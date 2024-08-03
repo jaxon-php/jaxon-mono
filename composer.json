@@ -1,0 +1,27 @@
+{
+    "name": "jaxon-php/jaxon-flot",
+    "type": "library",
+    "description": "Javascript charts for Jaxon with the Flot library",
+    "authors": [
+        {
+            "name": "Thierry Feuzeu"
+        }
+    ],
+    "homepage": "https://github.com/jaxon-php/jaxon-flot",
+    "license": "BSD-2-Clause",
+    "keywords": ["Jaxon", "Xajax", "Ajax", "PHP", "Javascript", "Graph", "Chart", "Plot", "Flot"],
+    "support": {
+        "issues": "https://github.com/jaxon-php/jaxon-flot/issues",
+        "source": "https://github.com/jaxon-php/jaxon-flot"
+    },
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Jaxon\\Flot\\": "src/"
+        },
+        "files": [
+            "src/start.php"
+        ]
+    }
+}
