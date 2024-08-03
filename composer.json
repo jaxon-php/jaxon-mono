@@ -1,0 +1,98 @@
+{
+    "name": "jaxon-php/jaxon-mono",
+    "type": "library",
+    "description": "Jaxon is an open source PHP library for easily creating Ajax web applications",
+    "authors": [
+        {
+            "name": "Thierry Feuzeu"
+        },
+        {
+            "name": "Jared White"
+        },
+        {
+            "name": "J. Max Wilson"
+        },
+        {
+            "name": "Joseph Woolley"
+        },
+        {
+            "name": "Steffen Konerow"
+        }
+    ],
+    "homepage": "https://www.jaxon-php.org",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "Jaxon",
+        "Xajax",
+        "Ajax",
+        "PHP",
+        "Asynchronous"
+    ],
+    "support": {
+        "issues": "https://github.com/jaxon-php/jaxon-core/issues",
+        "source": "https://github.com/jaxon-php/jaxon-core"
+    },
+    "require": {
+        "php": ">=8.0",
+        "ext-json": "*",
+        "keradus/psr4autoloader": "dev-master",
+        "league/flysystem": "^3.0|^2.2",
+        "mindplay/annotations": "^1.3",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1",
+        "pimple/pimple": "^3.0",
+        "psr/container": "^1.0|^2.0",
+        "psr/http-message": "^1.0|^2.0",
+        "psr/http-server-handler": "^1.0|^2.0",
+        "psr/http-server-middleware": "^1.0|^2.0",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "tedivm/jshrink": "^1.4"
+    },
+    "require-dev": {
+        "contao/monorepo-tools": "^0.2.0",
+        "lagdo/twitter-feed": "dev-test",
+        "php-coveralls/php-coveralls": "^2.5",
+        "phpunit/phpcov": "^8.2",
+        "phpunit/phpunit": "^9.5"
+    },
+    "replace": {
+        "jaxon-php/jaxon-annotations": "self.version",
+        "jaxon-php/jaxon-core": "self.version",
+        "jaxon-php/jaxon-dialogs": "self.version",
+        "jaxon-php/jaxon-examples": "self.version",
+        "jaxon-php/jaxon-flot": "self.version",
+        "jaxon-php/jaxon-js": "self.version",
+        "jaxon-php/jaxon-upload": "self.version",
+        "jaxon-php/jaxon-utils": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jaxon\\": "jaxon-core/src/",
+            "Jaxon\\Annotations\\": "jaxon-annotations/src/",
+            "Jaxon\\Dialogs\\": "jaxon-dialogs/src/",
+            "Jaxon\\Flot\\": "jaxon-flot/src/",
+            "Jaxon\\Upload\\": "jaxon-upload/src/",
+            "Jaxon\\Utils\\": "jaxon-utils/src/"
+        },
+        "files": [
+            "jaxon-annotations/src/start.php",
+            "jaxon-core/src/start.php",
+            "jaxon-dialogs/src/start.php",
+            "jaxon-flot/src/start.php",
+            "jaxon-upload/src/start.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jaxon\\Annotations\\Tests\\": "jaxon-annotations/tests/",
+            "Jaxon\\Tests\\": "jaxon-core/tests/",
+            "Jaxon\\Tests\\App\\": "jaxon-core/tests/src/",
+            "Jaxon\\Tests\\Ns\\": "jaxon-core/tests/src/Ns/",
+            "Jaxon\\Upload\\Tests\\": "jaxon-upload/tests/",
+            "Jaxon\\Utils\\Tests\\": "jaxon-utils/tests/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": []
+    }
+}

@@ -1,0 +1,29 @@
+# URL or absolute path to the remote GIT repository of the monorepo
+monorepo_url: git@github.com:jaxon-php/jaxon-mono.git
+
+# All branches that match this regular expression will be split by default
+branch_filter: /^(main|\d+\.\d+)$/
+
+# List of all split projects
+repositories:
+    jaxon-utils:
+        url: git@github.com:jaxon-php/jaxon-utils.git
+    jaxon-core:
+        url: git@github.com:jaxon-php/jaxon-core.git
+    jaxon-annotations:
+        url: git@github.com:jaxon-php/jaxon-annotations.git
+    jaxon-dialogs:
+        url: git@github.com:jaxon-php/jaxon-dialogs.git
+    jaxon-upload:
+        url: git@github.com:jaxon-php/jaxon-upload.git
+    jaxon-flot:
+        url: git@github.com:jaxon-php/jaxon-flot.git
+    jaxon-examples:
+        url: git@github.com:jaxon-php/jaxon-examples.git
+    jaxon-js:
+        url: git@github.com:jaxon-php/jaxon-js.git
+
+# Additional composer settings for the root composer.json
+composer:
+    require-dev:
+        contao/monorepo-tools: ^0.2
