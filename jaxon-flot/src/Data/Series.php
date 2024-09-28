@@ -84,7 +84,7 @@ class Series implements JsonSerializable
      *
      * @return integer      The number of points in the graph series
      */
-    public function points($aPoints)
+    public function points($aPoints): int
     {
         foreach($aPoints as $aPoint)
         {
@@ -116,7 +116,7 @@ class Series implements JsonSerializable
      *
      * @return integer      The number of points in the graph series
      */
-    public function expr($iStart, $iEnd, $iStep, $sJsValue, $sJsLabel = '')
+    public function expr($iStart, $iEnd, $iStep, $sJsValue, $sJsLabel = ''): int
     {
         for($x = $iStart; $x < $iEnd; $x += $iStep)
         {
@@ -137,7 +137,7 @@ class Series implements JsonSerializable
      *
      * @return stdClass
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): stdClass
     {
         // Surround the js var with a special marker that will later be removed
         // Note: does not work when returning an array

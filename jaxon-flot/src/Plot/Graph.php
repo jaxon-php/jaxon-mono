@@ -14,6 +14,7 @@ namespace Jaxon\Flot\Plot;
 
 use JsonSerializable;
 use Jaxon\Flot\Data\Series;
+use stdClass;
 
 use function array_merge;
 
@@ -75,7 +76,7 @@ class Graph implements JsonSerializable
      *
      * @return stdClass
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): stdClass
     {
         $json = $this->xSeries->jsonSerialize();
         $json->options = $this->aOptions;

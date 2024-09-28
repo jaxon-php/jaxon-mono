@@ -114,7 +114,7 @@ class Ticks implements JsonSerializable
      *
      * @return stdClass
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): stdClass
     {
         // Surround the js var with a special marker that will later be removed
         // Note: does not work when returning an array
