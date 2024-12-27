@@ -12,6 +12,8 @@ repositories:
         url: git@github.com:jaxon-php/jaxon-core.git
     jaxon-annotations:
         url: git@github.com:jaxon-php/jaxon-annotations.git
+    jaxon-attributes:
+        url: git@github.com:jaxon-php/jaxon-attributes.git
     jaxon-dialogs:
         url: git@github.com:jaxon-php/jaxon-dialogs.git
     jaxon-upload:

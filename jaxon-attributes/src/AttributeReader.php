@@ -14,10 +14,12 @@
 
 namespace Jaxon\Attributes;
 
+use Jaxon\App\Metadata\Metadata;
+use Jaxon\App\Metadata\MetadataInterface;
+use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Attributes\Attribute\AbstractAttribute;
 use Jaxon\Attributes\Attribute\DI as DiAttribute;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\CallableMetadataInterface;
 use Error;
 use Exception;
 use ReflectionAttribute;
@@ -30,7 +32,7 @@ use function array_merge;
 use function count;
 use function is_a;
 
-class AttributeReader implements CallableMetadataInterface
+class AttributeReader implements MetadataReaderInterface
 {
     /**
      * @var ReflectionClass
@@ -190,7 +192,7 @@ class AttributeReader implements CallableMetadataInterface
      * @throws SetupException
      */
     public function getAttributes(ReflectionClass|string $xReflectionClass,
-        array $aMethods = [], array $aProperties = []): array
+        array $aMethods = [], array $aProperties = []): ?MetadataInterface
     {
         $this->xReflectionClass = is_string($xReflectionClass) ?
             new ReflectionClass($xReflectionClass) : $xReflectionClass;
@@ -215,7 +217,8 @@ class AttributeReader implements CallableMetadataInterface
             $aClassAttrs = $this->getAttrValues($this->xReflectionClass->getAttributes());
             if(isset($aClassAttrs['protected']))
             {
-                return [true, [], []]; // The entire class is not to be exported.
+                // The entire class is not to be exported.
+                return new Metadata(true, [], []);
             }
 
             // Merge attributes and class attributes
@@ -242,7 +245,7 @@ class AttributeReader implements CallableMetadataInterface
                 }
             }
 
-            return [false, $aAttrValues, $aProtected];
+            return new Metadata(false, $aAttrValues, $aProtected);
         }
         catch(Exception|Error $e)
         {
