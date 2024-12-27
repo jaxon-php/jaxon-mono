@@ -13,7 +13,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Attribute;
+namespace Jaxon\Attributes\Attribute;
 
 use Attribute;
 use Jaxon\Exception\SetupException;

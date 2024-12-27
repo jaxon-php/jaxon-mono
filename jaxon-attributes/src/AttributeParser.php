@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Attribute;
+namespace Jaxon\Attributes;
 
 use ReflectionClass;
 

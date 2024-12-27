@@ -12,10 +12,10 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Attribute;
+namespace Jaxon\Attributes;
 
-use Jaxon\App\Attribute\AbstractAttribute;
-use Jaxon\App\Attribute\DI as DiAttribute;
+use Jaxon\Attributes\Attribute\AbstractAttribute;
+use Jaxon\Attributes\Attribute\DI as DiAttribute;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableMetadataInterface;
 use Error;
