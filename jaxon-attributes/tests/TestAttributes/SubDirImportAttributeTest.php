@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\TestAttributes;
+namespace Jaxon\Attributes\Tests\TestAttributes;
 
-use Jaxon\Plugin\Attribute\AttributeReader;
-use Jaxon\Tests\App\Attr\Ajax\SubDirImportAttribute;
+use Jaxon\App\Metadata\MetadataReaderInterface;
+use Jaxon\Attributes\Tests\Attr\Ajax\SubDirImportAttribute;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
@@ -18,9 +18,9 @@ class SubDirImportAttributeTest extends TestCase
     private $sCacheDir;
 
     /**
-     * @var AttributeReader
+     * @var MetadataReaderInterface
      */
-    protected $xAttributeReader;
+    protected $xMetadataReader;
 
     /**
      * @throws SetupException
@@ -31,7 +31,7 @@ class SubDirImportAttributeTest extends TestCase
         @mkdir($this->sCacheDir);
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
-        $this->xAttributeReader = jaxon()->di()->getMetadataReader('attributes');
+        $this->xMetadataReader = jaxon()->di()->getMetadataReader('attributes');
     }
 
     /**
@@ -45,15 +45,15 @@ class SubDirImportAttributeTest extends TestCase
 
     public function testCbBeforeAttributeErrorNumber()
     {
-        [$bExcluded, $aProperties, ] = $this->xAttributeReader->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
+        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
 
         $this->assertFalse($bExcluded);
 
         $this->assertCount(2, $aProperties);
         $this->assertArrayHasKey('attrDi', $aProperties);
         $this->assertCount(1, $aProperties['attrDi']['__di']);
-        $this->assertEquals('Jaxon\Tests\Service\SubDir\FirstService', $aProperties['attrDi']['__di']['firstService']);
+        $this->assertEquals('Jaxon\Attributes\Tests\Service\SubDir\FirstService', $aProperties['attrDi']['__di']['firstService']);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertEquals('Jaxon\Tests\Service\SubDir\SecondService', $aProperties['*']['__di']['secondService']);
+        $this->assertEquals('Jaxon\Attributes\Tests\Service\SubDir\SecondService', $aProperties['*']['__di']['secondService']);
     }
 }

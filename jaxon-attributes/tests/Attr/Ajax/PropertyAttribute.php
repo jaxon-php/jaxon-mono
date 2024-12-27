@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\App\Attr\Ajax;
+namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\App\Attribute\DI;
-use Jaxon\Tests\App\Attr\CallableClass;
-use Jaxon\Tests\Service\ColorService;
+use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Tests\Service\ColorService;
 
 class PropertyAttribute extends CallableClass
 {
@@ -13,7 +13,7 @@ class PropertyAttribute extends CallableClass
 
     protected FontService $fontService;
 
-    protected \Jaxon\Tests\Service\TextService $textService;
+    protected \Jaxon\Attributes\Tests\Service\TextService $textService;
 
     #[DI('ColorService')]
     protected $colorService1;
@@ -21,7 +21,7 @@ class PropertyAttribute extends CallableClass
     #[DI('FontService')]
     protected $fontService1;
 
-    #[DI('\Jaxon\Tests\Service\TextService')]
+    #[DI('\Jaxon\Attributes\Tests\Service\TextService')]
     protected $textService1;
 
     #[DI]
@@ -31,7 +31,7 @@ class PropertyAttribute extends CallableClass
     protected FontService $fontService2;
 
     #[DI]
-    protected \Jaxon\Tests\Service\TextService $textService2;
+    protected \Jaxon\Attributes\Tests\Service\TextService $textService2;
 
     #[DI(type: 'ColorService')]
     protected $colorService3;
@@ -39,7 +39,7 @@ class PropertyAttribute extends CallableClass
     #[DI(type: 'FontService')]
     protected $fontService3;
 
-    #[DI(type: '\Jaxon\Tests\Service\TextService')]
+    #[DI(type: '\Jaxon\Attributes\Tests\Service\TextService')]
     protected $textService3;
 
     #[DI('FontService', 'fontService')]

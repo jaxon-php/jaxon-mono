@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\App\Attr\Ajax;
+namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\App\Attribute\After;
 use Jaxon\App\Attribute\Before;
@@ -9,8 +9,8 @@ use Jaxon\App\Attribute\DataBag;
 use Jaxon\App\Attribute\DI;
 use Jaxon\App\Attribute\Exclude;
 use Jaxon\App\Attribute\Upload;
-use Jaxon\Tests\App\Attr\CallableClass;
-use Jaxon\Tests\Service\ColorService;
+use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Tests\Service\ColorService;
 
 class Attribute extends CallableClass
 {
@@ -86,7 +86,7 @@ class Attribute extends CallableClass
     }
 
     #[DI(type: 'ColorService', attr: 'colorService')]
-    #[DI(type: '\Jaxon\Tests\Service\TextService', attr: 'textService')]
+    #[DI(type: '\Jaxon\Attributes\Tests\Service\TextService', attr: 'textService')]
     public function di2()
     {
     }

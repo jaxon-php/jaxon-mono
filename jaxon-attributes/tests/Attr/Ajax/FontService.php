@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\App\Attr\Ajax;
+namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 class FontService
 {}

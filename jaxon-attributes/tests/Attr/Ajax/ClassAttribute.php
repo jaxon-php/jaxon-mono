@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\App\Attr\Ajax;
+namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\App\Attribute\After;
 use Jaxon\App\Attribute\Before;
 use Jaxon\App\Attribute\DataBag;
 use Jaxon\App\Attribute\DI;
 use Jaxon\App\Attribute\Exclude;
-use Jaxon\Tests\App\Attr\CallableClass;
-use Jaxon\Tests\Service\TextService;
+use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Tests\Service\TextService;
 
 #[Exclude(false)]
 #[Databag(name: 'user.name')]
@@ -19,7 +19,7 @@ use Jaxon\Tests\Service\TextService;
 #[After(call: 'funcAfter1')]
 #[After(call: 'funcAfter2')]
 #[After(call: 'funcAfter3')]
-#[DI(type: '\Jaxon\Tests\Service\ColorService', attr: 'colorService')]
+#[DI(type: '\Jaxon\Attributes\Tests\Service\ColorService', attr: 'colorService')]
 #[DI(type: 'TextService', attr: 'textService')]
 #[DI(type: 'FontService', attr: 'fontService')]
 class ClassAttribute extends CallableClass

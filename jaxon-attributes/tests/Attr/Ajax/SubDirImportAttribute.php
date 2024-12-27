@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Jaxon\Tests\App\Attr\Ajax;
+namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\App\Attribute\DI;
-use Jaxon\Tests\App\Attr\CallableClass;
-use Jaxon\Tests\Service\SubDir;
+use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Tests\Service\SubDir;
 
 class SubDirImportAttribute extends CallableClass
 {

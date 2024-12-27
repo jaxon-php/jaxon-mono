@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Tests\App\Attr;
+namespace Jaxon\Attributes\Tests\Attr;
 
 class CallableClass extends \Jaxon\App\CallableClass
 {
