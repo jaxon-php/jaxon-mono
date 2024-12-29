@@ -2,7 +2,7 @@
 
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
-use Jaxon\App\Metadata\MetadataReaderInterface;
+use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\AttributeNoName;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassAttributeNoName;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExcludedNoName;
@@ -15,15 +15,12 @@ use function rmdir;
 
 class NoNameAttributeTest extends TestCase
 {
+    use AttributeTrait;
+
     /**
      * @var string
      */
     private $sCacheDir;
-
-    /**
-     * @var MetadataReaderInterface
-     */
-    protected $xMetadataReader;
 
     /**
      * @throws SetupException
@@ -34,7 +31,6 @@ class NoNameAttributeTest extends TestCase
         @mkdir($this->sCacheDir);
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
-        $this->xMetadataReader = jaxon()->di()->getMetadataReader('attributes');
     }
 
     /**
@@ -62,7 +58,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testUploadAndExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->xMetadataReader->getAttributes(AttributeNoName::class, ['saveFiles', 'doNot']);
+        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(AttributeNoName::class, ['saveFiles', 'doNot']);
 
         $this->assertFalse($bExcluded);
 
@@ -80,7 +76,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testDataBagAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(AttributeNoName::class, ['withBags']);
+        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class, ['withBags']);
 
         $this->assertFalse($bExcluded);
 
@@ -97,7 +93,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testCallbacksAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(AttributeNoName::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class,
             ['cbSingle', 'cbMultiple', 'cbParams']);
 
         $this->assertFalse($bExcluded);
@@ -141,7 +137,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(AttributeNoName::class, ['di1', 'di2']);
+        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class, ['di1', 'di2']);
 
         $this->assertFalse($bExcluded);
 
@@ -161,7 +157,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testClassAttribute()
     {
-        [$bExcluded, $aProperties,] = $this->xMetadataReader->getAttributes(ClassAttributeNoName::class, []);
+        [$bExcluded, $aProperties,] = $this->getAttributes(ClassAttributeNoName::class, []);
         // $this->assertEquals('', json_encode($aProperties));
 
         $this->assertFalse($bExcluded);
@@ -205,7 +201,7 @@ class NoNameAttributeTest extends TestCase
      */
     public function testClassExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->xMetadataReader->getAttributes(ClassExcludedNoName::class,
+        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(ClassExcludedNoName::class,
             ['doNot', 'withBags', 'cbSingle']);
 
         $this->assertTrue($bExcluded);
@@ -216,84 +212,84 @@ class NoNameAttributeTest extends TestCase
     public function testUploadAttributeErrorFieldName()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['saveFileErrorFieldName']);
+        $this->getAttributes(AttributeNoName::class, ['saveFileErrorFieldName']);
     }
 
     public function testUploadAttributeErrorFieldNumber()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['saveFileErrorFieldNumber']);
+        $this->getAttributes(AttributeNoName::class, ['saveFileErrorFieldNumber']);
     }
 
     public function testDataBagAttributeErrorName()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['withBagsErrorName']);
+        $this->getAttributes(AttributeNoName::class, ['withBagsErrorName']);
     }
 
     public function testDataBagAttributeErrorNumber()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['withBagsErrorNumber']);
+        $this->getAttributes(AttributeNoName::class, ['withBagsErrorNumber']);
     }
 
     public function testContainerAttributeErrorAttr()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['diErrorAttr']);
+        $this->getAttributes(AttributeNoName::class, ['diErrorAttr']);
     }
 
     public function testContainerAttributeErrorClass()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['diErrorClass']);
+        $this->getAttributes(AttributeNoName::class, ['diErrorClass']);
     }
 
     public function testContainerAttributeErrorOneParam()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['diErrorOneParam']);
+        $this->getAttributes(AttributeNoName::class, ['diErrorOneParam']);
     }
 
     public function testContainerAttributeErrorThreeParams()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['diErrorThreeParams']);
+        $this->getAttributes(AttributeNoName::class, ['diErrorThreeParams']);
     }
 
     public function testCbBeforeAttributeErrorName()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbBeforeErrorName']);
+        $this->getAttributes(AttributeNoName::class, ['cbBeforeErrorName']);
     }
 
     public function testCbBeforeAttributeErrorParam()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbBeforeErrorParam']);
+        $this->getAttributes(AttributeNoName::class, ['cbBeforeErrorParam']);
     }
 
     public function testCbBeforeAttributeErrorNumber()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbBeforeErrorNumber']);
+        $this->getAttributes(AttributeNoName::class, ['cbBeforeErrorNumber']);
     }
 
     public function testCbAfterAttributeErrorName()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbAfterErrorName']);
+        $this->getAttributes(AttributeNoName::class, ['cbAfterErrorName']);
     }
 
     public function testCbAfterAttributeErrorParam()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbAfterErrorParam']);
+        $this->getAttributes(AttributeNoName::class, ['cbAfterErrorParam']);
     }
 
     public function testCbAfterAttributeErrorNumber()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(AttributeNoName::class, ['cbAfterErrorNumber']);
+        $this->getAttributes(AttributeNoName::class, ['cbAfterErrorNumber']);
     }
 }

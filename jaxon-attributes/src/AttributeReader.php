@@ -1,19 +1,20 @@
 <?php
 
 /**
- * AnnotationReader.php
+ * AttributeReader.php
  *
- * Jaxon annotation reader.
+ * Jaxon attribute reader.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
 namespace Jaxon\Attributes;
 
+use Jaxon\App\Metadata\InputDataInterface;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -191,11 +192,9 @@ class AttributeReader implements MetadataReaderInterface
      * @inheritDoc
      * @throws SetupException
      */
-    public function getAttributes(ReflectionClass|string $xReflectionClass,
-        array $aMethods = [], array $aProperties = []): ?MetadataInterface
+    public function getAttributes(InputDataInterface $xInput): ?MetadataInterface
     {
-        $this->xReflectionClass = is_string($xReflectionClass) ?
-            new ReflectionClass($xReflectionClass) : $xReflectionClass;
+        $this->xReflectionClass = $xInput->getReflectionClass();
         $this->readImportedTypes();
         $this->readPropertyTypes();
 
@@ -204,7 +203,7 @@ class AttributeReader implements MetadataReaderInterface
             // Processing properties attributes
             $aPropAttrs = [];
             // Properties attributes
-            foreach($aProperties as $sProperty)
+            foreach($xInput->getProperties() as $sProperty)
             {
                 [$sName, $xValue] = $this->getPropertyAttrValues($sProperty);
                 if($xValue !== null)
@@ -230,7 +229,7 @@ class AttributeReader implements MetadataReaderInterface
             // Processing methods attributes
             $aAttrValues = count($aClassAttrs) > 0 ? ['*' => $aClassAttrs] : [];
             $aProtected = [];
-            foreach($aMethods as $sMethod)
+            foreach($xInput->getMethods() as $sMethod)
             {
                 $aAttributes = $this->xReflectionClass->getMethod($sMethod)->getAttributes();
                 $aMethodAttrs = $this->getAttrValues($aAttributes);

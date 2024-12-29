@@ -2,7 +2,7 @@
 
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
-use Jaxon\App\Metadata\MetadataReaderInterface;
+use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\PropertyAttribute;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
@@ -11,15 +11,12 @@ use function Jaxon\jaxon;
 
 class PropertyAttributeTest extends TestCase
 {
+    use AttributeTrait;
+
     /**
      * @var string
      */
     private $sCacheDir;
-
-    /**
-     * @var MetadataReaderInterface
-     */
-    protected $xMetadataReader;
 
     /**
      * @throws SetupException
@@ -30,7 +27,6 @@ class PropertyAttributeTest extends TestCase
         @mkdir($this->sCacheDir);
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
-        $this->xMetadataReader = jaxon()->di()->getMetadataReader('attributes');
     }
 
     /**
@@ -58,7 +54,7 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(PropertyAttribute::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
             ['attrVar'], ['colorService', 'fontService', 'textService']);
 
         $this->assertFalse($bExcluded);
@@ -76,7 +72,7 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDocBlockAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(PropertyAttribute::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
             ['attrDbVar'], ['colorService', 'fontService', 'textService']);
 
         $this->assertFalse($bExcluded);
@@ -94,7 +90,7 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(PropertyAttribute::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService1', 'fontService1', 'textService1']);
 
         $this->assertFalse($bExcluded);
@@ -112,7 +108,7 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAndVarAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(PropertyAttribute::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService2', 'fontService2', 'textService2']);
 
         $this->assertFalse($bExcluded);
@@ -130,7 +126,7 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerPropAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(PropertyAttribute::class,
+        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService3', 'fontService3', 'textService3']);
 
         $this->assertFalse($bExcluded);
@@ -146,36 +142,36 @@ class PropertyAttributeTest extends TestCase
     public function testContainerAttributeErrorTwoParams()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, [], ['errorTwoParams']);
+        $this->getAttributes(PropertyAttribute::class, [], ['errorTwoParams']);
     }
 
     public function testContainerAttributeErrorDiAttr()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, [], ['errorDiAttr']);
+        $this->getAttributes(PropertyAttribute::class, [], ['errorDiAttr']);
     }
 
     public function testContainerAttributeErrorTwoDi()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, [], ['errorTwoDi']);
+        $this->getAttributes(PropertyAttribute::class, [], ['errorTwoDi']);
     }
 
     public function testContainerAttributeErrorDiClass()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, ['errorDiClass']);
+        $this->getAttributes(PropertyAttribute::class, ['errorDiClass']);
     }
 
     public function testContainerAttributeErrorNoVar()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, ['errorDiNoVar']);
+        $this->getAttributes(PropertyAttribute::class, ['errorDiNoVar']);
     }
 
     public function testContainerAttributeErrorTwoVars()
     {
         $this->expectException(SetupException::class);
-        $this->xMetadataReader->getAttributes(PropertyAttribute::class, ['errorDiTwoVars']);
+        $this->getAttributes(PropertyAttribute::class, ['errorDiTwoVars']);
     }
 }

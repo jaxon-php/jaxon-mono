@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
-use Jaxon\App\Metadata\MetadataReaderInterface;
+use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\SubDirImportAttribute;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
@@ -12,15 +12,12 @@ use function Jaxon\jaxon;
 
 class SubDirImportAttributeTest extends TestCase
 {
+    use AttributeTrait;
+
     /**
      * @var string
      */
     private $sCacheDir;
-
-    /**
-     * @var MetadataReaderInterface
-     */
-    protected $xMetadataReader;
 
     /**
      * @throws SetupException
@@ -31,7 +28,6 @@ class SubDirImportAttributeTest extends TestCase
         @mkdir($this->sCacheDir);
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
-        $this->xMetadataReader = jaxon()->di()->getMetadataReader('attributes');
     }
 
     /**
@@ -45,7 +41,7 @@ class SubDirImportAttributeTest extends TestCase
 
     public function testCbBeforeAttributeErrorNumber()
     {
-        [$bExcluded, $aProperties, ] = $this->xMetadataReader->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
+        [$bExcluded, $aProperties, ] = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
 
         $this->assertFalse($bExcluded);
 
