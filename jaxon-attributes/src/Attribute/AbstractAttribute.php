@@ -71,12 +71,10 @@ abstract class AbstractAttribute
     /**
      * Validate the attribute values
      *
-     * @return bool
+     * @return void
      */
     protected function validateValues()
-    {
-        return true;
-    }
+    {}
 
     /**
      * Get the annotation value
