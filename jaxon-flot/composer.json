@@ -21,7 +21,7 @@
             "Jaxon\\Flot\\": "src/"
         },
         "files": [
-            "src/start.php"
+            "src/register.php"
         ]
     }
 }

@@ -77,12 +77,12 @@
             "Jaxon\\Utils\\": "jaxon-utils/src/"
         },
         "files": [
-            "jaxon-annotations/src/start.php",
-            "jaxon-attributes/src/start.php",
-            "jaxon-core/src/start.php",
-            "jaxon-dialogs/src/start.php",
-            "jaxon-flot/src/start.php",
-            "jaxon-upload/src/start.php"
+            "jaxon-core/src/functions.php",
+            "jaxon-annotations/src/register.php",
+            "jaxon-attributes/src/register.php",
+            "jaxon-dialogs/src/register.php",
+            "jaxon-flot/src/register.php",
+            "jaxon-upload/src/register.php"
         ]
     },
     "autoload-dev": {

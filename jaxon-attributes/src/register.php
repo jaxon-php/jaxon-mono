@@ -6,6 +6,7 @@ use Jaxon\Attributes\AttributeParser;
 use Jaxon\Attributes\AttributeReader;
 
 use function Jaxon\jaxon;
+use function php_sapi_name;
 use function sys_get_temp_dir;
 
 /**
@@ -13,8 +14,14 @@ use function sys_get_temp_dir;
  *
  * @return void
  */
-function registerAttributesReader()
+function register()
 {
+    // Register only if running on a web server.
+    if(php_sapi_name() === 'cli')
+    {
+        return;
+    };
+
     $di = jaxon()->di();
 
     $sCacheDirKey = 'jaxon_attributes_cache_dir';
@@ -32,5 +39,4 @@ function registerAttributesReader()
     $di->alias('metadata_reader_attributes', AttributeReader::class);
 }
 
-// Register the attribute reader.
-registerAttributesReader();
+register();
