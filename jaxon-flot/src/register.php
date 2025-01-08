@@ -8,14 +8,8 @@ use Jaxon\Utils\Template\TemplateEngine;
 use function Jaxon\jaxon;
 use function php_sapi_name;
 
-function register()
+function _register()
 {
-    // Do nothing if running in cli.
-    if(php_sapi_name() === 'cli')
-    {
-        return;
-    };
-
     $jaxon = jaxon();
 
     // Register the template dir into the template renderer
@@ -27,6 +21,15 @@ function register()
 
     // Register an instance of this plugin
     $jaxon->registerPlugin(FlotPlugin::class, FlotPlugin::NAME);
+}
+
+function register()
+{
+    // Do nothing if running in cli.
+    if(php_sapi_name() !== 'cli')
+    {
+        _register();
+    };
 }
 
 register();
