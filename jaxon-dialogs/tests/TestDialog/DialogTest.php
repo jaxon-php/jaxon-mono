@@ -5,10 +5,10 @@ namespace Jaxon\Tests\TestUi;
 require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary as Alert;
-use Jaxon\Dialogs\Library\Bootbox;
-use Jaxon\Dialogs\Library\Bootstrap;
-use Jaxon\Dialogs\Library\CuteAlert;
+use Jaxon\Dialogs\Dialog\Library\Alert;
+use Jaxon\Dialogs\Dialog\Library\Bootbox;
+use Jaxon\Dialogs\Dialog\Library\Bootstrap;
+use Jaxon\Dialogs\Dialog\Library\CuteAlert;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
@@ -23,6 +23,7 @@ use function get_class;
 use function Jaxon\jaxon;
 use function Jaxon\rq;
 use function Jaxon\pm;
+use function Jaxon\Dialogs\dialog;
 use function Jaxon\Dialogs\_register;
 
 class DialogTest extends TestCase
@@ -36,7 +37,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
         jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
-        jaxon()->dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
+        dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
     }
 
     /**
@@ -50,44 +51,41 @@ class DialogTest extends TestCase
 
     public function testDialogSettings()
     {
-        $xDialogManager = jaxon()->di()->getDialogManager();
-        $this->assertEquals('', $xDialogManager->getQuestionLibrary()->getName());
-        $this->assertEquals(Alert::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(Alert::class, get_class($xDialogManager->getMessageLibrary()));
-        $this->assertEquals(null, $xDialogManager->getModalLibrary());
+        $this->assertEquals('', dialog()->getConfirmLibrary()->getName());
+        $this->assertEquals(Alert::class, get_class(dialog()->getConfirmLibrary()));
+        $this->assertEquals(Alert::class, get_class(dialog()->getAlertLibrary()));
+        $this->assertEquals(null, dialog()->getModalLibrary());
 
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
-        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getMessageLibrary()));
-        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getModalLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class(dialog()->getConfirmLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class(dialog()->getAlertLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class(dialog()->getModalLibrary()));
 
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
         jaxon()->setOption('dialogs.default.question', 'bootbox');
-        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getMessageLibrary()));
-        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getModalLibrary()));
+        $this->assertEquals(Bootbox::class, get_class(dialog()->getConfirmLibrary()));
+        $this->assertEquals(Bootbox::class, get_class(dialog()->getAlertLibrary()));
+        $this->assertEquals(Bootbox::class, get_class(dialog()->getModalLibrary()));
     }
 
     public function testDialogOptions()
     {
-        $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.message', 'cute');
-        $xMessageLibrary = $xDialogManager->getMessageLibrary();
-        $this->assertEquals(CuteAlert::class, get_class($xMessageLibrary));
+        $xAlertLibrary = dialog()->getAlertLibrary();
+        $this->assertEquals(CuteAlert::class, get_class($xAlertLibrary));
     }
 
     public function testDialogDefaultMethods()
     {
-        $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
-        $xQuestionLibrary = $xDialogManager->getQuestionLibrary();
-        $this->assertEquals('', $xQuestionLibrary->getUri());
-        $this->assertEquals('', $xQuestionLibrary->getJs());
-        $this->assertEquals('', $xQuestionLibrary->getScript());
-        $this->assertEquals('', $xQuestionLibrary->getReadyScript());
+        $xConfirmLibrary = dialog()->getConfirmLibrary();
+        $this->assertEquals('', $xConfirmLibrary->getUri());
+        $this->assertEquals('', $xConfirmLibrary->getJs());
+        $this->assertEquals('', $xConfirmLibrary->getScript());
+        $this->assertEquals('', $xConfirmLibrary->getReadyScript());
 
         $xDialogPlugin = jaxon()->di()->getDialogPlugin();
         $this->assertEquals('', $xDialogPlugin->getUri());
@@ -561,10 +559,10 @@ class DialogTest extends TestCase
     public function testErrorRegisterIncorrectDialogClass()
     {
         $this->expectException(SetupException::class);
-        jaxon()->dialog()->registerLibrary(Dialog::class, 'incorrect');
+        dialog()->registerLibrary(Dialog::class, 'incorrect');
     }
 
-    public function testErrorSetWrongMessageLibrary()
+    public function testErrorSetWrongAlertLibrary()
     {
         $this->expectException(SetupException::class);
         jaxon()->setOption('dialogs.default.message', 'incorrect');
@@ -576,7 +574,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'incorrect');
     }
 
-    public function testErrorSetWrongQuestionLibrary()
+    public function testErrorSetWrongConfirmLibrary()
     {
         $this->expectException(SetupException::class);
         jaxon()->setOption('dialogs.default.question', 'incorrect');

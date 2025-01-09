@@ -12,11 +12,19 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\Dialogs\Dialog\Library;
 
-class AlertLibrary extends AbstractDialogLibrary
-    implements LibraryInterface, MessageInterface, QuestionInterface
+use Jaxon\Dialogs\Dialog\AbstractLibrary;
+use Jaxon\App\Dialog\Library\AlertInterface;
+use Jaxon\App\Dialog\Library\ConfirmInterface;
+
+class Alert extends AbstractLibrary implements AlertInterface, ConfirmInterface
 {
+    /**
+     * @const The library name
+     */
+    const NAME = '';
+
     /**
      * Get the library name
      *

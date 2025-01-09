@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\Plugin\Response\Dialog\Library\DialogLibraryTrait;
-use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
-use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
+use Jaxon\App\Dialog\Library\LibraryInterface;
+use Jaxon\App\Dialog\Library\ConfirmInterface;
+use Jaxon\Dialogs\Dialog\AbstractLibrary;
 use Jaxon\Tests\Ns\CallableClass;
 
 class Dialog extends CallableClass
@@ -45,10 +45,8 @@ class Dialog extends CallableClass
     }
 }
 
-class TestDialogLibrary implements LibraryInterface, QuestionInterface
+class TestDialogLibrary extends AbstractLibrary implements LibraryInterface, ConfirmInterface
 {
-    use DialogLibraryTrait;
-
     /**
      * @const The library name
      */

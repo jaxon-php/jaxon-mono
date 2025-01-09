@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\Dialogs\Dialog;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
+use Jaxon\App\Dialog\Library\LibraryInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function is_bool;
@@ -14,7 +14,7 @@ use function rtrim;
 use function str_repeat;
 use function trim;
 
-class DialogLibraryHelper
+class LibraryHelper
 {
     /**
      * The name of the library

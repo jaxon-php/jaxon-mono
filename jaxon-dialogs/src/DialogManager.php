@@ -11,18 +11,22 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog;
+namespace Jaxon\Dialogs;
 
 use Jaxon\App\Config\ConfigListenerInterface;
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\AlertInterface;
+use Jaxon\App\Dialog\Library\ConfirmInterface;
+use Jaxon\App\Dialog\Library\LibraryInterface;
+use Jaxon\App\Dialog\Library\ModalInterface;
+use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Dialogs\Dialog\LibraryHelper;
+use Jaxon\Dialogs\Dialog\Library\Alert;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
-use Jaxon\Plugin\Response\Dialog\Library\MessageInterface;
-use Jaxon\Plugin\Response\Dialog\Library\ModalInterface;
-use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_map;
 use function array_keys;
@@ -30,31 +34,26 @@ use function class_implements;
 use function in_array;
 use function substr;
 
-class DialogManager implements ConfigListenerInterface
+class DialogManager implements ConfigListenerInterface, LibraryRegistryInterface
 {
-    /**
-     * @var Container
-     */
-    private $di;
-
     /**
      * @var array
      */
     protected $aLibraries = [];
 
     /**
-     * The QuestionInterface class name
+     * The ConfirmInterface class name
      *
      * @var string
      */
-    private $sQuestionLibrary = '';
+    private $sConfirmLibrary = '';
 
     /**
-     * The MessageInterface class name
+     * The AlertInterface class name
      *
      * @var string
      */
-    private $sMessageLibrary = '';
+    private $sAlertLibrary = '';
 
     /**
      * The ModalInterface class name
@@ -64,35 +63,35 @@ class DialogManager implements ConfigListenerInterface
     private $sModalLibrary = '';
 
     /**
-     * The name of the library to use for the next call.
-     * This is used to override the default library.
-     *
-     * @var string
-     */
-    protected $sNextLibrary = '';
-
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
-
-    /**
-     * @var Translator
-     */
-    private $xTranslator;
-
-    /**
      * The constructor
      *
      * @param Container $di
      * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(private Container $di,
+        private ConfigManager $xConfigManager, private Translator $xTranslator)
+    {}
+
+    /**
+     * Register a javascript dialog library adapter.
+     *
+     * @param string $sClass
+     * @param string $sLibraryName
+     *
+     * @return void
+     */
+    private function _registerLibrary(string $sClass, string $sLibraryName)
     {
-        $this->di = $di;
-        $this->xConfigManager = $xConfigManager;
-        $this->xTranslator = $xTranslator;
+        $this->di->set($sClass, function($di) use($sClass) {
+            return $di->make($sClass);
+        });
+        $this->di->set("dialog_library_helper_$sLibraryName", function($di) use($sClass) {
+            return new LibraryHelper($di->g($sClass), $di->g(ConfigManager::class),
+                $di->g(TemplateEngine::class));
+        });
+        // Set the alias, so the libraries can be found by their names.
+        $this->di->alias("dialog_library_$sLibraryName", $sClass);
     }
 
     /**
@@ -117,8 +116,8 @@ class DialogManager implements ConfigListenerInterface
             throw new SetupException($sMessage);
         }
 
-        $bIsQuestion = in_array(QuestionInterface::class, $aInterfaces);
-        $bIsMessage = in_array(MessageInterface::class, $aInterfaces);
+        $bIsQuestion = in_array(ConfirmInterface::class, $aInterfaces);
+        $bIsMessage = in_array(AlertInterface::class, $aInterfaces);
         $bIsModal = in_array(ModalInterface::class, $aInterfaces);
         if(!$bIsQuestion && !$bIsMessage && !$bIsModal)
         {
@@ -135,18 +134,30 @@ class DialogManager implements ConfigListenerInterface
             'used' => false,
         ];
         // Register the library class in the container
-        $this->di->registerDialogLibrary($sClassName, $sLibraryName);
+        $this->_registerLibrary($sClassName, $sLibraryName);
     }
 
     /**
-     * Set the QuestionInterface library
+     * Get the dialog library helper
      *
-     * @param string $sLibraryName The QuestionInterface library name
+     * @param string $sLibraryName
+     *
+     * @return LibraryHelper
+     */
+    public function getLibraryHelper(string $sLibraryName): LibraryHelper
+    {
+        return $this->di->g("dialog_library_helper_$sLibraryName");
+    }
+
+    /**
+     * Set the ConfirmInterface library
+     *
+     * @param string $sLibraryName The ConfirmInterface library name
      *
      * @return void
      * @throws SetupException
      */
-    public function setQuestionLibrary(string $sLibraryName)
+    public function setConfirmLibrary(string $sLibraryName)
     {
         if(!isset($this->aLibraries[$sLibraryName]) || !$this->aLibraries[$sLibraryName]['question'])
         {
@@ -154,28 +165,29 @@ class DialogManager implements ConfigListenerInterface
                 ['type' => 'question', 'name' => $sLibraryName]);
             throw new SetupException($sMessage);
         }
-        $this->sQuestionLibrary = $sLibraryName;
+        $this->sConfirmLibrary = $sLibraryName;
     }
 
     /**
-     * Get the QuestionInterface library
+     * Get the ConfirmInterface library
      *
-     * @return QuestionInterface
+     * @return ConfirmInterface
      */
-    public function getQuestionLibrary(): QuestionInterface
+    public function getConfirmLibrary(): ConfirmInterface
     {
-        return $this->di->getQuestionLibrary($this->sNextLibrary ?: $this->sQuestionLibrary);
+        $sKey = "dialog_library_{$this->sConfirmLibrary}";
+        return $this->di->h($sKey) ? $this->di->g($sKey) : $this->di->g(Alert::class);
     }
 
     /**
-     * Set MessageInterface library
+     * Set AlertInterface library
      *
-     * @param string $sLibraryName The MessageInterface library name
+     * @param string $sLibraryName The AlertInterface library name
      *
      * @return void
      * @throws SetupException
      */
-    public function setMessageLibrary(string $sLibraryName)
+    public function setAlertLibrary(string $sLibraryName)
     {
         if(!isset($this->aLibraries[$sLibraryName]) || !$this->aLibraries[$sLibraryName]['message'])
         {
@@ -183,17 +195,18 @@ class DialogManager implements ConfigListenerInterface
                 ['type' => 'message', 'name' => $sLibraryName]);
             throw new SetupException($sMessage);
         }
-        $this->sMessageLibrary = $sLibraryName;
+        $this->sAlertLibrary = $sLibraryName;
     }
 
     /**
-     * Get the MessageInterface library
+     * Get the AlertInterface library
      *
-     * @return MessageInterface
+     * @return AlertInterface
      */
-    public function getMessageLibrary(): MessageInterface
+    public function getAlertLibrary(): AlertInterface
     {
-        return $this->di->getMessageLibrary($this->sNextLibrary ?: $this->sMessageLibrary);
+        $sKey = "dialog_library_{$this->sAlertLibrary}";
+        return $this->di->h($sKey) ? $this->di->g($sKey) : $this->di->g(Alert::class);
     }
 
     /**
@@ -222,19 +235,8 @@ class DialogManager implements ConfigListenerInterface
      */
     public function getModalLibrary(): ?ModalInterface
     {
-        return $this->di->getModalLibrary($this->sNextLibrary ?: $this->sModalLibrary);
-    }
-
-    /**
-     * Set the name of the library to use for the next call
-     *
-     * @param string $sNextLibrary
-     *
-     * @return void
-     */
-    public function setNextLibrary(string $sNextLibrary): void
-    {
-        $this->sNextLibrary = $sNextLibrary;
+        $sKey = "dialog_library_{$this->sModalLibrary}";
+        return $this->di->h($sKey) ? $this->di->g($sKey) : null;
     }
 
     /**
@@ -269,13 +271,13 @@ class DialogManager implements ConfigListenerInterface
         // Set the default message library
         if(($sLibraryName = $this->xConfigManager->getOption('dialogs.default.message', '')))
         {
-            $this->setMessageLibrary($sLibraryName);
+            $this->setAlertLibrary($sLibraryName);
             $this->aLibraries[$sLibraryName]['used'] = true;
         }
         // Set the default question library
         if(($sLibraryName = $this->xConfigManager->getOption('dialogs.default.question', '')))
         {
-            $this->setQuestionLibrary($sLibraryName);
+            $this->setConfirmLibrary($sLibraryName);
             $this->aLibraries[$sLibraryName]['used'] = true;
         }
     }
@@ -305,12 +307,17 @@ class DialogManager implements ConfigListenerInterface
      */
     public function getLibraries(): array
     {
+        // Reset the default libraries any time the config is changed.
+        $this->registerLibraries();
+        $this->setDefaultLibraries();
+        $this->setUsedLibraries();
+
         // Only return the libraries that are used.
         $aLibraries = array_filter($this->aLibraries, function($aLibrary) {
             return $aLibrary['used'];
         });
         return array_map(function($sLibraryName) {
-            return $this->di->getDialogLibrary($sLibraryName);
+            return $this->di->g("dialog_library_$sLibraryName");
         }, array_keys($aLibraries));
     }
 

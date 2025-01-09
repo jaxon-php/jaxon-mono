@@ -12,16 +12,16 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\Dialogs\Dialog;
 
-use function Jaxon\jaxon;
+use function Jaxon\Dialogs\dialog;
 
-abstract class AbstractDialogLibrary
+abstract class AbstractLibrary
 {
     /**
      * The dialog library helper
      *
-     * @var DialogLibraryHelper
+     * @var LibraryHelper
      */
     private $xHelper = null;
 
@@ -35,12 +35,11 @@ abstract class AbstractDialogLibrary
     /**
      * Get the helper
      *
-     * @return DialogLibraryHelper
+     * @return LibraryHelper
      */
-    public function helper(): DialogLibraryHelper
+    public function helper(): LibraryHelper
     {
-        return $this->xHelper ?:
-            $this->xHelper = jaxon()->di()->getDialogLibraryHelper($this->getName());
+        return $this->xHelper ?: $this->xHelper = dialog()->getLibraryHelper($this->getName());
     }
 
     /**
