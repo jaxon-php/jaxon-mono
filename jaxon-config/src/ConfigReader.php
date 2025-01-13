@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config;
+namespace Jaxon\Config;
 
 use function trim;
 use function pathinfo;

@@ -6,6 +6,8 @@ branch_filter: /^(main|\d+\.\d+)$/
 
 # List of all split projects
 repositories:
+    jaxon-config:
+        url: git@github.com:jaxon-php/jaxon-coonfig.git
     jaxon-utils:
         url: git@github.com:jaxon-php/jaxon-utils.git
     jaxon-core:

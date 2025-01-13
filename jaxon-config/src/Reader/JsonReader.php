@@ -1,9 +1,9 @@
 <?php
 
 /**
- * YamlExtension.php - Jaxon config reader
+ * Json.php - Jaxon config reader
  *
- * Read the config data from a YAML formatted config file.
+ * Read the config data from a JSON formatted config file.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,42 +12,37 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config\Reader;
+namespace Jaxon\Config\Reader;
 
-use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileContent;
+use Jaxon\Config\Exception\FileAccess;
+use Jaxon\Config\Exception\FileContent;
 
 use function is_array;
 use function realpath;
 use function is_readable;
-use function extension_loaded;
-use function yaml_parse_file;
+use function file_get_contents;
+use function json_decode;
 
-class YamlReader
+class JsonReader
 {
     /**
-     * Read options from a YAML formatted config file
+     * Read options from a JSON formatted config file
      *
      * @param string $sConfigFile The full path to the config file
      *
      * @return array
-     * @throws YamlExtension
      * @throws FileAccess
      * @throws FileContent
      */
     public static function read(string $sConfigFile): array
     {
-        if(!extension_loaded('yaml'))
-        {
-            throw new YamlExtension();
-        }
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
         {
             throw new FileAccess($sConfigFile);
         }
-        $aConfigOptions = yaml_parse_file($sConfigFile);
+        $sFileContent = file_get_contents($sConfigFile);
+        $aConfigOptions = json_decode($sFileContent, true);
         if(!is_array($aConfigOptions))
         {
             throw new FileContent($sConfigFile);

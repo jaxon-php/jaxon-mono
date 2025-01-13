@@ -13,7 +13,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config\Exception;
+namespace Jaxon\Config\Exception;
 
 class YamlExtension extends \Exception
 {

@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config\Reader;
+namespace Jaxon\Config\Reader;
 
 use function array_filter;
 use function array_keys;

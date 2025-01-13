@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config\Exception;
+namespace Jaxon\Config\Exception;
 
-class FileExtension extends \Exception
+class FileContent extends \Exception
 {
     /**
      * @var string

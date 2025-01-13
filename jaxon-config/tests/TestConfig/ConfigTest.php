@@ -1,14 +1,14 @@
 <?php
 
-namespace Jaxon\Utils\Tests;
+namespace Jaxon\Config\Tests\TestConfig;
 
-use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Config\ConfigSetter;
-use Jaxon\Utils\Config\Exception\DataDepth;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileContent;
-use Jaxon\Utils\Config\Exception\FileExtension;
+use Jaxon\Config\Config;
+use Jaxon\Config\ConfigReader;
+use Jaxon\Config\ConfigSetter;
+use Jaxon\Config\Exception\DataDepth;
+use Jaxon\Config\Exception\FileAccess;
+use Jaxon\Config\Exception\FileContent;
+use Jaxon\Config\Exception\FileExtension;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigTest extends TestCase
@@ -28,8 +28,14 @@ final class ConfigTest extends TestCase
      */
     protected $xConfig;
 
+    /**
+     * @var string
+     */
+    protected $sConfigDir;
+
     protected function setUp(): void
     {
+        $this->sConfigDir = __DIR__ .  '/../config';
         $this->xConfigSetter = new ConfigSetter();
         $this->xConfigReader = new ConfigReader($this->xConfigSetter);
         $this->xConfig = $this->xConfigSetter->newConfig(['core' => ['language' => 'en']]);
@@ -38,7 +44,7 @@ final class ConfigTest extends TestCase
 
     public function testPhpConfigReader()
     {
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/config.php', 'jaxon');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/config.php", 'jaxon');
         $this->assertEquals('en', $this->xConfig->getOption('core.language'));
         $this->assertEquals('jaxon_', $this->xConfig->getOption('core.prefix.function'));
         $this->assertFalse($this->xConfig->getOption('core.debug.on'));
@@ -47,7 +53,7 @@ final class ConfigTest extends TestCase
 
     public function testYamlConfigReader()
     {
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/config.yaml', 'jaxon');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/config.yaml", 'jaxon');
         $this->assertEquals('en', $this->xConfig->getOption('core.language'));
         $this->assertEquals('jaxon_', $this->xConfig->getOption('core.prefix.function'));
         $this->assertFalse($this->xConfig->getOption('core.debug.on'));
@@ -56,7 +62,7 @@ final class ConfigTest extends TestCase
 
     public function testJsonConfigReader()
     {
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/config.json', 'jaxon');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/config.json", 'jaxon');
         $this->assertEquals('en', $this->xConfig->getOption('core.language'));
         $this->assertEquals('jaxon_', $this->xConfig->getOption('core.prefix.function'));
         $this->assertFalse($this->xConfig->getOption('core.debug.on'));
@@ -65,7 +71,7 @@ final class ConfigTest extends TestCase
 
     public function testReadOptionNames()
     {
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/config.json');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/config.json");
         $aOptionNames = $this->xConfig->getOptionNames('jaxon.core');
         $this->assertIsArray($aOptionNames);
         $this->assertCount(3, $aOptionNames);
@@ -73,7 +79,7 @@ final class ConfigTest extends TestCase
 
     public function testSimpleArrayValues()
     {
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/array.php');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/array.php");
         $aOption = $this->xConfig->getOption('core.array');
         $this->assertIsArray($aOption);
         $this->assertCount(4, $aOption);
@@ -131,42 +137,42 @@ final class ConfigTest extends TestCase
     public function testMissingPhpFile()
     {
         $this->expectException(FileAccess::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/missing.php');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/missing.php");
     }
 
     public function testMissingJsonFile()
     {
         $this->expectException(FileAccess::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/missing.json');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/missing.json");
     }
 
     public function testMissingYamlFile()
     {
         $this->expectException(FileAccess::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/missing.yml');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/missing.yml");
     }
 
     public function testErrorInPhpFile()
     {
         $this->expectException(FileContent::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/error.php');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/error.php");
     }
 
     public function testErrorInJsonFile()
     {
         $this->expectException(FileContent::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/error.json');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/error.json");
     }
 
     public function testErrorInYamlFile()
     {
         $this->expectException(FileContent::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/error.yml');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/error.yml");
     }
 
     public function testUnsupportedFileExtension()
     {
         $this->expectException(FileExtension::class);
-        $this->xConfig = $this->xConfigReader->load($this->xConfig, __DIR__ . '/config/config.ini');
+        $this->xConfig = $this->xConfigReader->load($this->xConfig, "{$this->sConfigDir}/config.ini");
     }
 }

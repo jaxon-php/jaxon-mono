@@ -12,10 +12,10 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config;
+namespace Jaxon\Config;
 
-use Jaxon\Utils\Config\Exception\DataDepth;
-use Jaxon\Utils\Config\Reader\Value;
+use Jaxon\Config\Exception\DataDepth;
+use Jaxon\Config\Reader\Value;
 
 use function array_merge;
 use function array_pop;
@@ -69,14 +69,13 @@ class ConfigSetter
     private function setValue(array $aValues, string $sOptionName, $xOptionValue): array
     {
         // Given an option name like a.b.c, the values of a and a.b must also be set.
-        $sName = $sOptionName;
         $xValue = $xOptionValue;
         $sLastName = '';
-        $aNames = Value::explodeName($sName);
+        $aNames = Value::explodeName($sOptionName);
         while($this->pop($sLastName, $aNames) > 0)
         {
             $sName = implode('.', $aNames);
-            // The current value is deleted if it is not an array of options.
+            // The current value is overwritten if it is not an array of options.
             $xCurrentValue = isset($aValues[$sName]) &&
                 Value::containsOptions($aValues[$sName]) ? $aValues[$sName] : [];
             $aValues[$sName] = array_merge($xCurrentValue, [$sLastName => $xValue]);
@@ -132,6 +131,7 @@ class ConfigSetter
                 $aValues = $this->setValues($aValues, $xValue, $sNextPrefix, $nDepth + 1);
                 continue;
             }
+
             // Save the value of this option
             $aValues = $this->setValue($aValues, $sNamePrefix . $sName, $xValue);
         }

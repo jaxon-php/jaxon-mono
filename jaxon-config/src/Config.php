@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config;
+namespace Jaxon\Config;
 
-use Jaxon\Utils\Config\Reader\Value;
+use Jaxon\Config\Reader\Value;
 
 use function array_combine;
 use function array_filter;

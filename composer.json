@@ -58,6 +58,7 @@
     "replace": {
         "jaxon-php/jaxon-annotations": "self.version",
         "jaxon-php/jaxon-attributes": "self.version",
+        "jaxon-php/jaxon-config": "self.version",
         "jaxon-php/jaxon-core": "self.version",
         "jaxon-php/jaxon-dialogs": "self.version",
         "jaxon-php/jaxon-examples": "self.version",
@@ -71,6 +72,7 @@
             "Jaxon\\": "jaxon-core/src/",
             "Jaxon\\Annotations\\": "jaxon-annotations/src/",
             "Jaxon\\Attributes\\": "jaxon-attributes/src/",
+            "Jaxon\\Config\\": "jaxon-config/src/",
             "Jaxon\\Dialogs\\": "jaxon-dialogs/src/",
             "Jaxon\\Flot\\": "jaxon-flot/src/",
             "Jaxon\\Upload\\": "jaxon-upload/src/",
@@ -89,6 +91,7 @@
         "psr-4": {
             "Jaxon\\Annotations\\Tests\\": "jaxon-annotations/tests/",
             "Jaxon\\Attributes\\Tests\\": "jaxon-attributes/tests/",
+            "Jaxon\\Config\\Tests\\": "jaxon-config/tests/",
             "Jaxon\\Tests\\": "jaxon-core/tests/",
             "Jaxon\\Tests\\App\\": "jaxon-core/tests/src/",
             "Jaxon\\Tests\\Ns\\": "jaxon-core/tests/src/Ns/",
