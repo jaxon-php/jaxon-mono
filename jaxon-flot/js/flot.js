@@ -1,6 +1,7 @@
 /*
  * Jaxon Flot plugin
  */
+jaxon.dom.ready(function() {
     $("#flot-tooltip").remove();
     $('<div id="flot-tooltip"></div>').css({
         position: "absolute",
@@ -111,3 +112,4 @@
         }
         return true;
     });
+});

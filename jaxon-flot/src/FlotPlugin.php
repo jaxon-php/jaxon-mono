@@ -12,7 +12,9 @@
 
 namespace Jaxon\Flot;
 
+use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Plugin\Code\Scripts;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Flot\Plot\Plot;
 
@@ -24,19 +26,14 @@ class FlotPlugin extends AbstractResponsePlugin
     const NAME = 'flot';
 
     /**
-     * @var TemplateEngine
-     */
-    protected $xTemplateEngine;
-
-    /**
      * The constructor
      *
+     * @param ConfigManager $xConfigManager
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(TemplateEngine $xTemplateEngine)
-    {
-        $this->xTemplateEngine = $xTemplateEngine;
-    }
+    public function __construct(private  ConfigManager $xConfigManager,
+        private TemplateEngine $xTemplateEngine)
+    {}
 
     /**
      * @inheritDoc
@@ -60,15 +57,27 @@ class FlotPlugin extends AbstractResponsePlugin
      */
     public function getJs(): string
     {
-        return $this->xTemplateEngine->render('jaxon::flot::js.html');
+        $sUri = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/dist/es5/jquery.flot.min.js';
+        return '<script type="text/javascript" src="' . $sUri . '"></script>';
     }
 
     /**
      * @inheritDoc
      */
-    public function getReadyScript(): string
+    public function getScripts(): Scripts
+    // public function getReadyScript(): string
     {
-        return $this->xTemplateEngine->render('jaxon::flot::ready.js');
+        $xScripts = new Scripts();
+        if(!$this->xConfigManager->getOption('js.app.export', false))
+        {
+            $xScripts->sJs = $this->xTemplateEngine->render('jaxon::flot::flot.js');
+        }
+        else
+        {
+            $sUri = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-flot@main/js/flot.js';
+            $xScripts->aFiles[] = $sUri;
+        }
+        return $xScripts;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Jaxon\Flot;
 
+use Jaxon\App\Config\ConfigManager;
 use Jaxon\Flot\FlotPlugin;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -15,8 +16,8 @@ function _register()
     // Register the template dir into the template renderer
     $jaxon->di()->set(FlotPlugin::class, function($c) {
         $xTemplateEngine = $c->g(TemplateEngine::class);
-        $xTemplateEngine->addNamespace('jaxon::flot', realpath(__DIR__ . '/../templates'));
-        return new FlotPlugin($xTemplateEngine);
+        $xTemplateEngine->addNamespace('jaxon::flot', realpath(__DIR__ . '/../js'));
+        return new FlotPlugin($c->g(ConfigManager::class), $xTemplateEngine);
     });
 
     // Register an instance of this plugin
