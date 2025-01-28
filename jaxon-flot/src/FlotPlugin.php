@@ -14,7 +14,7 @@ namespace Jaxon\Flot;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
-use Jaxon\Plugin\Code\Scripts;
+use Jaxon\Plugin\Code\JsCode;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Flot\Plot\Plot;
 
@@ -23,7 +23,17 @@ class FlotPlugin extends AbstractResponsePlugin
     /**
      * @const The plugin name
      */
-    const NAME = 'flot';
+    public const NAME = 'flot';
+
+    /**
+     * @const
+     */
+    private const JS_LIB_URL = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/dist/es5/jquery.flot.min.js';
+
+    /**
+     * @const
+     */
+    private const JS_SCRIPT_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-flot@main/js/flot.js';
 
     /**
      * The constructor
@@ -57,27 +67,31 @@ class FlotPlugin extends AbstractResponsePlugin
      */
     public function getJs(): string
     {
-        $sUri = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/dist/es5/jquery.flot.min.js';
-        return '<script type="text/javascript" src="' . $sUri . '"></script>';
+        return '<script type="text/javascript" src="' . self::JS_LIB_URL . '"></script>';
     }
 
     /**
      * @inheritDoc
      */
-    public function getScripts(): Scripts
-    // public function getReadyScript(): string
+    public function getScript(): string
     {
-        $xScripts = new Scripts();
+        return $this->xConfigManager->getOption('js.app.export', false) ? '' :
+            $this->xTemplateEngine->render('jaxon::flot::flot.js');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJsCode(): ?JsCode
+    {
         if(!$this->xConfigManager->getOption('js.app.export', false))
         {
-            $xScripts->sJs = $this->xTemplateEngine->render('jaxon::flot::flot.js');
+            return null;
         }
-        else
-        {
-            $sUri = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-flot@main/js/flot.js';
-            $xScripts->aFiles[] = $sUri;
-        }
-        return $xScripts;
+
+        $xJsCode = new JsCode();
+        $xJsCode->aFiles[] = self::JS_SCRIPT_URL;
+        return $xJsCode;
     }
 
     /**
