@@ -6,7 +6,7 @@
  * Jaxon attribute.
  * Specifies a data bag stored in the browser and included in ajax requests to a method.
  *
- * @package jaxon-core
+ * @package jaxon-attributes
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
