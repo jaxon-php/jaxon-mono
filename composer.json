@@ -79,7 +79,8 @@
             "Jaxon\\Utils\\": "jaxon-utils/src/"
         },
         "files": [
-            "jaxon-core/src/functions.php",
+            "jaxon-core/src/jaxon_fn.php",
+            "jaxon-core/src/jaxon_ns.php",
             "jaxon-annotations/src/register.php",
             "jaxon-attributes/src/register.php",
             "jaxon-dialogs/src/register.php",
