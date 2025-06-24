@@ -11,7 +11,7 @@ Install this package with Composer.
 
 ```json
 "require": {
-    "jaxon-php/jaxon-flot": "~1.0"
+    "jaxon-php/jaxon-flot": "^5.0"
 }
 ```
 

@@ -59,7 +59,7 @@ class FlotPlugin extends AbstractResponsePlugin
     public function getHash(): string
     {
         // The version number is used as hash
-        return '3.1.0';
+        return '5.0.0';
     }
 
     /**
