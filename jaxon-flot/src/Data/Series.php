@@ -56,9 +56,9 @@ class Series implements JsonSerializable
      * @param integer       $iXaxis                 The point on the X axis
      * @param string        $sLabel                 The value on the graph
      *
-     * @return Jaxon\Flot\Data\Ticks
+     * @return static
      */
-    public function point($iXaxis, $xValue, $sLabel = '')
+    public function point($iXaxis, $xValue, $sLabel = ''): static
     {
         $this->aPoints[] = $iXaxis;
         if(!$this->aValues['data'])
@@ -82,7 +82,7 @@ class Series implements JsonSerializable
      *
      * @param array         $aPoints                The points to be added
      *
-     * @return integer      The number of points in the graph series
+     * @return int
      */
     public function points($aPoints): int
     {
@@ -114,7 +114,7 @@ class Series implements JsonSerializable
      * The series, x and y variables are used in the $sJsLabel javascript function to
      * represent resp. the series label, the xaxis and graph values of the point.
      *
-     * @return integer      The number of points in the graph series
+     * @return int
      */
     public function expr($iStart, $iEnd, $iStep, $sJsValue, $sJsLabel = ''): int
     {

@@ -49,9 +49,9 @@ class Ticks implements JsonSerializable
      * @param integer       $iXaxis                 The point on the X axis
      * @param string        $sLabel                 The value on the graph
      *
-     * @return Jaxon\Flot\Data\Ticks
+     * @return static
      */
-    public function point($iXaxis, $sLabel)
+    public function point($iXaxis, $sLabel): static
     {
         $this->aPoints[] = $iXaxis;
         if(!$this->aLabels['data'])
@@ -67,9 +67,9 @@ class Ticks implements JsonSerializable
      *
      * @param array         $aPoints                The points to be added
      *
-     * @return integer      The number of points in the ticks
+     * @return int
      */
-    public function points($aPoints)
+    public function points($aPoints): int
     {
         foreach($aPoints as $aPoint)
         {
@@ -92,9 +92,9 @@ class Ticks implements JsonSerializable
      * The first three parameters are used in a for loop.
      * The x variable is used in the javascript code to represent each point.
      *
-     * @return integer      The number of points in the ticks
+     * @return int
      */
-    public function expr($iStart, $iEnd, $iStep, $sJsLabel)
+    public function expr($iStart, $iEnd, $iStep, $sJsLabel): int
     {
         for($x = $iStart; $x < $iEnd; $x += $iStep)
         {

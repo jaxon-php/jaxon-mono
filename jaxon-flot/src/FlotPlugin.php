@@ -111,7 +111,7 @@ class FlotPlugin extends AbstractResponsePlugin
      *
      * @return void
      */
-    public function draw(Plot $xPlot)
+    public function draw(Plot $xPlot): void
     {
         $this->addCommand('flot.plot', ['plot' => $xPlot]);
     }

@@ -9,7 +9,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 use function Jaxon\jaxon;
 use function php_sapi_name;
 
-function _register()
+function _register(): void
 {
     $jaxon = jaxon();
 
@@ -24,7 +24,7 @@ function _register()
     $jaxon->registerPlugin(FlotPlugin::class, FlotPlugin::NAME);
 }
 
-function register()
+function register(): void
 {
     // Do nothing if running in cli.
     if(php_sapi_name() !== 'cli')

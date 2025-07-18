@@ -51,7 +51,7 @@ class Graph implements JsonSerializable
      *
      * @return Series
      */
-    public function series()
+    public function series(): Series
     {
         return $this->xSeries;
     }
@@ -61,9 +61,9 @@ class Graph implements JsonSerializable
      *
      * @param array         $aOptions               The graph options
      *
-     * @return Graph
+     * @return static
      */
-    public function setOptions(array $aOptions)
+    public function setOptions(array $aOptions): static
     {
         $this->aOptions = array_merge($this->aOptions, $aOptions);
         return $this;

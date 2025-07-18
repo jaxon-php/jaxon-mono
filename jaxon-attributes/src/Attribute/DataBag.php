@@ -51,7 +51,7 @@ class DataBag extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments)
+    public function validateArguments(array $aArguments): void
     {
         if(count($aArguments) !== 1)
         {
@@ -62,7 +62,7 @@ class DataBag extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validateValues()
+    protected function validateValues(): void
     {
         if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sName) > 0)
         {
@@ -74,7 +74,7 @@ class DataBag extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function getValue()
+    protected function getValue(): mixed
     {
         if(is_array($this->xPrevValue))
         {

@@ -48,7 +48,7 @@ class Upload extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments)
+    public function validateArguments(array $aArguments): void
     {
         if(count($aArguments) !== 1)
         {
@@ -59,7 +59,7 @@ class Upload extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validateValues()
+    protected function validateValues(): void
     {
         if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sFieldId) > 0)
         {
@@ -71,7 +71,7 @@ class Upload extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function getValue()
+    protected function getValue(): string
     {
         return "'" . $this->sFieldId . "'" ; // The field id is surrounded with simple quotes.
     }

@@ -69,7 +69,7 @@ class DI extends AbstractAttribute
      *
      * @return void
      */
-    public function setProperty(string $sPropertyName)
+    public function setProperty(string $sPropertyName): void
     {
         $this->sPropertyName = $sPropertyName;
     }
@@ -80,7 +80,7 @@ class DI extends AbstractAttribute
      *
      * @return void
      */
-    public function setTypes(array $aImportedTypes, array $aPropertyTypes)
+    public function setTypes(array $aImportedTypes, array $aPropertyTypes): void
     {
         $this->aImportedTypes = $aImportedTypes;
         $this->aPropertyTypes = $aPropertyTypes;
@@ -97,7 +97,7 @@ class DI extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments)
+    public function validateArguments(array $aArguments): void
     {
         $nArgCount = count($aArguments);
         if($nArgCount > 2)
@@ -148,7 +148,7 @@ class DI extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validateValues()
+    protected function validateValues(): void
     {
         if($this->xTarget === Attribute::TARGET_PROPERTY)
         {
@@ -233,7 +233,7 @@ class DI extends AbstractAttribute
      * @inheritDoc
      * @throws SetupException
      */
-    protected function getValue()
+    protected function getValue(): mixed
     {
         if(is_array($this->xPrevValue))
         {

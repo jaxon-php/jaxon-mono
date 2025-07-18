@@ -57,7 +57,7 @@ abstract class AbstractCallback extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments)
+    public function validateArguments(array $aArguments): void
     {
         if(count($aArguments) !== 1 && count($aArguments) !== 2)
         {
@@ -68,7 +68,7 @@ abstract class AbstractCallback extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validateValues()
+    protected function validateValues(): void
     {
         if(preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $this->sMethodName) > 0)
         {
@@ -81,7 +81,7 @@ abstract class AbstractCallback extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function getValue()
+    protected function getValue(): mixed
     {
         if(is_array($this->xPrevValue))
         {

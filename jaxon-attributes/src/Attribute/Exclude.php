@@ -39,7 +39,7 @@ class Exclude extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments)
+    public function validateArguments(array $aArguments): void
     {
         if(count($aArguments) !== 0 && count($aArguments) !== 1)
         {
@@ -58,7 +58,7 @@ class Exclude extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function getValue()
+    protected function getValue(): bool
     {
         return $this->bValue;
     }

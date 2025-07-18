@@ -58,14 +58,14 @@ class Plot implements JsonSerializable
     /**
      * The plot X axis
      *
-     * @var Jaxon\Flot\Data\Ticks
+     * @var Ticks
      */
     protected $xAxisX;
 
     /**
      * The plot Y axis
      *
-     * @var Jaxon\Flot\Data\Ticks
+     * @var Ticks
      */
     protected $xAxisY;
 
@@ -88,9 +88,9 @@ class Plot implements JsonSerializable
      *
      * @param string        $sWidth                 The container width
      *
-     * @return Jaxon\Flot\Plot\Plot
+     * @return static
      */
-    public function width($sWidth)
+    public function width($sWidth): static
     {
         $this->sWidth = trim($sWidth, " \t");
         return $this;
@@ -101,9 +101,9 @@ class Plot implements JsonSerializable
      *
      * @param string        $sHeight                The container height
      *
-     * @return Jaxon\Flot\Plot\Plot
+     * @return static
      */
-    public function height($sHeight)
+    public function height($sHeight): static
     {
         $this->sHeight = trim($sHeight, " \t");
         return $this;
@@ -114,9 +114,9 @@ class Plot implements JsonSerializable
      *
      * @param array         $aOptions               The graph options
      *
-     * @return Jaxon\Flot\Plot\Graph
+     * @return Graph
      */
-    public function graph(array $aOptions = [])
+    public function graph(array $aOptions = []): Graph
     {
         $xGraph = new Graph($aOptions);
         $this->aGraphs[] = $xGraph;
@@ -126,9 +126,9 @@ class Plot implements JsonSerializable
     /**
      * Get the graph X axis.
      *
-     * @return Jaxon\Flot\Data\Ticks
+     * @return Ticks
      */
-    public function xaxis()
+    public function xaxis(): Ticks
     {
         return $this->xAxisX;
     }
@@ -136,9 +136,9 @@ class Plot implements JsonSerializable
     /**
      * Get the graph Y axis.
      *
-     * @return Jaxon\Flot\Data\Ticks
+     * @return Ticks
      */
-    public function yaxis()
+    public function yaxis(): Ticks
     {
         return $this->xAxisY;
     }

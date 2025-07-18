@@ -98,7 +98,7 @@ abstract class AbstractAttribute
      *
      * @return mixed
      */
-    public function getValidatedValue()
+    public function getValidatedValue(): mixed
     {
         $this->validateValues();
 

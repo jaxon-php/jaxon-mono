@@ -82,7 +82,7 @@ class AttributeReader implements MetadataReaderInterface
      *
      * @return void
      */
-    private function readPropertyTypes()
+    private function readPropertyTypes(): void
     {
         $sClass = $this->xReflectionClass->getName();
         if(isset($this->aPropertyTypes[$sClass]))
