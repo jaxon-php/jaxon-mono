@@ -16,6 +16,9 @@
     <testsuite name="Jaxon Core">
       <directory>jaxon-core/tests</directory>
     </testsuite>
+    <testsuite name="Jaxon Annotations">
+      <directory>jaxon-annotations/tests</directory>
+    </testsuite>
   </testsuites>
   <logging/>
 </phpunit>
