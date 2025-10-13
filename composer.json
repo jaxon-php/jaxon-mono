@@ -101,6 +101,14 @@
             "Jaxon\\Utils\\Tests\\": "jaxon-utils/tests/"
         }
     },
+    "scripts": {
+        "test": [
+            "@clearCache",
+            "@putenv XDEBUG_MODE=coverage",
+            "vendor/bin/phpunit"
+        ],
+        "clearCache": "rm -rf cache/*"
+    },
     "extra": {
         "contao-manager-plugin": []
     }
