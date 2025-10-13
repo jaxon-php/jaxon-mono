@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
-use Jaxon\App\Attribute\After;
-use Jaxon\App\Attribute\Before;
-use Jaxon\App\Attribute\DataBag;
-use Jaxon\App\Attribute\DI;
-use Jaxon\App\Attribute\Exclude;
-use Jaxon\App\Attribute\Upload;
-use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Attribute\After;
+use Jaxon\Attributes\Attribute\Before;
+use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Inject;
+use Jaxon\Attributes\Attribute\Exclude;
+use Jaxon\Attributes\Attribute\Upload;
+use Jaxon\Attributes\Tests\Attr\FuncComponent;
 use Jaxon\Attributes\Tests\Service\ColorService;
 
-class AttributeNoName extends CallableClass
+class AttributeNoName extends FuncComponent
 {
     #[Exclude(true)]
     public function doNot()
@@ -99,11 +99,6 @@ class AttributeNoName extends CallableClass
     {
     }
 
-    #[Before('funcBefore', ["param1"], false)]
-    public function cbBeforeErrorNumber()
-    {
-    }
-
     #[Before('func:After')]
     public function cbAfterErrorName()
     {
@@ -114,40 +109,30 @@ class AttributeNoName extends CallableClass
     {
     }
 
-    #[Before('funcAfter', ["param1"], false)]
-    public function cbAfterErrorNumber()
-    {
-    }
-
-    #[DI('ColorService', 'colorService')]
-    #[DI('FontService', 'fontService')]
+    #[Inject(ColorService::class, 'colorService')]
+    #[Inject(FontService::class, 'fontService')]
     public function di1()
     {
     }
 
-    #[DI('ColorService', 'colorService')]
-    #[DI('\Jaxon\Attributes\Tests\Service\TextService', 'textService')]
+    #[Inject(ColorService::class, 'colorService')]
+    #[Inject('\Jaxon\Attributes\Tests\Service\TextService', 'textService')]
     public function di2()
     {
     }
 
-    #[DI('ColorService', 'color.Service')]
+    #[Inject(ColorService::class, 'color.Service')]
     public function diErrorAttr()
     {
     }
 
-    #[DI('Color.Service', 'colorService')]
+    #[Inject('Color.Service', 'colorService')]
     public function diErrorClass()
     {
     }
 
-    #[DI('colorService')]
+    #[Inject('colorService')]
     public function diErrorOneParam()
-    {
-    }
-
-    #[DI('ColorService', 'TextService', 'colorService')]
-    public function diErrorThreeParams()
     {
     }
 }

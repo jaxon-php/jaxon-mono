@@ -14,11 +14,13 @@
 
 namespace Jaxon\Attributes;
 
+use Jaxon\App;
 use Jaxon\App\Metadata\InputDataInterface;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Attributes\Attribute\AbstractAttribute;
-use Jaxon\Attributes\Attribute\DI as DiAttribute;
+use Jaxon\Attributes\Attribute\Inject as InjectAttribute;
+use Jaxon\Attributes\Attribute\Exclude as ExcludeAttribute;
 use Jaxon\Exception\SetupException;
 use Error;
 use Exception;
@@ -28,237 +30,188 @@ use ReflectionNamedType;
 use ReflectionProperty;
 
 use function array_filter;
-use function array_merge;
 use function array_reverse;
 use function count;
+use function in_array;
 use function is_a;
 
 class AttributeReader implements MetadataReaderInterface
 {
     /**
-     * @var ReflectionClass
+     * @var Metadata
      */
-    protected $xReflectionClass;
+    protected Metadata $xMetadata;
 
     /**
-     * Imports defined with "use" statements in file headers.
-     *
      * @var array
      */
-    protected $aImportedTypes;
+    protected array $aTypes;
 
     /**
-     * Properties types.
-     *
      * @var array
      */
-    protected $aPropertyTypes;
+    private $aJaxonClasses = [
+        App\Component::class,
+        App\NodeComponent::class,
+        App\FuncComponent::class,
+        App\PageComponent::class,
+        App\CallableClass::class,
+    ];
 
     /**
-     * @param AttributeParser $xParser
      * @param string $sCacheDir
      */
-    public function __construct(private AttributeParser $xParser, private string $sCacheDir)
+    public function __construct(private string $sCacheDir)
     {}
 
     /**
      * Read the property types
      *
-     * @param ReflectionClass $xReflectionClass
+     * @param ReflectionClass $xClass
      *
      * @return void
      */
-    private function readImportedTypes(ReflectionClass $xReflectionClass)
+    private function readTypes(ReflectionClass $xClass)
     {
-        $sClass = $xReflectionClass->getName();
-        if(isset($this->aImportedTypes[$sClass]))
+        $sClass = $xClass->getName();
+        if(isset($this->aTypes[$sClass]))
         {
             return;
         }
 
-        $this->aImportedTypes[$sClass] = $this->xParser->readImportedTypes($xReflectionClass);
-    }
-
-    /**
-     * Read the property types
-     *
-     * @param ReflectionClass $xReflectionClass
-     *
-     * @return void
-     */
-    private function readPropertyTypes(ReflectionClass $xReflectionClass): void
-    {
-        $sClass = $xReflectionClass->getName();
-        if(isset($this->aPropertyTypes[$sClass]))
-        {
-            return;
-        }
-
-        $this->aPropertyTypes[$sClass] = [];
+        $this->aTypes[$sClass] = [];
         $nFilter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
-        $aProperties = $xReflectionClass->getProperties($nFilter);
+        $aProperties = $xClass->getProperties($nFilter);
         foreach($aProperties as $xReflectionProperty)
         {
             $xType = $xReflectionProperty->getType();
+            $sType = $xType?->getName() ?? '';
             // Check that the property has a valid type defined
-            if(is_a($xType, ReflectionNamedType::class) && $xType->getName() !== '')
+            if($sType !== '' && is_a($xType, ReflectionNamedType::class))
             {
-                $this->aPropertyTypes[$sClass][$xReflectionProperty->getName()] = $xType->getName();
+                $this->aTypes[$sClass][$xReflectionProperty->getName()] = $sType;
             }
         }
     }
 
     /**
-     * @param ReflectionClass $xReflectionClass
-     * @param ReflectionAttribute $xAttribute
-     * @param array $aValues The current values of the attribute
+     * @param AbstractAttribute $xAttribute
+     * @param ReflectionClass $xClass
+     * @param ReflectionAttribute $xReflectionAttribute
+     *
+     * @return void
+     */
+    private function initAttribute(AbstractAttribute $xAttribute,
+        ReflectionClass $xClass, ReflectionAttribute $xReflectionAttribute): void
+    {
+        if(is_a($xAttribute, InjectAttribute::class))
+        {
+            $this->readTypes($xClass);
+
+            $xAttribute->setTarget($xReflectionAttribute->getTarget());
+            $xAttribute->setNamespace($xClass->getNamespaceName());
+            $xAttribute->setTypes($this->aTypes[$xClass->getName()]);
+        }
+    }
+
+    /**
+     * @param ReflectionClass $xClass
+     *
+     * @return void
+     */
+    private function getClassExcludeAttr(ReflectionClass $xClass): void
+    {
+        $aClassAttributes = $xClass->getAttributes();
+        $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
+            is_a($xAttribute->getName(), ExcludeAttribute::class, true));
+        foreach($aAttributes as $xReflectionAttribute)
+        {
+            $xReflectionAttribute->newInstance()->saveValue($this->xMetadata);
+        }
+    }
+
+    /**
+     * @param ReflectionClass $xClass
+     *
+     * @return void
+     */
+    private function getClassAttrs(ReflectionClass $xClass): void
+    {
+        $aClassAttributes = $xClass->getAttributes();
+        $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
+            is_a($xAttribute->getName(), AbstractAttribute::class, true) &&
+            !is_a($xAttribute->getName(), ExcludeAttribute::class, true));
+        foreach($aAttributes as $xReflectionAttribute)
+        {
+            $xAttribute = $xReflectionAttribute->newInstance();
+            $this->initAttribute($xAttribute, $xClass, $xReflectionAttribute);
+
+            $xAttribute->saveValue($this->xMetadata);
+        }
+    }
+
+    /**
+     * @param ReflectionClass $xClass
      * @param string $sProperty
      *
-     * @return array
+     * @return void
      * @throws SetupException
      */
-    private function getAttrValue(ReflectionClass $xReflectionClass,
-        ReflectionAttribute $xAttribute, array $aValues, string $sProperty = ''): array
+    private function getPropertyAttrs(ReflectionClass $xClass, string $sProperty): void
     {
-        $xInstance = $xAttribute->newInstance();
-        $xInstance->setTarget($xAttribute->getTarget());
-        $xInstance->setNamespace($xReflectionClass->getNamespaceName());
-        $sName = $xInstance->getName();
-        if(is_a($xInstance, DiAttribute::class))
+        // Only Inject attributes are allowed on properties
+        $aAttributes = !$xClass->hasProperty($sProperty) ? [] :
+            $xClass->getProperty($sProperty)->getAttributes();
+        $aAttributes = array_filter($aAttributes, fn($xAttribute) =>
+            is_a($xAttribute->getName(), InjectAttribute::class, true));
+        if(count($aAttributes) > 1)
         {
-            $sClass = $xReflectionClass->getName();
-            $xInstance->setTypes($this->aImportedTypes[$sClass], $this->aPropertyTypes[$sClass]);
-            if($sProperty !== '')
-            {
-                $xInstance->setProperty($sProperty);
-            }
+            throw new SetupException('Only one Inject attribute is allowed on a property');
         }
 
-        $xInstance->validateArguments($xAttribute->getArguments());
-        $xInstance->setPrevValue($aValues[$sName] ?? null);
+        foreach($aAttributes as $xReflectionAttribute)
+        {
+            /** @var InjectAttribute */
+            $xAttribute = $xReflectionAttribute->newInstance();
+            $xAttribute->setAttr($sProperty);
+            $this->initAttribute($xAttribute, $xClass, $xReflectionAttribute);
 
-        return [$sName, $xInstance->getValidatedValue()];
+            $xAttribute->saveValue($this->xMetadata);
+        }
     }
 
     /**
-     * @param ReflectionClass $xReflectionClass
-     * @param array<ReflectionAttribute> $aAttributes
+     * @param ReflectionClass $xClass
+     * @param string $sMethod
      *
-     * @return array
-     * @throws SetupException
+     * @return void
      */
-    private function getAttrValues(ReflectionClass $xReflectionClass, array $aAttributes): array
+    private function getMethodAttrs(ReflectionClass $xClass, string $sMethod): void
     {
-        // Only keep our attributes.
-        $aAttributes = array_filter($aAttributes, function($xAttribute) {
-            return is_a($xAttribute->getName(), AbstractAttribute::class, true);
-        });
-
-        $aValues = [];
-        foreach($aAttributes as $xAttribute)
+        $aAttributes = !$xClass->hasMethod($sMethod) ? [] :
+            $xClass->getMethod($sMethod)->getAttributes();
+        $aAttributes = array_filter($aAttributes, fn($xAttribute) =>
+            is_a($xAttribute->getName(), AbstractAttribute::class, true));
+        foreach($aAttributes as $xReflectionAttribute)
         {
-            [$sName, $xValue] = $this->getAttrValue($xReflectionClass, $xAttribute, $aValues);
-            if($sName !== 'protected' || ($xValue)) // Ignore attribute Exclude with value true
-            {
-                $aValues[$sName] = $xValue;
-            }
+            $xAttribute = $xReflectionAttribute->newInstance();
+            $this->initAttribute($xAttribute, $xClass, $xReflectionAttribute);
+
+            $xAttribute->saveValue($this->xMetadata, $sMethod);
         }
-        return $aValues;
     }
 
     /**
-     * @param ReflectionClass $xReflectionClass
-     * @param string $sProperty
+     * @param ReflectionClass $xClass
      *
-     * @return array
-     * @throws SetupException
+     * @return ReflectionClass|null
      */
-    private function getPropertyAttrValues(ReflectionClass $xReflectionClass, string $sProperty): array
+    private function getParentClass(ReflectionClass $xClass): ReflectionClass|null
     {
-        // Only keep our attributes.
-        $aAttributes = $xReflectionClass->getProperty($sProperty)->getAttributes();
-        $aAttributes = array_filter($aAttributes, function($xAttribute) {
-            // Only DI attributes are allowed on properties
-            return is_a($xAttribute->getName(), DiAttribute::class, true);
-        });
-
-        $nCount = count($aAttributes);
-        if($nCount === 0)
-        {
-            return ['', null];
-        }
-        if($nCount > 1)
-        {
-            throw new SetupException('Only one DI attribute is allowed on a property');
-        }
-
-        return $this->getAttrValue($xReflectionClass, $aAttributes[0], [], $sProperty);
-    }
-
-    /**
-     * @param array $aAttributes
-     *
-     * @return array
-     */
-    private function mergeAttributes(array $aAttributes): array
-    {
-        return array_merge(...$aAttributes);
-    }
-
-    /**
-     * @param array<ReflectionClass> $aReflectionClasses
-     *
-     * @return array
-     */
-    private function getClassAttributes(array $aReflectionClasses): array
-    {
-        $fCb = fn(ReflectionClass $xClass) =>
-            $this->getAttrValues($xClass, $xClass->getAttributes());
-        return $this->mergeAttributes(array_map($fCb, $aReflectionClasses));
-    }
-
-    /**
-     * @param array<ReflectionClass> $aReflectionClasses
-     * @param array<string> $aProperties
-     *
-     * @return array
-     */
-    private function getPropsAttributes(array $aReflectionClasses, array $aProperties): array
-    {
-        $aPropAttrs = [];
-        foreach($aReflectionClasses as $xReflectionClass)
-        {
-            // Properties attributes
-            foreach($aProperties as $sProperty)
-            {
-                [$sName, $xValue] = $this->getPropertyAttrValues($xReflectionClass, $sProperty);
-                if($xValue !== null)
-                {
-                    $aPropAttrs[$sName] = array_merge($aPropAttrs[$sName] ?? [], $xValue);
-                }
-            }
-        }
-        return $aPropAttrs;
-    }
-
-    /**
-     * @param array<ReflectionClass> $aReflectionClasses
-     * @param array<string> $aMethods
-     *
-     * @return array
-     */
-    private function getMethodsAttributes(array $aReflectionClasses, array $aMethods): array
-    {
-        $aMethodsValues = [];
-        foreach($aReflectionClasses as $xReflectionClass)
-        {
-            foreach($aMethods as $sMethod)
-            {
-                $aAttributes = $xReflectionClass->getMethod($sMethod)?->getAttributes() ?? [];
-                $aMethodsValues[$sMethod] = $this->getAttrValues($xReflectionClass, $aAttributes);
-            }
-        }
-        return $aMethodsValues;
+        $xParentClass = $xClass->getParentClass();
+        return $xParentClass !== false &&
+            in_array($xParentClass->getName(), $this->aJaxonClasses) ?
+            $xParentClass : null;
     }
 
     /**
@@ -267,49 +220,44 @@ class AttributeReader implements MetadataReaderInterface
      */
     public function getAttributes(InputDataInterface $xInput): ?Metadata
     {
-        $xReflectionClass = $xInput->getReflectionClass();
-        $aReflectionClasses = [];
-        do
-        {
-            $aReflectionClasses[] = $xReflectionClass;
-            $this->readImportedTypes($xReflectionClass);
-            $this->readPropertyTypes($xReflectionClass);
-            $xReflectionClass = $xReflectionClass->getParentClass();
-        }
-        while($xReflectionClass);
-        $aReflectionClasses = array_reverse($aReflectionClasses);
-
         try
         {
-            // Processing class attributes
-            $aClassAttrs = $this->getClassAttributes($aReflectionClasses);
-            if(isset($aClassAttrs['protected']))
+            $this->xMetadata = new Metadata();
+
+            $xClass = $xInput->getReflectionClass();
+            // First check if the class is exluded.
+            $this->getClassExcludeAttr($xClass);
+            if($this->xMetadata->isExcluded())
             {
-                // The entire class is not to be exported.
-                return new Metadata(true, [], []);
+                return $this->xMetadata;
             }
 
-            // Processing properties attributes
-            $aPropsAttrs = $this->getPropsAttributes($aReflectionClasses, $xInput->getProperties());
-
-            // Merge attributes and class attributes
-            foreach($aPropsAttrs as $sName => $xValue)
+            $aClasses = [$xClass];
+            while(($xClass = $this->getParentClass($xClass)) !== null)
             {
-                $aClassAttrs[$sName] = array_merge($aClassAttrs[$sName] ?? [], $xValue);
+                $aClasses[] = $xClass;
+            }
+            $aClasses = array_reverse($aClasses);
+
+            foreach($aClasses as $xClass)
+            {
+                // Processing class attributes
+                $this->getClassAttrs($xClass);
+
+                // Processing properties attributes
+                foreach($xInput->getProperties() as $sProperty)
+                {
+                    $this->getPropertyAttrs($xClass, $sProperty);
+                }
+
+                // Processing methods attributes
+                foreach($xInput->getMethods() as $sMethod)
+                {
+                    $this->getMethodAttrs($xClass, $sMethod);
+                }
             }
 
-            // Processing methods attributes
-            $aMethodsAttrs = $this->getMethodsAttributes($aReflectionClasses, $xInput->getMethods());
-            $aAttrValues = array_filter($aMethodsAttrs, fn($aMethodAttrs) =>
-                !isset($aMethodAttrs['protected']) && count($aMethodAttrs) > 0);
-            if(count($aClassAttrs) > 0)
-            {
-                $aAttrValues['*'] = $aClassAttrs;
-            }
-            $aProtected = array_filter(array_keys($aMethodsAttrs),
-                fn($sMethod) => isset($aMethodsAttrs[$sMethod]['protected']));
-
-            return new Metadata(false, $aAttrValues, $aProtected);
+            return $this->xMetadata;
         }
         catch(Exception|Error $e)
         {

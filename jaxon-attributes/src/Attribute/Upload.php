@@ -15,64 +15,26 @@
 
 namespace Jaxon\Attributes\Attribute;
 
-use Attribute;
+use Jaxon\App\Metadata\Metadata;
 use Jaxon\Exception\SetupException;
+use Attribute;
 
 use function count;
-use function preg_match;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Upload extends AbstractAttribute
 {
     /**
-     * @var string
-     */
-    private string $sFieldId;
-
-    /**
      * @param string $field The name of the upload field
      */
-    public function __construct(string $field)
-    {
-        $this->sFieldId = $field;
-    }
+    public function __construct(private string $field)
+    {}
 
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public function saveValue(Metadata $xMetadata, string $sMethod = '*'): void
     {
-        return 'upload';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function validateArguments(array $aArguments): void
-    {
-        if(count($aArguments) !== 1)
-        {
-            throw new SetupException('The Upload attribute requires only one argument');
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function validateValues(): void
-    {
-        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sFieldId) > 0)
-        {
-            return;
-        }
-        throw new SetupException($this->sFieldId . ' is not a valid "field" value for the Upload attribute');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getValue(): string
-    {
-        return "'" . $this->sFieldId . "'" ; // The field id is surrounded with simple quotes.
+        $xMetadata->upload($sMethod)->setValue($this->field);
     }
 }

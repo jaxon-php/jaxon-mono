@@ -8,6 +8,7 @@ use Jaxon\Attributes\Tests\Attr\Ajax\SubDirImportAttribute;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use function Jaxon\Attributes\_register;
 use function Jaxon\jaxon;
 
 class SubDirImportAttributeTest extends TestCase
@@ -27,6 +28,9 @@ class SubDirImportAttributeTest extends TestCase
         $this->sCacheDir = __DIR__ . '/../cache';
         @mkdir($this->sCacheDir);
 
+        jaxon()->di()->getPluginManager()->registerPlugins();
+        _register();
+
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
     }
 
@@ -41,7 +45,10 @@ class SubDirImportAttributeTest extends TestCase
 
     public function testCbBeforeAttributeErrorNumber()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
+        $xMetadata = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 

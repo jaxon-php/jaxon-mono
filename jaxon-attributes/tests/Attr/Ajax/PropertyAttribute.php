@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
-use Jaxon\App\Attribute\DI;
-use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Attribute\Inject;
+use Jaxon\Attributes\Tests\Attr\FuncComponent;
 use Jaxon\Attributes\Tests\Service\ColorService;
 
-class PropertyAttribute extends CallableClass
+class PropertyAttribute extends FuncComponent
 {
     protected ColorService $colorService;
 
@@ -15,53 +15,53 @@ class PropertyAttribute extends CallableClass
 
     protected \Jaxon\Attributes\Tests\Service\TextService $textService;
 
-    #[DI('ColorService')]
+    #[Inject(ColorService::class)]
     protected $colorService1;
 
-    #[DI('FontService')]
+    #[Inject(FontService::class)]
     protected $fontService1;
 
-    #[DI('\Jaxon\Attributes\Tests\Service\TextService')]
+    #[Inject('\Jaxon\Attributes\Tests\Service\TextService')]
     protected $textService1;
 
-    #[DI]
+    #[Inject]
     protected ColorService $colorService2;
 
-    #[DI]
+    #[Inject]
     protected FontService $fontService2;
 
-    #[DI]
+    #[Inject]
     protected \Jaxon\Attributes\Tests\Service\TextService $textService2;
 
-    #[DI(type: 'ColorService')]
+    #[Inject(type: ColorService::class)]
     protected $colorService3;
 
-    #[DI(type: 'FontService')]
+    #[Inject(type: FontService::class)]
     protected $fontService3;
 
-    #[DI(type: '\Jaxon\Attributes\Tests\Service\TextService')]
+    #[Inject(type: '\Jaxon\Attributes\Tests\Service\TextService')]
     protected $textService3;
 
-    #[DI('FontService', 'fontService')]
+    #[Inject(FontService::class, 'fontService')]
     protected $errorTwoParams;
 
-    #[DI(attr: 'fontService')]
+    #[Inject(attr: 'fontService')]
     protected $errorDiAttr;
 
-    #[DI]
-    #[DI('FontService')]
+    #[Inject]
+    #[Inject(FontService::class)]
     protected $errorTwoDi;
 
-    #[DI(attr: 'colorService')]
-    #[DI(attr: 'fontService')]
-    #[DI(attr: 'textService')]
+    #[Inject(attr: 'colorService')]
+    #[Inject(attr: 'fontService')]
+    #[Inject(attr: 'textService')]
     public function attrVar()
     {
     }
 
-    #[DI('colorService')]
-    #[DI('fontService')]
-    #[DI('textService')]
+    #[Inject(attr: 'colorService')]
+    #[Inject(attr: 'fontService')]
+    #[Inject(attr: 'textService')]
     public function attrDbVar()
     {
     }
@@ -70,7 +70,7 @@ class PropertyAttribute extends CallableClass
     {
     }
 
-    #[DI(type: 'ColorService')]
+    #[Inject(type: ColorService::class)]
     public function errorDiClass()
     {
     }

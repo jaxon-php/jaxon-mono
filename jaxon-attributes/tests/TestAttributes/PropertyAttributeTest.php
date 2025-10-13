@@ -7,6 +7,7 @@ use Jaxon\Attributes\Tests\Attr\Ajax\PropertyAttribute;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use function Jaxon\Attributes\_register;
 use function Jaxon\jaxon;
 
 class PropertyAttributeTest extends TestCase
@@ -25,6 +26,9 @@ class PropertyAttributeTest extends TestCase
     {
         $this->sCacheDir = __DIR__ . '/../cache';
         @mkdir($this->sCacheDir);
+
+        jaxon()->di()->getPluginManager()->registerPlugins();
+        _register();
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
     }
@@ -54,8 +58,11 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
+        $xMetadata = $this->getAttributes(PropertyAttribute::class,
             ['attrVar'], ['colorService', 'fontService', 'textService']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -72,8 +79,11 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDocBlockAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
+        $xMetadata = $this->getAttributes(PropertyAttribute::class,
             ['attrDbVar'], ['colorService', 'fontService', 'textService']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -90,8 +100,11 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
+        $xMetadata = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService1', 'fontService1', 'textService1']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -108,8 +121,11 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAndVarAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
+        $xMetadata = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService2', 'fontService2', 'textService2']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -126,8 +142,11 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerPropAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(PropertyAttribute::class,
+        $xMetadata = $this->getAttributes(PropertyAttribute::class,
             ['attrDi'], ['colorService3', 'fontService3', 'textService3']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -137,12 +156,6 @@ class PropertyAttributeTest extends TestCase
         $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService3']);
         $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService3']);
         $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService3']);
-    }
-
-    public function testContainerAttributeErrorTwoParams()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(PropertyAttribute::class, [], ['errorTwoParams']);
     }
 
     public function testContainerAttributeErrorDiAttr()
@@ -161,17 +174,5 @@ class PropertyAttributeTest extends TestCase
     {
         $this->expectException(SetupException::class);
         $this->getAttributes(PropertyAttribute::class, ['errorDiClass']);
-    }
-
-    public function testContainerAttributeErrorNoVar()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(PropertyAttribute::class, ['errorDiNoVar']);
-    }
-
-    public function testContainerAttributeErrorTwoVars()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(PropertyAttribute::class, ['errorDiTwoVars']);
     }
 }

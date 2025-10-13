@@ -19,10 +19,10 @@ use Jaxon\App\Metadata\Metadata;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class DataBag extends AbstractAttribute
+class Callback extends AbstractAttribute
 {
     /**
-     * @param string $name The data bag name
+     * @param string $name The javascript object name
      */
     public function __construct(private string $name)
     {}
@@ -32,6 +32,6 @@ class DataBag extends AbstractAttribute
      */
     public function saveValue(Metadata $xMetadata, string $sMethod = '*'): void
     {
-        $xMetadata->databag($sMethod)->addValue($this->name);
+        $xMetadata->callback($sMethod)->addValue($this->name);
     }
 }

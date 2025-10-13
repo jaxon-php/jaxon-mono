@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
-use Jaxon\App\Attribute\After;
-use Jaxon\App\Attribute\Before;
-use Jaxon\App\Attribute\DataBag;
-use Jaxon\App\Attribute\DI;
-use Jaxon\App\Attribute\Exclude;
-use Jaxon\App\Attribute\Upload;
-use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Attribute\After;
+use Jaxon\Attributes\Attribute\Before;
+use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Inject;
+use Jaxon\Attributes\Attribute\Exclude;
+use Jaxon\Attributes\Attribute\Upload;
+use Jaxon\Attributes\Tests\Attr\FuncComponent;
 use Jaxon\Attributes\Tests\Service\ColorService;
 
-class Attribute extends CallableClass
+class Attribute extends FuncComponent
 {
     #[Exclude]
     public function doNot()
@@ -79,14 +79,14 @@ class Attribute extends CallableClass
     {
     }
 
-    #[DI(type: 'ColorService', attr: 'colorService')]
-    #[DI(type: 'FontService', attr: 'fontService')]
+    #[Inject(type: ColorService::class, attr: 'colorService')]
+    #[Inject(type: FontService::class, attr: 'fontService')]
     public function di1()
     {
     }
 
-    #[DI(type: 'ColorService', attr: 'colorService')]
-    #[DI(type: '\Jaxon\Attributes\Tests\Service\TextService', attr: 'textService')]
+    #[Inject(type: ColorService::class, attr: 'colorService')]
+    #[Inject(type: '\Jaxon\Attributes\Tests\Service\TextService', attr: 'textService')]
     public function di2()
     {
     }
@@ -121,17 +121,17 @@ class Attribute extends CallableClass
     {
     }
 
-    #[DI(attr: 'attr', params: '')]
+    #[Inject(attr: 'attr', params: '')]
     public function diUnknownAttr()
     {
     }
 
-    #[DI(type: 'ClassName', attr: [])]
+    #[Inject(type: 'ClassName', attr: [])]
     public function diWrongAttrType()
     {
     }
 
-    #[DI(type: true, attr: 'attr')]
+    #[Inject(type: true, attr: 'attr')]
     public function diWrongClassType()
     {
     }

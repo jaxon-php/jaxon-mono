@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Callback.php
+ * AbstractAttribute.php
  *
- * Jaxon attribute.
+ * Base class for Jaxon class attributes.
  *
  * @package jaxon-attributes
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,94 +14,17 @@
 
 namespace Jaxon\Attributes\Attribute;
 
+use Jaxon\App\Metadata\Metadata;
+
 abstract class AbstractAttribute
 {
     /**
-     * @var mixed
-     */
-    protected $xTarget;
-
-    /**
-     * @var string
-     */
-    protected string $sNamespace;
-
-    /**
-     * @var mixed
-     */
-    protected $xPrevValue = null;
-
-    /**
-     * @param mixed $xTarget
+     * Save the annotation value
+     *
+     * @param Metadata $xMetadata
+     * @param string $sMethod
      *
      * @return void
      */
-    public function setTarget($xTarget): void
-    {
-        $this->xTarget = $xTarget;
-    }
-
-    /**
-     * Set the attribute previous value
-     *
-     * @param mixed $xPrevValue The previous value of the attribute
-     *
-     * @return void
-     */
-    public function setPrevValue($xPrevValue)
-    {
-        $this->xPrevValue = $xPrevValue;
-    }
-
-    /**
-     * Get the annotation name
-     * This is the corresponding option name in the Jaxon config.
-     *
-     * @return string
-     */
-    abstract public function getName(): string;
-
-    /**
-     * Validate the attribute arguments
-     *
-     * @return void
-     */
-    abstract public function validateArguments(array $aArguments);
-
-    /**
-     * Validate the attribute values
-     *
-     * @return void
-     */
-    protected function validateValues()
-    {}
-
-    /**
-     * Get the annotation value
-     *
-     * @return mixed
-     */
-    abstract protected function getValue();
-
-    /**
-     * @param string $sNamespace
-     *
-     * @return void
-     */
-    public function setNamespace(string $sNamespace)
-    {
-        $this->sNamespace = $sNamespace;
-    }
-
-    /**
-     * Get the annotation value
-     *
-     * @return mixed
-     */
-    public function getValidatedValue(): mixed
-    {
-        $this->validateValues();
-
-        return $this->getValue();
-    }
+    abstract public function saveValue(Metadata $xMetadata, string $sMethod = '*'): void;
 }

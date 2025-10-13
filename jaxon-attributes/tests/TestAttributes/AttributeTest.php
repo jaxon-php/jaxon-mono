@@ -9,6 +9,7 @@ use Jaxon\Attributes\Tests\Attr\Ajax\ClassExcluded;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use function Jaxon\Attributes\_register;
 use function Jaxon\jaxon;
 
 class AttributeTest extends TestCase
@@ -28,6 +29,9 @@ class AttributeTest extends TestCase
         $this->sCacheDir = __DIR__ . '/../cache';
         @mkdir($this->sCacheDir);
 
+        jaxon()->di()->getPluginManager()->registerPlugins();
+        _register();
+
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
     }
 
@@ -45,17 +49,20 @@ class AttributeTest extends TestCase
      */
     public function testUploadAndExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(Attribute::class, ['saveFiles', 'doNot']);
+        $xMetadata = $this->getAttributes(Attribute::class, ['saveFiles', 'doNot']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
+
+        $this->assertCount(1, $aProtected);
+        $this->assertEquals('doNot', $aProtected[0]);
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('saveFiles', $aProperties);
         $this->assertCount(1, $aProperties['saveFiles']);
         $this->assertEquals("'user-files'", $aProperties['saveFiles']['upload']);
-
-        $this->assertCount(1, $aProtected);
-        $this->assertEquals('doNot', $aProtected[0]);
     }
 
     /**
@@ -63,7 +70,10 @@ class AttributeTest extends TestCase
      */
     public function testDataBagAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(Attribute::class, ['withBags']);
+        $xMetadata = $this->getAttributes(Attribute::class, ['withBags']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -80,7 +90,10 @@ class AttributeTest extends TestCase
      */
     public function testCallbacksAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(Attribute::class, ['cbSingle', 'cbMultiple', 'cbParams']);
+        $xMetadata = $this->getAttributes(Attribute::class, ['cbSingle', 'cbMultiple', 'cbParams']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -123,7 +136,10 @@ class AttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(Attribute::class, ['di1', 'di2']);
+        $xMetadata = $this->getAttributes(Attribute::class, ['di1', 'di2']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -143,7 +159,10 @@ class AttributeTest extends TestCase
      */
     public function testClassAttribute()
     {
-        [$bExcluded, $aProperties,] = $this->getAttributes(ClassAttribute::class, []);
+        $xMetadata = $this->getAttributes(ClassAttribute::class, []);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -186,7 +205,10 @@ class AttributeTest extends TestCase
      */
     public function testClassExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(ClassExcluded::class, ['doNot', 'withBags', 'cbSingle']);
+        $xMetadata = $this->getAttributes(ClassExcluded::class, ['doNot', 'withBags', 'cbSingle']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);

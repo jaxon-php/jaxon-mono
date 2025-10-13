@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
-use Jaxon\App\Attribute\After;
-use Jaxon\App\Attribute\Before;
-use Jaxon\App\Attribute\DataBag;
-use Jaxon\App\Attribute\DI;
-use Jaxon\App\Attribute\Exclude;
-use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Attribute\After;
+use Jaxon\Attributes\Attribute\Before;
+use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Inject;
+use Jaxon\Attributes\Attribute\Exclude;
+use Jaxon\Attributes\Tests\Attr\FuncComponent;
 use Jaxon\Attributes\Tests\Service\TextService;
 
 #[Exclude(false)]
@@ -19,9 +19,9 @@ use Jaxon\Attributes\Tests\Service\TextService;
 #[After('funcAfter1')]
 #[After('funcAfter2')]
 #[After('funcAfter3')]
-#[DI('\Jaxon\Attributes\Tests\Service\ColorService', 'colorService')]
-#[DI('TextService', 'textService')]
-#[DI('FontService', 'fontService')]
-class ClassAttributeNoName extends CallableClass
+#[Inject('\Jaxon\Attributes\Tests\Service\ColorService', 'colorService')]
+#[Inject(TextService::class, 'textService')]
+#[Inject(FontService::class, 'fontService')]
+class ClassAttributeNoName extends FuncComponent
 {
 }

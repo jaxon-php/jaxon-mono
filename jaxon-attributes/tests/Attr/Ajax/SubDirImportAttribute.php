@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
-use Jaxon\App\Attribute\DI;
-use Jaxon\Attributes\Tests\Attr\CallableClass;
+use Jaxon\Attributes\Attribute\Inject;
+use Jaxon\Attributes\Tests\Attr\FuncComponent;
 use Jaxon\Attributes\Tests\Service\SubDir;
 
-class SubDirImportAttribute extends CallableClass
+class SubDirImportAttribute extends FuncComponent
 {
     protected SubDir\FirstService $firstService;
 
-    #[DI('SubDir\SecondService')]
+    #[Inject(SubDir\SecondService::class)]
     protected $secondService;
 
-    #[DI('firstService')]
+    #[Inject(attr: 'firstService')]
     public function attrDi()
     {
     }

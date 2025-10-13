@@ -15,51 +15,23 @@
 
 namespace Jaxon\Attributes\Attribute;
 
+use Jaxon\App\Metadata\Metadata;
 use Attribute;
-use Jaxon\Exception\SetupException;
-
-use function count;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Exclude extends AbstractAttribute
 {
     /**
-     * @var bool
-     */
-    private $bValue;
-
-    /**
      * @param bool $value
      */
     public function __construct(private bool $value = true)
-    {
-        $this->bValue = $value;
-    }
+    {}
 
     /**
      * @inheritDoc
      */
-    public function validateArguments(array $aArguments): void
+    public function saveValue(Metadata $xMetadata, string $sMethod = '*'): void
     {
-        if(count($aArguments) !== 0 && count($aArguments) !== 1)
-        {
-            throw new SetupException('the Exclude attribute requires a single boolean or no argument');
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return 'protected';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getValue(): bool
-    {
-        return $this->bValue;
+        $xMetadata->exclude($sMethod)->setValue($this->value);
     }
 }

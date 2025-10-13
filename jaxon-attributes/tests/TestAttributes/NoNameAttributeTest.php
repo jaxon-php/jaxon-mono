@@ -9,6 +9,7 @@ use Jaxon\Attributes\Tests\Attr\Ajax\ClassExcludedNoName;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use function Jaxon\Attributes\_register;
 use function Jaxon\jaxon;
 use function mkdir;
 use function rmdir;
@@ -29,6 +30,9 @@ class NoNameAttributeTest extends TestCase
     {
         $this->sCacheDir = __DIR__ . '/../cache';
         @mkdir($this->sCacheDir);
+
+        jaxon()->di()->getPluginManager()->registerPlugins();
+        _register();
 
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
     }
@@ -58,7 +62,10 @@ class NoNameAttributeTest extends TestCase
      */
     public function testUploadAndExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(AttributeNoName::class, ['saveFiles', 'doNot']);
+        $xMetadata = $this->getAttributes(AttributeNoName::class, ['saveFiles', 'doNot']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -76,7 +83,10 @@ class NoNameAttributeTest extends TestCase
      */
     public function testDataBagAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class, ['withBags']);
+        $xMetadata = $this->getAttributes(AttributeNoName::class, ['withBags']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -93,8 +103,11 @@ class NoNameAttributeTest extends TestCase
      */
     public function testCallbacksAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class,
+        $xMetadata = $this->getAttributes(AttributeNoName::class,
             ['cbSingle', 'cbMultiple', 'cbParams']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -137,7 +150,10 @@ class NoNameAttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        [$bExcluded, $aProperties, ] = $this->getAttributes(AttributeNoName::class, ['di1', 'di2']);
+        $xMetadata = $this->getAttributes(AttributeNoName::class, ['di1', 'di2']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -157,7 +173,10 @@ class NoNameAttributeTest extends TestCase
      */
     public function testClassAttribute()
     {
-        [$bExcluded, $aProperties,] = $this->getAttributes(ClassAttributeNoName::class, []);
+        $xMetadata = $this->getAttributes(ClassAttributeNoName::class, []);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
         // $this->assertEquals('', json_encode($aProperties));
 
         $this->assertFalse($bExcluded);
@@ -201,8 +220,11 @@ class NoNameAttributeTest extends TestCase
      */
     public function testClassExcludeAttribute()
     {
-        [$bExcluded, $aProperties, $aProtected] = $this->getAttributes(ClassExcludedNoName::class,
+        $xMetadata = $this->getAttributes(ClassExcludedNoName::class,
             ['doNot', 'withBags', 'cbSingle']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
 
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
@@ -251,12 +273,6 @@ class NoNameAttributeTest extends TestCase
         $this->getAttributes(AttributeNoName::class, ['diErrorOneParam']);
     }
 
-    public function testContainerAttributeErrorThreeParams()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(AttributeNoName::class, ['diErrorThreeParams']);
-    }
-
     public function testCbBeforeAttributeErrorName()
     {
         $this->expectException(SetupException::class);
@@ -269,12 +285,6 @@ class NoNameAttributeTest extends TestCase
         $this->getAttributes(AttributeNoName::class, ['cbBeforeErrorParam']);
     }
 
-    public function testCbBeforeAttributeErrorNumber()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(AttributeNoName::class, ['cbBeforeErrorNumber']);
-    }
-
     public function testCbAfterAttributeErrorName()
     {
         $this->expectException(SetupException::class);
@@ -285,11 +295,5 @@ class NoNameAttributeTest extends TestCase
     {
         $this->expectException(SetupException::class);
         $this->getAttributes(AttributeNoName::class, ['cbAfterErrorParam']);
-    }
-
-    public function testCbAfterAttributeErrorNumber()
-    {
-        $this->expectException(SetupException::class);
-        $this->getAttributes(AttributeNoName::class, ['cbAfterErrorNumber']);
     }
 }

@@ -15,16 +15,24 @@
 
 namespace Jaxon\Attributes\Attribute;
 
+use Jaxon\App\Metadata\Metadata;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Before extends AbstractCallback
+class Before extends AbstractAttribute
 {
+    /**
+     * @param string $call The method to call
+     * @param array $with The call parameters
+     */
+    public function __construct(protected string $call, protected array $with = [])
+    {}
+
     /**
      * @inheritDoc
      */
-    protected function getType(): string
+    public function saveValue(Metadata $xMetadata, string $sMethod = '*'): void
     {
-        return 'Before';
+        $xMetadata->before($sMethod)->addCall($this->call, $this->with);
     }
 }
