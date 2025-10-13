@@ -1,3 +1,7 @@
+[![Build Status](https://github.com/jaxon-php/jaxon-mono/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jaxon-php/jaxon-mono/actions)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaxon-php/jaxon-mono/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/jaxon-php/jaxon-mono/?branch=main)
+[![codecov](https://codecov.io/gh/jaxon-php/jaxon-mono/branch/main/graph/badge.svg?token=MKqDVnW7eJ)](https://codecov.io/gh/jaxon-php/jaxon-mono)
+
 The Jaxon Ajax library
 ======================
 
@@ -31,8 +35,8 @@ Some sample codes (only for version 2.x) are provided in the [jaxon-php/jaxon-ex
 Contribute
 ----------
 
-- Issue Tracker: github.com/jaxon-php/jaxon-core/issues
-- Source Code: github.com/jaxon-php/jaxon-core
+- Issue Tracker: github.com/jaxon-php/jaxon-mono/issues
+- Source Code: github.com/jaxon-php/jaxon-mono
 
 License
 -------
