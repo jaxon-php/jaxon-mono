@@ -44,17 +44,6 @@ class NoNameAttributeTest extends TestCase
     {
         jaxon()->reset();
         parent::tearDown();
-
-        // Delete the temp dir and all its content
-        $aFiles = scandir($this->sCacheDir);
-        foreach ($aFiles as $sFile)
-        {
-            if($sFile !== '.' && $sFile !== '..')
-            {
-                @unlink($this->sCacheDir . DIRECTORY_SEPARATOR . $sFile);
-            }
-        }
-        @rmdir($this->sCacheDir);
     }
 
     /**

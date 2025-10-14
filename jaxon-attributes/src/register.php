@@ -6,7 +6,6 @@ use Jaxon\Attributes\AttributeReader;
 
 use function Jaxon\jaxon;
 use function php_sapi_name;
-use function sys_get_temp_dir;
 
 /**
  * Register the attribute reader into the Jaxon Inject container
@@ -17,12 +16,8 @@ function _register(): void
 {
     $di = jaxon()->di();
 
-    $sCacheDirKey = 'jaxon_attributes_cache_dir';
-    $di->val($sCacheDirKey, sys_get_temp_dir());
-
     // Attribute reader
-    $di->set(AttributeReader::class, fn() =>
-        new AttributeReader($di->g($sCacheDirKey)));
+    $di->set(AttributeReader::class, fn() => new AttributeReader());
 
     $di->alias('metadata_reader_attributes', AttributeReader::class);
 }

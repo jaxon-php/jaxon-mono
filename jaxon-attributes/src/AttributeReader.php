@@ -59,12 +59,6 @@ class AttributeReader implements MetadataReaderInterface
     ];
 
     /**
-     * @param string $sCacheDir
-     */
-    public function __construct(private string $sCacheDir)
-    {}
-
-    /**
      * Read the property types
      *
      * @param ReflectionClass $xClass
