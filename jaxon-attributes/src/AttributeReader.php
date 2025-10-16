@@ -74,8 +74,8 @@ class AttributeReader implements MetadataReaderInterface
         }
 
         $this->aTypes[$sClass] = [];
-        $nFilter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
-        $aProperties = $xClass->getProperties($nFilter);
+        $aProperties = $xClass->getProperties(ReflectionProperty::IS_PUBLIC |
+            ReflectionProperty::IS_PROTECTED);
         foreach($aProperties as $xReflectionProperty)
         {
             $xType = $xReflectionProperty->getType();
@@ -101,9 +101,7 @@ class AttributeReader implements MetadataReaderInterface
         if(is_a($xAttribute, InjectAttribute::class))
         {
             $this->readTypes($xClass);
-
             $xAttribute->setTarget($xReflectionAttribute->getTarget());
-            $xAttribute->setNamespace($xClass->getNamespaceName());
             $xAttribute->setTypes($this->aTypes[$xClass->getName()]);
         }
     }

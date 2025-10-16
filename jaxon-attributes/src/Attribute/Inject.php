@@ -30,11 +30,6 @@ class Inject extends AbstractAttribute
     protected $nTarget;
 
     /**
-     * @var string
-     */
-    protected string $sNamespace;
-
-    /**
      * @var array
      */
     protected array $aTypes;
@@ -55,16 +50,6 @@ class Inject extends AbstractAttribute
     public function setTarget(int $nTarget): void
     {
         $this->nTarget = $nTarget;
-    }
-
-    /**
-     * @param string $sNamespace
-     *
-     * @return void
-     */
-    public function setNamespace(string $sNamespace)
-    {
-        $this->sNamespace = $sNamespace;
     }
 
     /**
