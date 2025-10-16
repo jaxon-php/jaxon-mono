@@ -15,7 +15,7 @@
 namespace Jaxon\Attributes;
 
 use Jaxon\App;
-use Jaxon\App\Metadata\InputDataInterface;
+use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Attributes\Attribute\AbstractAttribute;
@@ -212,7 +212,7 @@ class AttributeReader implements MetadataReaderInterface
      * @inheritDoc
      * @throws SetupException
      */
-    public function getAttributes(InputDataInterface $xInput): ?Metadata
+    public function getAttributes(InputData $xInput): ?Metadata
     {
         try
         {
