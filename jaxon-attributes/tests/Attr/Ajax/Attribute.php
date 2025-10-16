@@ -5,6 +5,7 @@ namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\Attributes\Attribute\After;
 use Jaxon\Attributes\Attribute\Before;
+use Jaxon\Attributes\Attribute\Callback;
 use Jaxon\Attributes\Attribute\DataBag;
 use Jaxon\Attributes\Attribute\Inject;
 use Jaxon\Attributes\Attribute\Exclude;
@@ -38,6 +39,12 @@ class Attribute extends FuncComponent
     #[DataBag(mane: 'user.name')]
     #[DataBag(mane: 'page.number')]
     public function withBagsError()
+    {
+    }
+
+    #[Callback('jaxon.callback.first')]
+    #[Callback('jaxon.callback.second')]
+    public function withCallbacks()
     {
     }
 

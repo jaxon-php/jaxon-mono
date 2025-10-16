@@ -168,10 +168,12 @@ class AttributeTest extends TestCase
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(4, $aProperties['*']);
+        $this->assertCount(5, $aProperties['*']);
         $this->assertArrayHasKey('bags', $aProperties['*']);
+        $this->assertArrayHasKey('callback', $aProperties['*']);
         $this->assertArrayHasKey('__before', $aProperties['*']);
         $this->assertArrayHasKey('__after', $aProperties['*']);
+        $this->assertArrayHasKey('__di', $aProperties['*']);
 
         $this->assertCount(2, $aProperties['*']['bags']);
         $this->assertEquals('user.name', $aProperties['*']['bags'][0]);

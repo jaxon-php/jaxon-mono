@@ -7,6 +7,7 @@ use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\Attribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassAttribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExcluded;
+use Jaxon\Attributes\Tests\Attr\Ajax\DiAttributeError;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
@@ -149,6 +150,51 @@ class MetadataCacheTest extends TestCase
         $this->assertCount(2, $aProperties['withBags']['bags']);
         $this->assertEquals('user.name', $aProperties['withBags']['bags'][0]);
         $this->assertEquals('page.number', $aProperties['withBags']['bags'][1]);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallbackWriteCache()
+    {
+        $xMetadata = $this->getAttributes(Attribute::class, ['withCallbacks']);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+
+        // Save the class metadata in the cache.
+        $xMetadataCache = jaxon()->di()->getMetadataCache();
+        $xMetadataCache->save(Attribute::class, $xMetadata);
+
+        $this->assertFalse($bExcluded);
+
+        $this->assertCount(1, $aProperties);
+        $this->assertArrayHasKey('withCallbacks', $aProperties);
+        $this->assertCount(1, $aProperties['withCallbacks']);
+        $this->assertCount(2, $aProperties['withCallbacks']['callback']);
+        $this->assertEquals('jaxon.callback.first', $aProperties['withCallbacks']['callback'][0]);
+        $this->assertEquals('jaxon.callback.second', $aProperties['withCallbacks']['callback'][1]);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallbackReadCache()
+    {
+        // Read the class metadata from the cache, and run the same tests.
+        $xMetadataCache = jaxon()->di()->getMetadataCache();
+        $xMetadata = $xMetadataCache->read(Attribute::class);
+
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+
+        $this->assertFalse($bExcluded);
+
+        $this->assertCount(1, $aProperties);
+        $this->assertArrayHasKey('withCallbacks', $aProperties);
+        $this->assertCount(1, $aProperties['withCallbacks']);
+        $this->assertCount(2, $aProperties['withCallbacks']['callback']);
+        $this->assertEquals('jaxon.callback.first', $aProperties['withCallbacks']['callback'][0]);
+        $this->assertEquals('jaxon.callback.second', $aProperties['withCallbacks']['callback'][1]);
     }
 
     /**
@@ -316,10 +362,12 @@ class MetadataCacheTest extends TestCase
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(4, $aProperties['*']);
+        $this->assertCount(5, $aProperties['*']);
         $this->assertArrayHasKey('bags', $aProperties['*']);
+        $this->assertArrayHasKey('callback', $aProperties['*']);
         $this->assertArrayHasKey('__before', $aProperties['*']);
         $this->assertArrayHasKey('__after', $aProperties['*']);
+        $this->assertArrayHasKey('__di', $aProperties['*']);
 
         $this->assertCount(2, $aProperties['*']['bags']);
         $this->assertEquals('user.name', $aProperties['*']['bags'][0]);
@@ -364,10 +412,12 @@ class MetadataCacheTest extends TestCase
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(4, $aProperties['*']);
+        $this->assertCount(5, $aProperties['*']);
         $this->assertArrayHasKey('bags', $aProperties['*']);
+        $this->assertArrayHasKey('callback', $aProperties['*']);
         $this->assertArrayHasKey('__before', $aProperties['*']);
         $this->assertArrayHasKey('__after', $aProperties['*']);
+        $this->assertArrayHasKey('__di', $aProperties['*']);
 
         $this->assertCount(2, $aProperties['*']['bags']);
         $this->assertEquals('user.name', $aProperties['*']['bags'][0]);
@@ -401,7 +451,8 @@ class MetadataCacheTest extends TestCase
      */
     public function testClassExcludeWriteCache()
     {
-        $xMetadata = $this->getAttributes(ClassExcluded::class, ['doNot', 'withBags', 'cbSingle']);
+        $xMetadata = $this->getAttributes(ClassExcluded::class,
+            ['doNot', 'withBags', 'withCallbacks', 'cbSingle']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aProtected = $xMetadata->getProtectedMethods();
@@ -431,5 +482,11 @@ class MetadataCacheTest extends TestCase
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
         $this->assertEmpty($aProtected);
+    }
+
+    public function testContainerAttributeWrongClassType()
+    {
+        $this->expectException(SetupException::class);
+        $this->getAttributes(DiAttributeError::class, ['diWrongClassType']);
     }
 }
