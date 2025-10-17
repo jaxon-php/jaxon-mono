@@ -23,7 +23,7 @@ trait AttributeTrait
         array $aMethods = [], array $aProperties = []): ?Metadata
     {
         $xInputData = new InputData($xClass, $aMethods, $aProperties);
-        $xMetadataReader = jaxon()->di()->g('metadata_reader_attributes');
+        $xMetadataReader = jaxon()->di()->getMetadataReader('attributes');
         return $xMetadataReader->getAttributes($xInputData);
     }
 }
