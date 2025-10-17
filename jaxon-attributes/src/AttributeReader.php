@@ -79,9 +79,9 @@ class AttributeReader implements MetadataReaderInterface
         foreach($aProperties as $xReflectionProperty)
         {
             $xType = $xReflectionProperty->getType();
-            $sType = $xType?->getName() ?? '';
             // Check that the property has a valid type defined
-            if($sType !== '' && is_a($xType, ReflectionNamedType::class))
+            if(is_a($xType, ReflectionNamedType::class) &&
+                ($sType = $xType->getName()) !== '')
             {
                 $this->aTypes[$sClass][$xReflectionProperty->getName()] = $sType;
             }
