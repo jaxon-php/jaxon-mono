@@ -50,7 +50,7 @@
     "require-dev": {
         "contao/monorepo-tools": "^0.2.0",
         "keradus/psr4autoloader": "dev-master",
-        "lagdo/twitter-feed": "dev-test",
+        "league/flysystem-memory": "^3.0|^2.2",
         "monolog/monolog": "^3.0",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpcov": "^8.2",
