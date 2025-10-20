@@ -5,7 +5,7 @@ namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\Attributes\Attribute\After;
 use Jaxon\Attributes\Attribute\Before;
-use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Databag;
 use Jaxon\Attributes\Attribute\Inject;
 use Jaxon\Attributes\Attribute\Exclude;
 use Jaxon\Attributes\Tests\Attr\FuncComponent;

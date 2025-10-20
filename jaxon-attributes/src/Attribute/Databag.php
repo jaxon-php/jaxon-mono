@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DataBag.php
+ * Databag.php
  *
  * Jaxon attribute.
  * Specifies a data bag stored in the browser and included in ajax requests to a method.
@@ -19,7 +19,7 @@ use Jaxon\App\Metadata\Metadata;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class DataBag extends AbstractAttribute
+class Databag extends AbstractAttribute
 {
     /**
      * @param string $name The data bag name

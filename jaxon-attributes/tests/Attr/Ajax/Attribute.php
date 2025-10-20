@@ -6,7 +6,7 @@ namespace Jaxon\Attributes\Tests\Attr\Ajax;
 use Jaxon\Attributes\Attribute\After;
 use Jaxon\Attributes\Attribute\Before;
 use Jaxon\Attributes\Attribute\Callback;
-use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Databag;
 use Jaxon\Attributes\Attribute\Inject;
 use Jaxon\Attributes\Attribute\Exclude;
 use Jaxon\Attributes\Attribute\Upload;
@@ -30,14 +30,14 @@ class Attribute extends FuncComponent
     {
     }
 
-    #[DataBag(name: 'user.name')]
-    #[DataBag(name: 'page.number')]
+    #[Databag(name: 'user.name')]
+    #[Databag(name: 'page.number')]
     public function withBags()
     {
     }
 
-    #[DataBag(mane: 'user.name')]
-    #[DataBag(mane: 'page.number')]
+    #[Databag(mane: 'user.name')]
+    #[Databag(mane: 'page.number')]
     public function withBagsError()
     {
     }

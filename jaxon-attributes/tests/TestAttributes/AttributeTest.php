@@ -68,7 +68,7 @@ class AttributeTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testDataBagAttribute()
+    public function testDatabagAttribute()
     {
         $xMetadata = $this->getAttributes(Attribute::class, ['withBags']);
         $bExcluded = $xMetadata->isExcluded();
@@ -223,7 +223,7 @@ class AttributeTest extends TestCase
         $this->getAttributes(Attribute::class, ['doNotError']);
     }
 
-    public function testDataBagAttributeError()
+    public function testDatabagAttributeError()
     {
         $this->expectException(SetupException::class);
         $this->getAttributes(Attribute::class, ['withBagsError']);

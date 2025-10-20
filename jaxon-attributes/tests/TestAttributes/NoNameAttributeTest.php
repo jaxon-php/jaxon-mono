@@ -70,7 +70,7 @@ class NoNameAttributeTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testDataBagAttribute()
+    public function testDatabagAttribute()
     {
         $xMetadata = $this->getAttributes(AttributeNoName::class, ['withBags']);
         $bExcluded = $xMetadata->isExcluded();
@@ -232,13 +232,13 @@ class NoNameAttributeTest extends TestCase
         $this->getAttributes(AttributeNoName::class, ['saveFileErrorFieldNumber']);
     }
 
-    public function testDataBagAttributeErrorName()
+    public function testDatabagAttributeErrorName()
     {
         $this->expectException(SetupException::class);
         $this->getAttributes(AttributeNoName::class, ['withBagsErrorName']);
     }
 
-    public function testDataBagAttributeErrorNumber()
+    public function testDatabagAttributeErrorNumber()
     {
         $this->expectException(SetupException::class);
         $this->getAttributes(AttributeNoName::class, ['withBagsErrorNumber']);

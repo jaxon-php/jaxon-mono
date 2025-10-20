@@ -5,7 +5,7 @@ namespace Jaxon\Attributes\Tests\Attr\Ajax;
 
 use Jaxon\Attributes\Attribute\After;
 use Jaxon\Attributes\Attribute\Before;
-use Jaxon\Attributes\Attribute\DataBag;
+use Jaxon\Attributes\Attribute\Databag;
 use Jaxon\Attributes\Attribute\Exclude;
 use Jaxon\Attributes\Tests\Attr\FuncComponent;
 
@@ -17,8 +17,8 @@ class ClassExcluded extends FuncComponent
     {
     }
 
-    #[DataBag(name: 'user.name')]
-    #[DataBag(name: 'page.number')]
+    #[Databag(name: 'user.name')]
+    #[Databag(name: 'page.number')]
     public function withBags()
     {
     }

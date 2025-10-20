@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DataBag.php
+ * Databag.php
  *
  * Jaxon attribute.
  * Specifies a data bag stored in the browser and included in ajax requests to a method.

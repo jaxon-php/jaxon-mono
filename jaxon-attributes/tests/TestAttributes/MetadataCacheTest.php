@@ -110,7 +110,7 @@ class MetadataCacheTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testDataBagWriteCache()
+    public function testDatabagWriteCache()
     {
         $xMetadata = $this->getAttributes(Attribute::class, ['withBags']);
         $bExcluded = $xMetadata->isExcluded();
@@ -133,7 +133,7 @@ class MetadataCacheTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testDataBagReadCache()
+    public function testDatabagReadCache()
     {
         // Read the class metadata from the cache, and run the same tests.
         $xMetadataCache = jaxon()->di()->getMetadataCache();
