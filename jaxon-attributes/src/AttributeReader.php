@@ -201,16 +201,15 @@ class AttributeReader implements MetadataReaderInterface
     private function getParentClass(ReflectionClass $xClass): ReflectionClass|null
     {
         $xParentClass = $xClass->getParentClass();
-        return $xParentClass !== false &&
-            in_array($xParentClass->getName(), $this->aJaxonClasses) ?
-            $xParentClass : null;
+        return $xParentClass === false || in_array($xParentClass->getName(),
+            $this->aJaxonClasses) ? null : $xParentClass;
     }
 
     /**
      * @inheritDoc
      * @throws SetupException
      */
-    public function getAttributes(InputData $xInput): ?Metadata
+    public function getAttributes(InputData $xInput): Metadata
     {
         try
         {
