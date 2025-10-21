@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/jaxon-php/jaxon-attributes/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jaxon-php/jaxon-attributes/actions)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaxon-php/jaxon-attributes/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/jaxon-php/jaxon-attributes/?branch=main)
-[![codecov](https://codecov.io/gh/jaxon-php/jaxon-attributes/branch/main/graph/badge.svg?token=HERKC60CC1)](https://codecov.io/gh/jaxon-php/jaxon-attributes)
+[![codecov](https://codecov.io/gh/jaxon-php/jaxon-attributes/branch/main/graph/badge.svg?token=qbk2LXp78V)](https://codecov.io/gh/jaxon-php/jaxon-attributes)
 
 [![Latest Stable Version](https://poser.pugx.org/jaxon-php/jaxon-attributes/v/stable)](https://packagist.org/packages/jaxon-php/jaxon-attributes)
 [![Total Downloads](https://poser.pugx.org/jaxon-php/jaxon-attributes/downloads)](https://packagist.org/packages/jaxon-php/jaxon-attributes)
