@@ -3,6 +3,7 @@
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
 use Jaxon\Attributes\Tests\AttributeTrait;
+use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsAttribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsExcluded;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsTraitExcluded;
 use Jaxon\Exception\SetupException;
@@ -125,5 +126,54 @@ class ClassExtendsTest extends TestCase
         $this->assertCount(2, $aProperties['withCallbacks']['callback']);
         $this->assertEquals('jaxon.callback.first', $aProperties['withCallbacks']['callback'][0]);
         $this->assertEquals('jaxon.callback.second', $aProperties['withCallbacks']['callback'][1]);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testClassExtendsAttribute()
+    {
+        $xMetadata = $this->getAttributes(ClassExtendsAttribute::class, []);
+        $bExcluded = $xMetadata->isExcluded();
+        $aProperties = $xMetadata->getProperties();
+        $aProtected = $xMetadata->getProtectedMethods();
+
+        $this->assertFalse($bExcluded);
+        $this->assertEmpty($aProtected);
+
+        $this->assertCount(1, $aProperties);
+        $this->assertArrayHasKey('*', $aProperties);
+        $this->assertCount(5, $aProperties['*']);
+        $this->assertArrayHasKey('bags', $aProperties['*']);
+        $this->assertArrayHasKey('callback', $aProperties['*']);
+        $this->assertArrayHasKey('__before', $aProperties['*']);
+        $this->assertArrayHasKey('__after', $aProperties['*']);
+        $this->assertArrayHasKey('__di', $aProperties['*']);
+
+        $this->assertCount(2, $aProperties['*']['bags']);
+        $this->assertEquals('user.name', $aProperties['*']['bags'][0]);
+        $this->assertEquals('page.number', $aProperties['*']['bags'][1]);
+
+        $this->assertCount(2, $aProperties['*']['__before']);
+        $this->assertArrayHasKey('funcBefore1', $aProperties['*']['__before']);
+        $this->assertArrayHasKey('funcBefore2', $aProperties['*']['__before']);
+        $this->assertIsArray($aProperties['*']['__before']['funcBefore1']);
+        $this->assertIsArray($aProperties['*']['__before']['funcBefore2']);
+
+        $this->assertCount(3, $aProperties['*']['__after']);
+        $this->assertArrayHasKey('funcAfter1', $aProperties['*']['__after']);
+        $this->assertArrayHasKey('funcAfter2', $aProperties['*']['__after']);
+        $this->assertArrayHasKey('funcAfter3', $aProperties['*']['__after']);
+        $this->assertIsArray($aProperties['*']['__after']['funcAfter1']);
+        $this->assertIsArray($aProperties['*']['__after']['funcAfter2']);
+        $this->assertIsArray($aProperties['*']['__after']['funcAfter3']);
+
+        $this->assertCount(3, $aProperties['*']['__di']);
+        $this->assertArrayHasKey('colorService', $aProperties['*']['__di']);
+        $this->assertArrayHasKey('textService', $aProperties['*']['__di']);
+        $this->assertArrayHasKey('fontService', $aProperties['*']['__di']);
+        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService']);
+        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService']);
+        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService']);
     }
 }
