@@ -16,10 +16,7 @@
 namespace Jaxon\Attributes\Attribute;
 
 use Jaxon\App\Metadata\Metadata;
-use Jaxon\Exception\SetupException;
 use Attribute;
-
-use function count;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Upload extends AbstractAttribute
