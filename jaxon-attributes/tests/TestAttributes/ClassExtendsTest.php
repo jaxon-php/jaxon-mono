@@ -53,12 +53,12 @@ class ClassExtendsTest extends TestCase
             ['doNot', 'withBags', 'cbSingle']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
-        $this->assertCount(1, $aProtected);
-        $this->assertEquals('doNot', $aProtected[0]);
+        $this->assertCount(1, $aExcluded);
+        $this->assertEquals('doNot', $aExcluded[0]);
 
         $this->assertCount(2, $aProperties);
 
@@ -86,10 +86,10 @@ class ClassExtendsTest extends TestCase
             ['doNot', 'withBags', 'cbSingle', 'cbMultiple', 'withCallbacks']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
-        $this->assertEmpty($aProtected);
+        $this->assertEmpty($aExcluded);
 
         $this->assertCount(4, $aProperties);
 
@@ -136,10 +136,10 @@ class ClassExtendsTest extends TestCase
         $xMetadata = $this->getAttributes(ClassExtendsAttribute::class, []);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
-        $this->assertEmpty($aProtected);
+        $this->assertEmpty($aExcluded);
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);

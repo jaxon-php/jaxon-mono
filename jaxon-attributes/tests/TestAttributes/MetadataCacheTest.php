@@ -66,7 +66,7 @@ class MetadataCacheTest extends TestCase
         $xMetadata = $this->getAttributes(Attribute::class, ['saveFiles', 'doNot']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         // Save the class metadata in the cache.
         $xMetadataCache = jaxon()->di()->getMetadataCache();
@@ -74,8 +74,8 @@ class MetadataCacheTest extends TestCase
 
         $this->assertFalse($bExcluded);
 
-        $this->assertCount(1, $aProtected);
-        $this->assertEquals('doNot', $aProtected[0]);
+        $this->assertCount(1, $aExcluded);
+        $this->assertEquals('doNot', $aExcluded[0]);
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('saveFiles', $aProperties);
@@ -94,12 +94,12 @@ class MetadataCacheTest extends TestCase
 
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
-        $this->assertCount(1, $aProtected);
-        $this->assertEquals('doNot', $aProtected[0]);
+        $this->assertCount(1, $aExcluded);
+        $this->assertEquals('doNot', $aExcluded[0]);
 
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('saveFiles', $aProperties);
@@ -455,7 +455,7 @@ class MetadataCacheTest extends TestCase
             ['doNot', 'withBags', 'withCallbacks', 'cbSingle']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         // Save the class metadata in the cache.
         $xMetadataCache = jaxon()->di()->getMetadataCache();
@@ -463,7 +463,7 @@ class MetadataCacheTest extends TestCase
 
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
-        $this->assertEmpty($aProtected);
+        $this->assertEmpty($aExcluded);
     }
 
     /**
@@ -477,11 +477,11 @@ class MetadataCacheTest extends TestCase
 
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
-        $this->assertEmpty($aProtected);
+        $this->assertEmpty($aExcluded);
     }
 
     public function testContainerAttributeWrongClassType()

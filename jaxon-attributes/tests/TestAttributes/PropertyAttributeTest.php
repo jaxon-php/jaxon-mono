@@ -51,7 +51,7 @@ class PropertyAttributeTest extends TestCase
             ['attrVar'], ['colorService', 'fontService', 'textService']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -72,7 +72,7 @@ class PropertyAttributeTest extends TestCase
             ['attrDbVar'], ['colorService', 'fontService', 'textService']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -93,7 +93,7 @@ class PropertyAttributeTest extends TestCase
             ['attrDi'], ['colorService1', 'fontService1', 'textService1']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -114,7 +114,7 @@ class PropertyAttributeTest extends TestCase
             ['attrDi'], ['colorService2', 'fontService2', 'textService2']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -135,7 +135,7 @@ class PropertyAttributeTest extends TestCase
             ['attrDi'], ['colorService3', 'fontService3', 'textService3']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 

@@ -5,10 +5,12 @@ namespace Jaxon\Attributes\Tests\TestAttributes;
 use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\FuncComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\NodeComponent;
+use Jaxon\Attributes\Tests\Attr\Ajax\Component\NodeBaseComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\PageComponent;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use ReflectionClass;
 use function Jaxon\Attributes\_register;
 use function Jaxon\jaxon;
 
@@ -50,14 +52,16 @@ class ComponentTest extends TestCase
     public function testNodeComponentExportMethods()
     {
         $xMetadata = $this->getAttributes(NodeComponent::class,
-            [], ['item', 'html', 'render', 'clear', 'visible']);
+            ['item', 'html', 'render', 'clear', 'visible'], []);
         $bExcluded = $xMetadata->isExcluded();
-        $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+        $aOnlyMethods = $xMetadata->getExportOnlyMethods();
 
         $this->assertFalse($bExcluded);
-        $this->assertCount(0, $aProperties);
-        $this->assertCount(0, $aProtected);
+        $this->assertCount(0, $aExcluded);
+        $this->assertCount(0, $aBaseMethods);
+        $this->assertCount(0, $aOnlyMethods);
     }
 
     /**
@@ -66,14 +70,16 @@ class ComponentTest extends TestCase
     public function testPageComponentExportMethods()
     {
         $xMetadata = $this->getAttributes(PageComponent::class,
-            [], ['item', 'html', 'render', 'clear', 'visible']);
+            ['item', 'html', 'render', 'clear', 'visible'], []);
         $bExcluded = $xMetadata->isExcluded();
-        $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+        $aOnlyMethods = $xMetadata->getExportOnlyMethods();
 
         $this->assertFalse($bExcluded);
-        $this->assertCount(0, $aProperties);
-        $this->assertCount(0, $aProtected);
+        $this->assertCount(0, $aExcluded);
+        $this->assertCount(0, $aBaseMethods);
+        $this->assertCount(0, $aOnlyMethods);
     }
 
     /**
@@ -82,14 +88,39 @@ class ComponentTest extends TestCase
     public function testFuncComponentExportMethods()
     {
         $xMetadata = $this->getAttributes(FuncComponent::class,
-            [], ['paginator']);
+            ['paginator'], []);
         $bExcluded = $xMetadata->isExcluded();
-        $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+        $aOnlyMethods = $xMetadata->getExportOnlyMethods();
 
         $this->assertFalse($bExcluded);
-        $this->assertCount(0, $aProperties);
-        $this->assertCount(0, $aProtected);
+        $this->assertCount(0, $aExcluded);
+        $this->assertCount(0, $aBaseMethods);
+        $this->assertCount(0, $aOnlyMethods);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testNodeComponentExportBaseMethods()
+    {
+        // The attribute exports the 'html' and 'render' methods,
+        // but only the 'render' method shall be exported.
+        $xClass = new ReflectionClass(NodeBaseComponent::class);
+        $aMethods = ['item', 'html', 'render', 'clear', 'visible'];
+        $xMetadata = $this->getAttributes($xClass, $aMethods, []);
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+
+        // The 'html' and 'render' methods are returned.
+        $this->assertCount(2, $aBaseMethods);
+
+        $xOptions = $this->getOptions($xClass);
+        $aPublicMethods = $xOptions->getPublicMethods();
+
+        // Only the 'render' method is returned.
+        $this->assertCount(1, $aPublicMethods);
+        $this->assertEquals('render', $aPublicMethods[0]);
     }
 
     // public function testContainerAttributeErrorTwoDi()

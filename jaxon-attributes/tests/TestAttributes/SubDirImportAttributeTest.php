@@ -48,7 +48,7 @@ class SubDirImportAttributeTest extends TestCase
         $xMetadata = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 

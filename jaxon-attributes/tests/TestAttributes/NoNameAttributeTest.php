@@ -54,7 +54,7 @@ class NoNameAttributeTest extends TestCase
         $xMetadata = $this->getAttributes(AttributeNoName::class, ['saveFiles', 'doNot']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -63,8 +63,8 @@ class NoNameAttributeTest extends TestCase
         $this->assertCount(1, $aProperties['saveFiles']);
         $this->assertEquals("'user-files'", $aProperties['saveFiles']['upload']);
 
-        $this->assertCount(1, $aProtected);
-        $this->assertEquals('doNot', $aProtected[0]);
+        $this->assertCount(1, $aExcluded);
+        $this->assertEquals('doNot', $aExcluded[0]);
     }
 
     /**
@@ -75,7 +75,7 @@ class NoNameAttributeTest extends TestCase
         $xMetadata = $this->getAttributes(AttributeNoName::class, ['withBags']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -96,7 +96,7 @@ class NoNameAttributeTest extends TestCase
             ['cbSingle', 'cbMultiple', 'cbParams']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -142,7 +142,7 @@ class NoNameAttributeTest extends TestCase
         $xMetadata = $this->getAttributes(AttributeNoName::class, ['di1', 'di2']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
@@ -165,7 +165,7 @@ class NoNameAttributeTest extends TestCase
         $xMetadata = $this->getAttributes(ClassAttributeNoName::class, []);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
         // $this->assertEquals('', json_encode($aProperties));
 
         $this->assertFalse($bExcluded);
@@ -213,11 +213,11 @@ class NoNameAttributeTest extends TestCase
             ['doNot', 'withBags', 'cbSingle']);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aProtected = $xMetadata->getProtectedMethods();
+        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
-        $this->assertEmpty($aProtected);
+        $this->assertEmpty($aExcluded);
     }
 
     public function testUploadAttributeErrorFieldName()
