@@ -21,7 +21,6 @@ use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Attributes\Attribute\AbstractAttribute;
 use Jaxon\Attributes\Attribute\Inject as InjectAttribute;
 use Jaxon\Attributes\Attribute\Exclude as ExcludeAttribute;
-use Jaxon\Attributes\Attribute\Export as ExportAttribute;
 use Jaxon\Exception\SetupException;
 use Error;
 use Exception;
@@ -124,24 +123,6 @@ class AttributeReader implements MetadataReaderInterface
     }
 
     /**
-     * Get the attributes that are not inherited
-     *
-     * @param ReflectionClass $xClass
-     *
-     * @return void
-     */
-    private function getBaseClassAttrs(ReflectionClass $xClass): void
-    {
-        $aClassAttributes = $xClass->getAttributes();
-        $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
-            is_a($xAttribute->getName(), ExportAttribute::class, true));
-        foreach($aAttributes as $xReflectionAttribute)
-        {
-            $xReflectionAttribute->newInstance()->saveValue($this->xMetadata);
-        }
-    }
-
-    /**
      * @param ReflectionClass $xClass
      *
      * @return void
@@ -151,8 +132,7 @@ class AttributeReader implements MetadataReaderInterface
         $aClassAttributes = $xClass->getAttributes();
         $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
             is_a($xAttribute->getName(), AbstractAttribute::class, true) &&
-            !is_a($xAttribute->getName(), ExcludeAttribute::class, true) &&
-            !is_a($xAttribute->getName(), ExportAttribute::class, true));
+            !is_a($xAttribute->getName(), ExcludeAttribute::class, true));
         foreach($aAttributes as $xReflectionAttribute)
         {
             $xAttribute = $xReflectionAttribute->newInstance();
