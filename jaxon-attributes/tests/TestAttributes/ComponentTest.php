@@ -4,6 +4,7 @@ namespace Jaxon\Attributes\Tests\TestAttributes;
 
 use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\FuncComponent;
+use Jaxon\Attributes\Tests\Attr\Ajax\Component\ExportErrorComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\NodeComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\NodeBaseComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\Component\PageComponent;
@@ -123,11 +124,12 @@ class ComponentTest extends TestCase
         $this->assertEquals('render', $aPublicMethods[0]);
     }
 
-    // public function testContainerAttributeErrorTwoDi()
-    // {
-    //     $this->expectException(SetupException::class);
-    //     $this->getAttributes(PropertyAttribute::class, [], ['errorTwoDi']);
-    // }
+    public function testAttributeExportError()
+    {
+        $this->expectException(SetupException::class);
+        $xClass = new ReflectionClass(ExportErrorComponent::class);
+        $this->getOptions($xClass);
+    }
 
     // public function testContainerAttributeErrorDiClass()
     // {
