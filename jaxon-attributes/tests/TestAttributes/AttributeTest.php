@@ -212,6 +212,10 @@ class AttributeTest extends TestCase
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
+        $xData = $xMetadata->exclude();
+        $this->assertTrue($xData->getValue());
+        $this->assertEquals('protected', $xData->getName());
+
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
         $this->assertEmpty($aExcluded);
