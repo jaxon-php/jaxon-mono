@@ -59,6 +59,20 @@ class AttributeReader implements MetadataReaderInterface
     ];
 
     /**
+     * @var array
+     */
+    private $aBaseAttributes = [
+        ExcludeAttribute::class,
+    ];
+
+    /**
+     * @var array
+     */
+    private $aPropertyAttributes = [
+        InjectAttribute::class,
+    ];
+
+    /**
      * Read the property types
      *
      * @param ReflectionClass $xClass
@@ -107,15 +121,45 @@ class AttributeReader implements MetadataReaderInterface
     }
 
     /**
+     * @param ReflectionAttribute $xReflectionAttribute
+     *
+     * @return bool
+     */
+    private function isJaxonAttribute(ReflectionAttribute $xReflectionAttribute): bool
+    {
+        return is_a($xReflectionAttribute->getName(), AbstractAttribute::class, true);
+    }
+
+    /**
+     * @param ReflectionAttribute $xReflectionAttribute
+     *
+     * @return bool
+     */
+    private function isBaseClassAttribute(ReflectionAttribute $xReflectionAttribute): bool
+    {
+        return in_array($xReflectionAttribute->getName(), $this->aBaseAttributes);
+    }
+
+    /**
+     * @param ReflectionAttribute $xReflectionAttribute
+     *
+     * @return bool
+     */
+    private function isPropertyAttribute(ReflectionAttribute $xReflectionAttribute): bool
+    {
+        return in_array($xReflectionAttribute->getName(), $this->aPropertyAttributes);
+    }
+
+    /**
      * @param ReflectionClass $xClass
      *
      * @return void
      */
-    private function getClassExcludeAttr(ReflectionClass $xClass): void
+    private function readBaseClassAttributes(ReflectionClass $xClass): void
     {
-        $aClassAttributes = $xClass->getAttributes();
-        $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
-            is_a($xAttribute->getName(), ExcludeAttribute::class, true));
+        $aAttributes = $xClass->getAttributes();
+        $aAttributes = array_filter($aAttributes, fn($xReflectionAttribute) =>
+            $this->isBaseClassAttribute($xReflectionAttribute));
         foreach($aAttributes as $xReflectionAttribute)
         {
             $xReflectionAttribute->newInstance()->saveValue($this->xMetadata);
@@ -127,12 +171,12 @@ class AttributeReader implements MetadataReaderInterface
      *
      * @return void
      */
-    private function getClassAttrs(ReflectionClass $xClass): void
+    private function readClassAttributes(ReflectionClass $xClass): void
     {
-        $aClassAttributes = $xClass->getAttributes();
-        $aAttributes = array_filter($aClassAttributes, fn($xAttribute) =>
-            is_a($xAttribute->getName(), AbstractAttribute::class, true) &&
-            !is_a($xAttribute->getName(), ExcludeAttribute::class, true));
+        $aAttributes = $xClass->getAttributes();
+        $aAttributes = array_filter($aAttributes, fn($xReflectionAttribute) =>
+            $this->isJaxonAttribute($xReflectionAttribute) &&
+            !$this->isBaseClassAttribute($xReflectionAttribute));
         foreach($aAttributes as $xReflectionAttribute)
         {
             $xAttribute = $xReflectionAttribute->newInstance();
@@ -149,13 +193,13 @@ class AttributeReader implements MetadataReaderInterface
      * @return void
      * @throws SetupException
      */
-    private function getPropertyAttrs(ReflectionClass $xClass, string $sProperty): void
+    private function readPropertyAttributes(ReflectionClass $xClass, string $sProperty): void
     {
-        // Only Inject attributes are allowed on properties
         $aAttributes = !$xClass->hasProperty($sProperty) ? [] :
             $xClass->getProperty($sProperty)->getAttributes();
-        $aAttributes = array_filter($aAttributes, fn($xAttribute) =>
-            is_a($xAttribute->getName(), InjectAttribute::class, true));
+        $aAttributes = array_filter($aAttributes, fn($xReflectionAttribute) =>
+            $this->isPropertyAttribute($xReflectionAttribute));
+        // Only Inject attributes are allowed on properties
         if(count($aAttributes) > 1)
         {
             throw new SetupException('Only one Inject attribute is allowed on a property');
@@ -178,12 +222,12 @@ class AttributeReader implements MetadataReaderInterface
      *
      * @return void
      */
-    private function getMethodAttrs(ReflectionClass $xClass, string $sMethod): void
+    private function readMethodAttributes(ReflectionClass $xClass, string $sMethod): void
     {
         $aAttributes = !$xClass->hasMethod($sMethod) ? [] :
             $xClass->getMethod($sMethod)->getAttributes();
-        $aAttributes = array_filter($aAttributes, fn($xAttribute) =>
-            is_a($xAttribute->getName(), AbstractAttribute::class, true));
+        $aAttributes = array_filter($aAttributes, fn($xReflectionAttribute) =>
+            $this->isJaxonAttribute($xReflectionAttribute));
         foreach($aAttributes as $xReflectionAttribute)
         {
             $xAttribute = $xReflectionAttribute->newInstance();
@@ -216,15 +260,7 @@ class AttributeReader implements MetadataReaderInterface
             $this->xMetadata = new Metadata();
 
             $xClass = $xInput->getReflectionClass();
-            // First check if the class is exluded.
-            $this->getClassExcludeAttr($xClass);
-            if($this->xMetadata->isExcluded())
-            {
-                return $this->xMetadata;
-            }
-
-            // Processing the base class attributes
-            $this->getBaseClassAttrs($xClass);
+            $this->readBaseClassAttributes($xClass);
 
             $aClasses = [$xClass];
             while(($xClass = $this->getParentClass($xClass)) !== null)
@@ -236,18 +272,26 @@ class AttributeReader implements MetadataReaderInterface
             foreach($aClasses as $xClass)
             {
                 // Processing class attributes
-                $this->getClassAttrs($xClass);
-
+                $this->readClassAttributes($xClass);
                 // Processing properties attributes
                 foreach($xInput->getProperties() as $sProperty)
                 {
-                    $this->getPropertyAttrs($xClass, $sProperty);
+                    $this->readPropertyAttributes($xClass, $sProperty);
                 }
+            }
 
+            // The methods attributes are not taken for excluded classes.
+            if($this->xMetadata->isExcluded())
+            {
+                return $this->xMetadata;
+            }
+
+            foreach($aClasses as $xClass)
+            {
                 // Processing methods attributes
                 foreach($xInput->getMethods() as $sMethod)
                 {
-                    $this->getMethodAttrs($xClass, $sMethod);
+                    $this->readMethodAttributes($xClass, $sMethod);
                 }
             }
 

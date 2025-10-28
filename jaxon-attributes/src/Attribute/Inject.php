@@ -21,7 +21,8 @@ use Attribute;
 
 use function ltrim;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY |
+    Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Inject extends AbstractAttribute
 {
     /**
@@ -91,7 +92,6 @@ class Inject extends AbstractAttribute
             {
                 throw new SetupException('When applied to a method, the Inject attribute requires the "attr" argument.');
             }
-            return;
         }
     }
 
