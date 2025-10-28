@@ -7,6 +7,7 @@ use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\Attribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassAttribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExcluded;
+use Jaxon\Attributes\Tests\Attr\Ajax\Component\NodeBaseComponent;
 use Jaxon\Attributes\Tests\Attr\Ajax\DiAttributeError;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
@@ -482,6 +483,38 @@ class MetadataCacheTest extends TestCase
         $this->assertTrue($bExcluded);
         $this->assertEmpty($aProperties);
         $this->assertEmpty($aExcluded);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testNodeComponentExport()
+    {
+        $xMetadata = $this->getAttributes(NodeBaseComponent::class,
+            ['item', 'html', 'render', 'clear', 'visible'], []);
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+
+        // Save the class metadata in the cache.
+        $xMetadataCache = jaxon()->di()->getMetadataCache();
+        $xMetadataCache->save(NodeBaseComponent::class, $xMetadata);
+
+        // The 'html' and 'render' methods are returned.
+        $this->assertCount(2, $aBaseMethods);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testNodeComponentExportReadCache()
+    {
+        // Read the class metadata from the cache, and run the same tests.
+        $xMetadataCache = jaxon()->di()->getMetadataCache();
+        $xMetadata = $xMetadataCache->read(NodeBaseComponent::class);
+
+        $aBaseMethods = $xMetadata->getExportBaseMethods();
+
+        // The 'html' and 'render' methods are returned.
+        $this->assertCount(2, $aBaseMethods);
     }
 
     public function testContainerAttributeWrongClassType()
