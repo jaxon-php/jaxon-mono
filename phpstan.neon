@@ -1,0 +1,12 @@
+parameters:
+    paths:
+        - jaxon-annotations/src/
+        - jaxon-attributes/src/
+        - jaxon-config/src/
+        - jaxon-core/src/
+        - jaxon-dialogs/src/
+        - jaxon-flot/src/
+        - jaxon-upload/src/
+        - jaxon-utils/src/
+
+    level: 5

@@ -38,7 +38,7 @@ class Graph implements JsonSerializable
     /**
      * The constructor.
      *
-     * @param string        $aOptions            The graph options, as defined by the Flot library
+     * @param array $aOptions            The graph options, as defined by the Flot library
      */
     public function __construct(array $aOptions = [])
     {

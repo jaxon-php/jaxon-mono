@@ -54,7 +54,8 @@
         "monolog/monolog": "^3.0",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpcov": "^8.2",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^2.1"
     },
     "replace": {
         "jaxon-php/jaxon-annotations": "self.version",
