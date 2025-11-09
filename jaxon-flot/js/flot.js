@@ -1,6 +1,8 @@
 /*
  * Jaxon Flot plugin
  */
+
+/** global: jaxon */
 jaxon.dom.ready(function() {
     $("#flot-tooltip").remove();
     $('<div id="flot-tooltip"></div>').css({
@@ -12,7 +14,7 @@ jaxon.dom.ready(function() {
         opacity: 0.80
     }).appendTo("body");
 
-    jaxon.register("flot.plot", function({ plot: { selector, graphs, size, xaxis, yaxis, options = {} } }) {
+    jaxon.register("flot.plot", ({ plot: { selector, graphs, size, xaxis, yaxis, options = {} } }) => {
         let showLabels = false;
         const labels = {};
         const dom = jaxon.utils.dom;
@@ -42,8 +44,7 @@ jaxon.dom.ready(function() {
             {
                 g.labels.func = dom.findFunction(g.labels.func);
             }
-            if(typeof g.options.label !== "undefined" &&
-                (g.labels.data !== null || g.labels.func !== null))
+            if(g.options.label !== undefined && (g.labels.data !== null || g.labels.func !== null))
             {
                 showLabels = true;
                 labels[g.options.label] = g.labels;
@@ -88,18 +89,19 @@ jaxon.dom.ready(function() {
                     $("#flot-tooltip").hide();
                     return;
                 }
+
                 const series = item.series.label;
                 const x = item.datapoint[0]; // item.datapoint[0].toFixed(2);
                 const y = item.datapoint[1]; // item.datapoint[1].toFixed(2);
                 let tooltip = "";
-                if(typeof labels[series] !== "undefined")
+                if(labels[series] !== undefined)
                 {
                     const _labels = labels[series];
-                    if(_labels.data != null && typeof _labels.data[x] !== "undefined")
+                    if(_labels.data !== null && _labels.data[x] !== undefined)
                     {
                         tooltip = _labels.data[x];
                     }
-                    else if(_labels.func != null)
+                    else if(_labels.func !== null)
                     {
                         tooltip = _labels.func(series, x, y);
                     }
