@@ -12,6 +12,7 @@
       <directory suffix=".php">jaxon-attributes/src</directory>
       <directory suffix=".php">jaxon-annotations/src</directory>
       <directory suffix=".php">jaxon-dialogs/src</directory>
+      <directory suffix=".php">jaxon-storage/src</directory>
       <directory suffix=".php">jaxon-upload/src</directory>
     </include>
     <report>
@@ -38,6 +39,9 @@
     </testsuite>
     <testsuite name="Jaxon Dialogs">
       <directory>jaxon-dialogs/tests</directory>
+    </testsuite>
+    <testsuite name="Jaxon Storage">
+      <directory>jaxon-storage/tests</directory>
     </testsuite>
     <testsuite name="Jaxon Upload">
       <directory>jaxon-upload/tests</directory>
