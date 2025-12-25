@@ -16,7 +16,7 @@
     },
     "require": {
         "php": ">=8.0",
-        "jaxon-php/jaxon-core": "^5.0"
+        "jaxon-php/jaxon-core": "^5.3"
     },
     "autoload": {
         "psr-4": {

@@ -12,37 +12,30 @@
 
 namespace Jaxon\Flot;
 
-use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
-use Jaxon\Plugin\Code\JsCode;
+use Jaxon\Plugin\JsCode;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Flot\Plot\Plot;
 
-class FlotPlugin extends AbstractResponsePlugin
+class FlotPlugin extends AbstractResponsePlugin implements JsCodeGeneratorInterface
 {
     /**
-     * @const The plugin name
+     * @var string The plugin name
      */
     public const NAME = 'flot';
 
     /**
-     * @const
+     * @var string
      */
     private const JS_LIB_URL = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/dist/es5/jquery.flot.min.js';
 
     /**
-     * @const
-     */
-    private const JS_SCRIPT_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-flot@main/js/flot.js';
-
-    /**
      * The constructor
      *
-     * @param ConfigManager $xConfigManager
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(private  ConfigManager $xConfigManager,
-        private TemplateEngine $xTemplateEngine)
+    public function __construct(private TemplateEngine $xTemplateEngine)
     {}
 
     /**
@@ -65,33 +58,10 @@ class FlotPlugin extends AbstractResponsePlugin
     /**
      * @inheritDoc
      */
-    public function getJs(): string
+    public function getJsCode(): JsCode
     {
-        return '<script type="text/javascript" src="' . self::JS_LIB_URL . '"></script>';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getScript(): string
-    {
-        return $this->xConfigManager->getOption('js.app.export', false) ? '' :
-            $this->xTemplateEngine->render('jaxon::flot::flot.js');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getJsCode(): ?JsCode
-    {
-        if(!$this->xConfigManager->getOption('js.app.export', false))
-        {
-            return null;
-        }
-
-        $xJsCode = new JsCode();
-        $xJsCode->aFiles[] = self::JS_SCRIPT_URL;
-        return $xJsCode;
+        $sCode = $this->xTemplateEngine->render('jaxon::flot::flot.js');
+        return new JsCode($sCode, [self::JS_LIB_URL]);
     }
 
     /**
@@ -113,6 +83,7 @@ class FlotPlugin extends AbstractResponsePlugin
      */
     public function draw(Plot $xPlot): void
     {
+        // The "flot.plot" command is registered by the plugin script.
         $this->addCommand('flot.plot', ['plot' => $xPlot]);
     }
 }
