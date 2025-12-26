@@ -90,7 +90,7 @@
             "jaxon-attributes/src/register.php",
             "jaxon-dialogs/src/register.php",
             "jaxon-flot/src/register.php",
-            "jaxon-storage/src/register.php",
+            "jaxon-storage/src/helpers.php",
             "jaxon-upload/src/register.php"
         ]
     },
