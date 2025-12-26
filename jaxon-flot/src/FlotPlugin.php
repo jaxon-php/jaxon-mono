@@ -61,7 +61,7 @@ class FlotPlugin extends AbstractResponsePlugin implements JsCodeGeneratorInterf
     public function getJsCode(): JsCode
     {
         $sCode = $this->xTemplateEngine->render('jaxon::flot::flot.js');
-        return new JsCode($sCode, [self::JS_LIB_URL]);
+        return new JsCode(sCode: $sCode, aUrls: [self::JS_LIB_URL]);
     }
 
     /**
