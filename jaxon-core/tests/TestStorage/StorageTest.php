@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Storage\Tests\TestStorage;
+namespace Jaxon\Tests\TestStorage;
 
 use Jaxon\Storage\StorageException;
 use Jaxon\Storage\StorageManager;
@@ -13,7 +13,7 @@ use function Jaxon\Storage\storage;
 use function dirname;
 use function file_get_contents;
 
-class StorageWithJaxonTest extends TestCase
+class StorageTest extends TestCase
 {
     /**
      * @var StorageManager

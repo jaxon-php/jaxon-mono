@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use function dirname;
 use function file_get_contents;
 
-class StorageWithoutJaxonTest extends TestCase
+class StorageTest extends TestCase
 {
     /**
      * @var StorageManager
