@@ -1,0 +1,36 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+    },
+
+    "routes": [
+        {
+            "match": {
+                "uri": ["/js/dialogs/*"]
+            },
+            "action": {
+                "share": "/var/www/jaxon-dialogs/js$uri"
+            }
+        },
+        {
+            "match": {
+                "uri": ["/*"]
+            },
+            "action": {
+                "share": "/var/www/jaxon-examples/public$uri",
+                "fallback": {
+                    "pass": "applications/jaxon"
+                }
+            }
+        }
+    ],
+
+    "applications": {
+        "jaxon": {
+            "type": "php",
+            "root": "/var/www/jaxon-examples/public/"
+        }
+    }
+}

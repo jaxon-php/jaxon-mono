@@ -1,0 +1,29 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+    },
+
+    "routes": [
+        {
+            "match": {
+                "uri": "/*"
+            },
+            "action": {
+                "share": "/var/www/public$uri",
+                "fallback": {
+                    "pass": "applications/jaxon"
+                }
+            }
+        }
+    ],
+
+    "applications": {
+        "jaxon": {
+            "type": "php",
+            "root": "/var/www/public/",
+            "script": "index.php"
+        }
+    }
+}

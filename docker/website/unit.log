@@ -1,0 +1,144 @@
+2026/01/29 10:45:32 [info] 12#12 discovery started
+2026/01/29 10:45:32 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/01/29 10:45:32 [info] 10#10 controller started
+2026/01/29 10:45:32 [info] 15#15 router started
+2026/01/29 10:45:32 [notice] 10#10 process 12 exited with code 0
+2026/01/29 10:45:32 [alert] 10#10 cannot set user "jaxon" for app "jaxon": missing capabilities
+2026/01/29 10:45:32 [warn] 15#15 failed to start prototype "jaxon"
+2026/01/29 10:45:32 [alert] 15#15 failed to apply new conf
+2026/01/29 10:47:26 [info] 12#12 discovery started
+2026/01/29 10:47:26 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/01/29 10:47:26 [info] 10#10 controller started
+2026/01/29 10:47:26 [info] 15#15 router started
+2026/01/29 10:47:26 [notice] 10#10 process 12 exited with code 0
+2026/01/29 10:47:26 [info] 22#22 "jaxon" prototype started
+2026/01/29 10:47:26 [info] 23#23 "jaxon" application started
+2026/01/29 10:47:26 [alert] 22#22 sendmsg(16, -1, -1, 1) failed (104: Connection reset by peer)
+2026/01/29 10:47:26 [notice] 10#10 process 14 exited with code 0
+2026/01/29 10:47:26 [notice] 10#10 process 15 exited with code 0
+2026/01/29 10:47:26 [notice] 22#22 app process 23 exited with code 0
+2026/01/29 10:47:26 [alert] 22#22 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/01/29 10:47:26 [notice] 10#10 process 22 exited with code 0
+2026/01/29 10:47:27 [info] 54#54 discovery started
+2026/01/29 10:47:27 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/01/29 10:47:27 [info] 1#1 controller started
+2026/01/29 10:47:27 [info] 56#56 router started
+2026/01/29 10:47:27 [notice] 1#1 process 54 exited with code 0
+2026/01/29 10:47:27 [info] 57#57 "jaxon" prototype started
+2026/01/29 10:47:27 [info] 58#58 "jaxon" application started
+2026/01/29 21:53:20 [alert] 57#57 sendmsg(16, -1, -1, 1) failed (104: Connection reset by peer)
+2026/01/29 21:53:20 [notice] 1#1 process 55 exited with code 0
+2026/01/29 21:53:20 [notice] 1#1 process 56 exited with code 0
+2026/01/29 21:53:20 [notice] 57#57 app process 58 exited with code 0
+2026/01/29 21:53:20 [alert] 57#57 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/01/29 21:53:20 [notice] 1#1 process 57 exited with code 0
+2026/01/29 21:53:33 [info] 12#12 discovery started
+2026/01/29 21:53:33 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/01/29 21:53:33 [info] 10#10 controller started
+2026/01/29 21:53:33 [notice] 10#10 process 12 exited with code 0
+2026/01/29 21:53:33 [info] 15#15 router started
+2026/01/29 21:53:33 [info] 22#22 "jaxon" prototype started
+2026/01/29 21:53:33 [info] 23#23 "jaxon" application started
+2026/01/29 21:53:33 [notice] 10#10 process 14 exited with code 0
+2026/01/29 21:53:33 [notice] 10#10 process 15 exited with code 0
+2026/01/29 21:53:33 [notice] 22#22 app process 23 exited with code 0
+2026/01/29 21:53:33 [alert] 22#22 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/01/29 21:53:33 [notice] 10#10 process 22 exited with code 0
+2026/01/29 21:53:34 [info] 54#54 discovery started
+2026/01/29 21:53:34 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/01/29 21:53:34 [info] 1#1 controller started
+2026/01/29 21:53:34 [notice] 1#1 process 54 exited with code 0
+2026/01/29 21:53:34 [info] 56#56 router started
+2026/01/29 21:53:34 [info] 57#57 "jaxon" prototype started
+2026/01/29 21:53:34 [info] 58#58 "jaxon" application started
+2026/02/12 13:38:52 [info] 12#12 discovery started
+2026/02/12 13:38:52 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/12 13:38:52 [info] 10#10 controller started
+2026/02/12 13:38:52 [notice] 10#10 process 12 exited with code 0
+2026/02/12 13:38:52 [info] 15#15 router started
+2026/02/12 13:38:52 [info] 22#22 "jaxon" prototype started
+2026/02/12 13:38:52 [info] 23#23 "jaxon" application started
+2026/02/12 13:38:52 [notice] 10#10 process 14 exited with code 0
+2026/02/12 13:38:52 [notice] 10#10 process 15 exited with code 0
+2026/02/12 13:38:52 [notice] 22#22 app process 23 exited with code 0
+2026/02/12 13:38:52 [alert] 22#22 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/12 13:38:52 [notice] 10#10 process 22 exited with code 0
+2026/02/12 13:38:53 [info] 54#54 discovery started
+2026/02/12 13:38:53 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/12 13:38:53 [info] 1#1 controller started
+2026/02/12 13:38:53 [info] 56#56 router started
+2026/02/12 13:38:53 [notice] 1#1 process 54 exited with code 0
+2026/02/12 13:38:53 [info] 57#57 "jaxon" prototype started
+2026/02/12 13:38:53 [info] 58#58 "jaxon" application started
+2026/02/13 17:58:56 [notice] 1#1 process 55 exited with code 0
+2026/02/13 17:58:56 [notice] 1#1 process 56 exited with code 0
+2026/02/13 17:58:56 [notice] 57#57 app process 58 exited with code 0
+2026/02/13 17:58:56 [alert] 57#57 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/13 17:58:56 [notice] 1#1 process 57 exited with code 0
+2026/02/18 12:07:20 [info] 12#12 discovery started
+2026/02/18 12:07:20 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/18 12:07:20 [info] 10#10 controller started
+2026/02/18 12:07:20 [notice] 10#10 process 12 exited with code 0
+2026/02/18 12:07:20 [info] 15#15 router started
+2026/02/18 12:07:20 [info] 16#16 "jaxon" prototype started
+2026/02/18 12:07:20 [info] 17#17 "jaxon" application started
+2026/02/18 12:07:20 [notice] 10#10 process 14 exited with code 0
+2026/02/18 12:07:20 [notice] 16#16 app process 17 exited with code 0
+2026/02/18 12:07:20 [alert] 16#16 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/18 12:07:20 [notice] 10#10 process 15 exited with code 0
+2026/02/18 12:07:20 [notice] 10#10 process 16 exited with code 0
+2026/02/18 12:07:21 [info] 54#54 discovery started
+2026/02/18 12:07:21 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/18 12:07:21 [info] 1#1 controller started
+2026/02/18 12:07:21 [info] 56#56 router started
+2026/02/18 12:07:21 [notice] 1#1 process 54 exited with code 0
+2026/02/18 12:07:21 [info] 57#57 "jaxon" prototype started
+2026/02/18 12:07:21 [info] 58#58 "jaxon" application started
+2026/02/21 09:42:52 [info] 11#11 discovery started
+2026/02/21 09:42:52 [notice] 11#11 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/21 09:42:52 [info] 10#10 controller started
+2026/02/21 09:42:52 [notice] 10#10 process 11 exited with code 0
+2026/02/21 09:42:52 [info] 15#15 router started
+2026/02/21 09:42:52 [info] 16#16 "jaxon" prototype started
+2026/02/21 09:42:52 [info] 17#17 "jaxon" application started
+2026/02/21 09:42:52 [notice] 10#10 process 14 exited with code 0
+2026/02/21 09:42:52 [notice] 10#10 process 15 exited with code 0
+2026/02/21 09:42:52 [notice] 16#16 app process 17 exited with code 0
+2026/02/21 09:42:52 [alert] 16#16 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/21 09:42:52 [notice] 10#10 process 16 exited with code 0
+2026/02/21 09:42:53 [info] 54#54 discovery started
+2026/02/21 09:42:53 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/21 09:42:53 [info] 1#1 controller started
+2026/02/21 09:42:53 [notice] 1#1 process 54 exited with code 0
+2026/02/21 09:42:53 [info] 56#56 router started
+2026/02/21 09:42:53 [info] 57#57 "jaxon" prototype started
+2026/02/21 09:42:53 [info] 58#58 "jaxon" application started
+2026/02/21 10:44:28 [notice] 1#1 process 55 exited with code 0
+2026/02/21 10:44:28 [notice] 1#1 process 56 exited with code 0
+2026/02/21 10:44:28 [notice] 57#57 app process 58 exited with code 0
+2026/02/21 10:44:28 [alert] 57#57 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/21 10:44:28 [notice] 1#1 process 57 exited with code 0
+2026/02/23 13:19:31 [info] 12#12 discovery started
+2026/02/23 13:19:31 [notice] 12#12 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/23 13:19:31 [info] 10#10 controller started
+2026/02/23 13:19:31 [info] 15#15 router started
+2026/02/23 13:19:31 [notice] 10#10 process 12 exited with code 0
+2026/02/23 13:19:31 [info] 16#16 "jaxon" prototype started
+2026/02/23 13:19:31 [info] 17#17 "jaxon" application started
+2026/02/23 13:19:31 [notice] 10#10 process 14 exited with code 0
+2026/02/23 13:19:31 [notice] 10#10 process 15 exited with code 0
+2026/02/23 13:19:31 [notice] 16#16 app process 17 exited with code 0
+2026/02/23 13:19:31 [alert] 16#16 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/23 13:19:31 [notice] 10#10 process 16 exited with code 0
+2026/02/23 13:19:32 [info] 54#54 discovery started
+2026/02/23 13:19:32 [notice] 54#54 module: php 8.4.17 "/usr/local/lib/unit/modules/php.unit.so"
+2026/02/23 13:19:32 [info] 1#1 controller started
+2026/02/23 13:19:32 [notice] 1#1 process 54 exited with code 0
+2026/02/23 13:19:32 [info] 56#56 router started
+2026/02/23 13:19:32 [info] 57#57 "jaxon" prototype started
+2026/02/23 13:19:32 [info] 58#58 "jaxon" application started
+2026/02/23 16:09:30 [notice] 1#1 process 55 exited with code 0
+2026/02/23 16:09:30 [notice] 1#1 process 56 exited with code 0
+2026/02/23 16:09:30 [notice] 57#57 app process 58 exited with code 0
+2026/02/23 16:09:30 [alert] 57#57 sendmsg(13, -1, -1, 2) failed (32: Broken pipe)
+2026/02/23 16:09:30 [notice] 1#1 process 57 exited with code 0

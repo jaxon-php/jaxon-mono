@@ -1,0 +1,45 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+    },
+
+    "routes": [
+        {
+            "match": {
+                "uri": "/assets/*"
+            },
+            "action": {
+                "share": "/var/www$uri"
+            }
+        },
+        {
+            "match": {
+                "uri": "/images/*"
+            },
+            "action": {
+                "share": "/var/www$uri"
+            }
+        },
+        {
+            "match": {
+                "uri": "!/not-index.php"
+            },
+            "action": {
+                "share": "/var/www/public$uri",
+                "fallback": {
+                    "pass": "applications/jaxon"
+                }
+            }
+        }
+    ],
+
+    "applications": {
+        "jaxon": {
+            "type": "php",
+            "root": "/var/www/public/",
+            "script": "index.php"
+        }
+    }
+}
