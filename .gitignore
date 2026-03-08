@@ -5,3 +5,4 @@ composer.lock
 .idea
 .phpunit.result.cache
 .monorepo-split-cache/
+jaxon-examples/pages/upload/files/
