@@ -51,7 +51,7 @@
     },
     "require-dev": {
         "contao/monorepo-tools": "^0.2.0",
-        "keradus/psr4autoloader": "dev-master",
+        "keradus/psr4autoloader": "^2.0",
         "league/flysystem-memory": "^3.0|^2.2",
         "monolog/monolog": "^3.0",
         "php-coveralls/php-coveralls": "^2.5",

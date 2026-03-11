@@ -12,7 +12,7 @@ RUN set -xe && \
   apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
 
-RUN install-php-extensions gmp intl sockets phar gd mbstring redis
+RUN install-php-extensions gmp intl sockets phar gd mbstring redis yaml
 
 # Configure Nginx Unit
 COPY website/config/unit.json /docker-entrypoint.d/config.json
