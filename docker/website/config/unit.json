@@ -16,17 +16,6 @@
         },
         {
             "match": {
-                "uri": "/examples/*"
-            },
-            "action": {
-                "share": "/var/www/examples/public$uri",
-                "fallback": {
-                    "pass": "applications/examples"
-                }
-            }
-        },
-        {
-            "match": {
                 "uri": ["/assets/*", "/images/*", "/user/plugins/*"]
             },
             "action": {
