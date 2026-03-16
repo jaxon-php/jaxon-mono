@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Series.php - Contains data to be printed in a graph.
+ * Series.php
+ *
+ * Contains data to be printed in a graph.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,8 +15,8 @@
 namespace Jaxon\Flot\Data;
 
 use JsonSerializable;
-use stdClass;
 
+use function array_filter;
 use function count;
 
 class Series implements JsonSerializable
@@ -24,127 +26,114 @@ class Series implements JsonSerializable
      *
      * @var array
      */
-    protected $aPoints;
+    protected $aPoints = [];
 
     /**
      * The points values
      *
      * @var array
      */
-    protected $aValues;
+    protected $aValues = [];
 
     /**
      * The points labels
      *
      * @var array
      */
-    protected $aLabels;
-
-    /**
-     * The constructor.
-     */
-    public function __construct()
-    {
-        $this->aPoints = [];
-        $this->aValues = ['data' => null, 'func' => null];
-        $this->aLabels = ['data' => null, 'func' => null];
-    }
+    protected $aLabels = [];
 
     /**
      * Add a point to the series.
      *
-     * @param integer       $iXaxis                 The point on the X axis
-     * @param string        $sLabel                 The value on the graph
+     * @param float $iXaxis The point on the X axis
+     * @param float|string $xValue The point value
+     * @param string $sLabel The point label
      *
      * @return static
      */
-    public function point($iXaxis, $xValue, $sLabel = ''): static
+    public function point(float $iXaxis, float|string $xValue, string $sLabel = ''): static
     {
         $this->aPoints[] = $iXaxis;
-        if(!$this->aValues['data'])
+        if(!isset($this->aValues['data']))
         {
             $this->aValues['data'] = [];
         }
         $this->aValues['data'][$iXaxis] = $xValue;
-        if(($sLabel))
+        if($sLabel !== '')
         {
-            if(!$this->aLabels['data'])
+            if(!isset($this->aLabels['data']))
             {
                 $this->aLabels['data'] = [];
             }
             $this->aLabels['data'][$iXaxis] = $sLabel;
         }
+
         return $this;
     }
 
     /**
      * Add an array of points to the series.
      *
-     * @param array         $aPoints                The points to be added
+     * @param array $aPoints
      *
      * @return int
      */
-    public function points($aPoints): int
+    public function points(array $aPoints): int
     {
+        $aPoints = array_filter($aPoints, fn(array $aPoint) =>
+            count($aPoint) === 2 || count($aPoint) === 3);
         foreach($aPoints as $aPoint)
         {
-            if(count($aPoint) === 2)
-            {
-                $this->point($aPoint[0], $aPoint[1]);
-            }
-            else if(count($aPoint) === 3)
-            {
-                $this->point($aPoint[0], $aPoint[1], $aPoint[2]);
-            }
+            $this->point($aPoint[0], $aPoint[1], $aPoint[2] ?? '');
         }
+
         return count($this->aPoints);
     }
 
     /**
      * Add points to the graph series using an expression.
      *
-     * @param numeric       $iStart                 The first point
-     * @param numeric       $iEnd                   The last point
-     * @param numeric       $iStep                  The step between next points
-     * @param string        $sJsValue               The javascript function to compute points values
-     * @param string        $sJsLabel               The javascript function to make points labels
+     * @param float $iStart The first point
+     * @param float $iEnd The last point
+     * @param float $iStep The step between next points
+     * @param string $sJsValue The javascript function to get points values
+     * @param string $sJsLabel The javascript function to get points labels
      *
      * The first three parameters are used in a for loop.
-     * The x variable is used in the $sJsValue javascript function to represent each point.
-     * The series, x and y variables are used in the $sJsLabel javascript function to
-     * represent resp. the series label, the xaxis and graph values of the point.
+     * The first javascript function takes the x value as parameter, and returns the corresponding point value.
+     * The second javascript function takes the x and y values and the series label as parameters,
+     * and returns the corresponding point label.
      *
      * @return int
      */
-    public function expr($iStart, $iEnd, $iStep, $sJsValue, $sJsLabel = ''): int
+    public function expr(float $iStart, float $iEnd, float $iStep, string $sJsValue, string $sJsLabel = ''): int
     {
         for($x = $iStart; $x < $iEnd; $x += $iStep)
         {
             $this->aPoints[] = $x;
         }
         $this->aValues['func'] = $sJsValue;
-        if(($sJsLabel))
+        if($sJsLabel !== '')
         {
             $this->aLabels['func'] = $sJsLabel;
         }
+
         return count($this->aPoints);
     }
 
     /**
-     * Convert this object to another object more suitable for json format.
+     * Convert this object to array.
      *
      * This is a method of the JsonSerializable interface.
      *
-     * @return stdClass
+     * @return array
      */
-    public function jsonSerialize(): stdClass
+    public function jsonSerialize(): array
     {
-        // Surround the js var with a special marker that will later be removed
-        // Note: does not work when returning an array
-        $json = new stdClass;
-        $json->points = $this->aPoints;
-        $json->values = $this->aValues;
-        $json->labels = $this->aLabels;
-        return $json;
+        return [
+            'points' => $this->aPoints,
+            'values' => $this->aValues,
+            'labels' => $this->aLabels,
+        ];
     }
 }

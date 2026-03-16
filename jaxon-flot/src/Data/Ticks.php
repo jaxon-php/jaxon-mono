@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Ticks.php - Contains data to be printed on the plot axis.
+ * Ticks.php
+ *
+ * Contains data to be printed on the plot axis.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,114 +15,103 @@
 namespace Jaxon\Flot\Data;
 
 use JsonSerializable;
-use stdClass;
 
+use function array_filter;
 use function count;
 
 class Ticks implements JsonSerializable
 {
-
     /**
      * The points
      *
      * @var array
      */
-    protected $aPoints;
+    protected $aPoints = [];
 
     /**
      * The points labels
      *
      * @var array
      */
-    protected $aLabels;
-
-    /**
-     * The constructor.
-     */
-    public function __construct()
-    {
-        $this->aPoints = [];
-        $this->aLabels = ['data' => null, 'func' => null];
-    }
+    protected $aLabels = [];
 
     /**
      * Add a point to the ticks.
      *
-     * @param integer       $iXaxis                 The point on the X axis
-     * @param string        $sLabel                 The value on the graph
+     * @param float $iXaxis The point on the X axis
+     * @param string $sLabel The point label on the X axis
      *
      * @return static
      */
-    public function point($iXaxis, $sLabel): static
+    public function point(float $iXaxis, string $sLabel): static
     {
         $this->aPoints[] = $iXaxis;
-        if(!$this->aLabels['data'])
+        if(!isset($this->aLabels['data']))
         {
             $this->aLabels['data'] = [];
         }
-        $this->aLabels['data']["$iXaxis"] = $sLabel;
+        $this->aLabels['data'][$iXaxis] = $sLabel;
+
         return $this;
     }
 
     /**
      * Add an array of points to the ticks.
      *
-     * @param array         $aPoints                The points to be added
+     * @param array $aPoints The points to be added
      *
      * @return int
      */
-    public function points($aPoints): int
+    public function points(array $aPoints): int
     {
+        $aPoints = array_filter($aPoints, fn(array $aPoint) => count($aPoint) === 2);
         foreach($aPoints as $aPoint)
         {
-            if(count($aPoint) == 2)
-            {
-                $this->point($aPoint[0], $aPoint[1]);
-            }
+            $this->point($aPoint[0], $aPoint[1]);
         }
+
         return count($this->aPoints);
     }
 
     /**
      * Add points to the ticks using an expression.
      *
-     * @param numeric       $iStart                 The first point
-     * @param numeric       $iEnd                   The last point
-     * @param numeric       $iStep                  The step between next points
-     * @param string        $sJsLabel               The javascript code to make points labels
+     * @param float $iStart The first point
+     * @param float $iEnd The last point
+     * @param float $iStep The step between next points
+     * @param string $sJsLabel The javascript function to get points labels
      *
      * The first three parameters are used in a for loop.
-     * The x variable is used in the javascript code to represent each point.
+     * The javascript function takes the x value as parameter, and returns the corresponding point label.
      *
      * @return int
      */
-    public function expr($iStart, $iEnd, $iStep, $sJsLabel): int
+    public function expr(float $iStart, float $iEnd, float $iStep, string $sJsLabel = ''): int
     {
         for($x = $iStart; $x < $iEnd; $x += $iStep)
         {
             $this->aPoints[] = $x;
         }
-        if(($sJsLabel))
+        if($sJsLabel !== '')
         {
             $this->aLabels['func'] = $sJsLabel;
         }
+
         return count($this->aPoints);
     }
 
     /**
-     * Convert this object to another object more suitable for json format.
+     * Convert this object to array.
      *
      * This is a method of the JsonSerializable interface.
      *
-     * @return stdClass
+     * @return array
      */
-    public function jsonSerialize(): stdClass
+    public function jsonSerialize(): array
     {
-        // Surround the js var with a special marker that will later be removed
-        // Note: does not work when returning an array
-        $json = new stdClass;
-        $json->points = $this->aPoints;
-        $json->labels = $this->aLabels;
-        return $json;
+        return [
+            'points' => $this->aPoints,
+            'labels' => $this->aLabels,
+        ];
     }
 }
