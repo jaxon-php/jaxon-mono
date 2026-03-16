@@ -76,9 +76,9 @@ class Series implements JsonSerializable
      *
      * @param array $aPoints
      *
-     * @return int
+     * @return void
      */
-    public function points(array $aPoints): int
+    public function points(array $aPoints): void
     {
         $aPoints = array_filter($aPoints, fn(array $aPoint) =>
             count($aPoint) === 2 || count($aPoint) === 3);
@@ -86,39 +86,38 @@ class Series implements JsonSerializable
         {
             $this->point($aPoint[0], $aPoint[1], $aPoint[2] ?? '');
         }
-
-        return count($this->aPoints);
     }
 
     /**
-     * Add points to the graph series using an expression.
+     * Add points to the graph series using a loop expression.
      *
      * @param float $iStart The first point
      * @param float $iEnd The last point
-     * @param float $iStep The step between next points
+     * @param float|string $xStep The step between next points
      * @param string $sJsValue The javascript function to get points values
      * @param string $sJsLabel The javascript function to get points labels
      *
      * The first three parameters are used in a for loop.
+     * The step can be either a float value or a javascript function.
      * The first javascript function takes the x value as parameter, and returns the corresponding point value.
      * The second javascript function takes the x and y values and the series label as parameters,
      * and returns the corresponding point label.
      *
-     * @return int
+     * @return void
      */
-    public function expr(float $iStart, float $iEnd, float $iStep, string $sJsValue, string $sJsLabel = ''): int
+    public function loop(float $iStart, float $iEnd, float|string $xStep,
+        string $sJsValue, string $sJsLabel = ''): void
     {
-        for($x = $iStart; $x < $iEnd; $x += $iStep)
-        {
-            $this->aPoints[] = $x;
-        }
+        $this->aPoints = [
+            'start' => $iStart,
+            'end' => $iEnd,
+            'step' => $xStep,
+        ];
         $this->aValues['func'] = $sJsValue;
         if($sJsLabel !== '')
         {
             $this->aLabels['func'] = $sJsLabel;
         }
-
-        return count($this->aPoints);
     }
 
     /**
@@ -130,10 +129,13 @@ class Series implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        return count($this->aLabels) > 0 ? [
             'points' => $this->aPoints,
             'values' => $this->aValues,
             'labels' => $this->aLabels,
+        ] : [
+            'points' => $this->aPoints,
+            'values' => $this->aValues,
         ];
     }
 }

@@ -60,44 +60,43 @@ class Ticks implements JsonSerializable
      *
      * @param array $aPoints The points to be added
      *
-     * @return int
+     * @return void
      */
-    public function points(array $aPoints): int
+    public function points(array $aPoints): void
     {
-        $aPoints = array_filter($aPoints, fn(array $aPoint) => count($aPoint) === 2);
+        $aPoints = array_filter($aPoints, fn(array $aPoint) =>
+            count($aPoint) === 1 || count($aPoint) === 2);
         foreach($aPoints as $aPoint)
         {
-            $this->point($aPoint[0], $aPoint[1]);
+            $this->point($aPoint[0], $aPoint[1] ?? '');
         }
-
-        return count($this->aPoints);
     }
 
     /**
-     * Add points to the ticks using an expression.
+     * Add points to the ticks using a loop expression.
      *
      * @param float $iStart The first point
      * @param float $iEnd The last point
-     * @param float $iStep The step between next points
+     * @param float|string $xStep The step between next points
      * @param string $sJsLabel The javascript function to get points labels
      *
      * The first three parameters are used in a for loop.
+     * The step can be either a float value or a javascript function.
      * The javascript function takes the x value as parameter, and returns the corresponding point label.
      *
-     * @return int
+     * @return void
      */
-    public function expr(float $iStart, float $iEnd, float $iStep, string $sJsLabel = ''): int
+    public function loop(float $iStart, float $iEnd, float|string $xStep, string $sJsLabel = '')
     {
-        for($x = $iStart; $x < $iEnd; $x += $iStep)
-        {
-            $this->aPoints[] = $x;
-        }
+        $this->aPoints = [
+            'start' => $iStart,
+            'end' => $iEnd,
+            'step' => $xStep,
+        ];
         if($sJsLabel !== '')
         {
             $this->aLabels['func'] = $sJsLabel;
         }
-
-        return count($this->aPoints);
     }
 
     /**
@@ -109,9 +108,11 @@ class Ticks implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        return count($this->aLabels) > 0 ? [
             'points' => $this->aPoints,
             'labels' => $this->aLabels,
+        ] : [
+            'points' => $this->aPoints,
         ];
     }
 }

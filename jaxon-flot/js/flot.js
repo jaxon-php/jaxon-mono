@@ -52,24 +52,59 @@ jaxon.dom.ready(() => {
         });
         observer.observe(document.body, { subtree: true, childList: true });
 
-        const dom = jaxon.utils.dom;
-        const makePoints = (points, { data = null, func = null }) => {
+        const { dom, types } = jaxon.utils;
+
+        const getPoints = (points) => {
+            if(types.isArray(points))
+            {
+                return points;
+            }
+            if(!types.isObject(points))
+            {
+                return [];
+            }
+
+            const { start, end, step } = points;
+            if(!types.isString(step))
+            {
+                const vals = [];
+                for(let val = start; val < end; val += step)
+                {
+                    vals.push(val);
+                }
+                return vals;
+            }
+
+            const func = dom.findFunction(step);
+            if(!func)
+            {
+                return [];
+            }
+            const vals = [];
+            for(let val = start; val < end; val += func(val))
+            {
+                vals.push(val);
+            }
+            return vals;
+        };
+
+        const getPointValues = (points, { data = null, func = null }) => {
             if(data !== null)
             {
-                return points.map(point => [point, data[point]]);
+                return getPoints(points).map(point => [point, data[point]]);
             }
             if(func !== null)
             {
                 func = dom.findFunction(func);
-                return points.map(point => [point, func(point)]);
+                return getPoints(points).map(point => [point, func(point)]);
             }
             return [];
         };
 
         const tooltips = {};
-        const makeGraph = ({ points, values, labels, options }) => {
+        const makeGraph = ({ points, values, labels = {}, options }) => {
             const graph = options || {};
-            graph.data = makePoints(points, values);
+            graph.data = getPointValues(points, values);
             const { label } = options;
             const { data = null, func = null } = labels;
             if(label !== undefined && (data !== null || func !== null))
@@ -83,8 +118,8 @@ jaxon.dom.ready(() => {
         };
 
         const makeTicks = () => {
-            const { points, labels } = xaxis;
-            return points.length > 0 ? makePoints(points, labels) : [];
+            const { points, labels = {} } = xaxis;
+            return points.length > 0 ? getPointValues(points, labels) : [];
         };
 
         const makeTooltipLabel = ({ series: { label }, datapoint: [x, y] }) => {
