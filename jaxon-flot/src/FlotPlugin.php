@@ -13,12 +13,14 @@
 namespace Jaxon\Flot;
 
 use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Plugin\CssCode;
+use Jaxon\Plugin\CssCodeGeneratorInterface;
 use Jaxon\Plugin\JsCode;
 use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Flot\Plot\Plot;
 
-class FlotPlugin extends AbstractResponsePlugin implements JsCodeGeneratorInterface
+class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInterface, JsCodeGeneratorInterface
 {
     /**
      * @var string The plugin name
@@ -52,7 +54,16 @@ class FlotPlugin extends AbstractResponsePlugin implements JsCodeGeneratorInterf
     public function getHash(): string
     {
         // The version number is used as hash
-        return '5.0.0';
+        return '5.0.3';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCssCode(): CssCode
+    {
+        $sCode = $this->xTemplateEngine->render('jaxon::flot::flot.css');
+        return new CssCode(sCode: $sCode);
     }
 
     /**

@@ -3,72 +3,109 @@
  */
 
 /** global: jaxon */
-jaxon.dom.ready(function() {
-    $("#flot-tooltip").remove();
-    $('<div id="flot-tooltip"></div>').css({
-        position: "absolute",
-        display: "none",
-        border: "1px solid #fdd",
-        padding: "2px",
-        "background-color": "#fee",
-        opacity: 0.80
-    }).appendTo("body");
+jaxon.dom.ready(() => {
+    jaxon.register("flot.plot", ({
+        plot: {
+            selector,
+            graphs: inputs,
+            size: { width: cWidth = '', height: cHeight = '' },
+            xaxis,
+            // yaxis,
+            options = {},
+        }
+    }) => {
+        const container = $(`#${selector}`);
+        if(!container)
+        {
+            console.error(`Flot plugin: unable to find the DOM element with id ${selector}.`);
+            return;
+        }
 
-    jaxon.register("flot.plot", ({ plot: { selector, graphs, size, xaxis, yaxis, options = {} } }) => {
-        let showLabels = false;
-        const labels = {};
+        // A wrapper is added so the graph destruction can be detected using its removal.
+        // Set the wrapper size.
+        const width = cWidth !== '' ? cWidth : container.css('width');
+        const height = cHeight !== '' ? cHeight : container.css('height');
+        const wrapperId = `${selector}-wrapper`;
+        container.html(`<div id="${wrapperId}" style="width:${width}; height:${height};"></div>`);
+        const wrapper = $(`#${wrapperId}`);
+
+        // Create the DOM element for the tooltip.
+        const tooltipId = `${selector}-flot-tooltip`;
+        $(`#${tooltipId}`).remove();
+        $(`<div id="${tooltipId}" class="flot-tooltip"></div>`).appendTo("body");
+
+        // Use an observer to remove the tooltip when the graph is deleted.
+        const observer = new MutationObserver((mutations) => {
+            const target = wrapper.get(0); // The actual DOM element.
+            // check for removed target
+            mutations.forEach((mutation) => {
+                const removedNodes = Array.from(mutation.removedNodes);
+                // Directly removed.
+                const directMatch = removedNodes.indexOf(target) > -1;
+                // Removed through a removed parent.
+                const parentMatch = removedNodes.some(parent => parent.contains(target));
+                if(directMatch || parentMatch)
+                {
+                    $(`#${tooltipId}`).remove();
+                }
+            });
+        });
+        observer.observe(document.body, { subtree: true, childList: true });
+
         const dom = jaxon.utils.dom;
-        // Set container size
-        if(size.width !== "")
-        {
-            $(selector).css({width: size.width});
-        }
-        if(size.height !== "")
-        {
-            $(selector).css({height: size.height});
-        }
+        const makePoints = (points, { data = null, func = null }) => {
+            if(data !== null)
+            {
+                return points.map(point => [point, data[point]]);
+            }
+            if(func !== null)
+            {
+                func = dom.findFunction(func);
+                return points.map(point => [point, func(point)]);
+            }
+            return [];
+        };
 
-        const _graphs = graphs.map(g => {
-            const graph = g.options || {};
-            graph.data = [];
-            if(g.values.data !== null)
-            {
-                graph.data = g.points.map(x => [x, g.values.data[x]]);
-            }
-            else if(g.values.func !== null)
-            {
-                g.values.func = dom.findFunction(g.values.func);
-                graph.data = g.points.map(x => [x, g.values.func(x)]);
-            }
-            if(g.labels.func !== null)
-            {
-                g.labels.func = dom.findFunction(g.labels.func);
-            }
-            if(g.options.label !== undefined && (g.labels.data !== null || g.labels.func !== null))
+        const tooltips = {};
+        const makeGraph = ({ points, values, labels, options }) => {
+            const graph = options || {};
+            graph.data = makePoints(points, values);
+            const { label } = options;
+            const { data = null, func = null } = labels;
+            if(label !== undefined && (data !== null || func !== null))
             {
                 showLabels = true;
-                labels[g.options.label] = g.labels;
+                tooltips[label] = data !== null ? { data } : {
+                    func: dom.findFunction(func),
+                };
             }
             return graph;
-        });
+        };
 
-        // Setting ticks
-        if(xaxis.points.length > 0)
+        const makeTicks = () => {
+            const { points, labels } = xaxis;
+            return points.length > 0 ? makePoints(points, labels) : [];
+        };
+
+        const makeTooltipLabel = ({ series: { label }, datapoint: [x, y] }) => {
+            const { data = null, func = null } = tooltips[label];
+            if(data !== null && data[x] !== undefined)
+            {
+                return data[x];
+            }
+            if(func !== null)
+            {
+                return func(x, y, label);
+            }
+            return '';
+        };
+
+        let showLabels = false;
+        const graphs = inputs.map(graph => makeGraph(graph));
+        const ticks = makeTicks();
+        if(ticks.length > 0)
         {
-            let ticks = [];
-            if(xaxis.labels.data !== null)
-            {
-                ticks = xaxis.points.map(point => [point, xaxis.labels.data[point]]);
-            }
-            else if(xaxis.labels.func !== null)
-            {
-                xaxis.labels.func = dom.findFunction(xaxis.labels.func);
-                ticks = xaxis.points.map(point => [point, xaxis.labels.func(point)]);
-            }
-            if(ticks.length > 0)
-            {
-                options.xaxis = {ticks: ticks};
-            }
+            options.xaxis = { ticks };
         }
         /*if(yaxis.points.length > 0)
         {
@@ -76,42 +113,32 @@ jaxon.dom.ready(function() {
 
         if(showLabels)
         {
-            options.grid = {hoverable: true};
+            options.grid = { hoverable: true };
         }
-        $.plot(selector, _graphs, options);
+        $.plot(wrapper, graphs, options);
 
         // Labels
-        if(showLabels)
+        if(!showLabels)
         {
-            $(selector).bind("plothover", function (event, pos, item) {
-                if(!item)
-                {
-                    $("#flot-tooltip").hide();
-                    return;
-                }
-
-                const series = item.series.label;
-                const x = item.datapoint[0]; // item.datapoint[0].toFixed(2);
-                const y = item.datapoint[1]; // item.datapoint[1].toFixed(2);
-                let tooltip = "";
-                if(labels[series] !== undefined)
-                {
-                    const _labels = labels[series];
-                    if(_labels.data !== null && _labels.data[x] !== undefined)
-                    {
-                        tooltip = _labels.data[x];
-                    }
-                    else if(_labels.func !== null)
-                    {
-                        tooltip = _labels.func(series, x, y);
-                    }
-                }
-                if((tooltip))
-                {
-                    $("#flot-tooltip").html(tooltip).css({top: item.pageY+5, left: item.pageX+5}).fadeIn(200);
-                }
-            });
+            return true;
         }
+
+        wrapper.bind("plothover", function (event, pos, item) {
+            const tooltip = $(`#${tooltipId}`);
+            if(!item)
+            {
+                tooltip.hide();
+                return;
+            }
+
+            const tooltipLabel = makeTooltipLabel(item);
+            if(tooltipLabel !== '')
+            {
+                tooltip.html(tooltipLabel)
+                    .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                    .fadeIn(200);
+            }
+        });
         return true;
     });
 });
