@@ -2,7 +2,12 @@ Javascript charts for Jaxon with Flot
 =====================================
 
 Javascript charts for Jaxon with the Flot library.
-http://www.flotcharts.org
+https://www.flotcharts.org
+
+See the plugin in action with sample code.
+- https://www.jaxon-php.org/examples/advanced/flot.html
+- https://www.jaxon-php.org/examples/advanced/flot-types.html
+- https://www.jaxon-php.org/examples/advanced/flot-axes.html
 
 Installation
 ------------
