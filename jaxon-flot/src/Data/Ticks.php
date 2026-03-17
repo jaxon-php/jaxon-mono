@@ -36,6 +36,43 @@ class Ticks implements JsonSerializable
     protected $aLabels = [];
 
     /**
+     * The axis options
+     *
+     * @var array
+     */
+    protected $aOptions = [];
+
+    /**
+     * Add an option
+     *
+     * @param string $sName
+     * @param mixed $xValue
+     *
+     * @return static
+     */
+    public function option(string $sName, mixed $xValue): static
+    {
+        $this->aOptions[$sName] = $xValue;
+        return $this;
+    }
+
+    /**
+     * Add options
+     *
+     * @param array $aOptions
+     *
+     * @return static
+     */
+    public function options(array $aOptions): static
+    {
+        foreach($aOptions as $sName => $xValue)
+        {
+            $this->option($sName, $xValue);
+        }
+        return $this;
+    }
+
+    /**
      * Add a point to the ticks.
      *
      * @param float $iXaxis The point on the X axis
@@ -51,7 +88,6 @@ class Ticks implements JsonSerializable
             $this->aLabels['data'] = [];
         }
         $this->aLabels['data'][$iXaxis] = $sLabel;
-
         return $this;
     }
 
@@ -60,9 +96,9 @@ class Ticks implements JsonSerializable
      *
      * @param array $aPoints The points to be added
      *
-     * @return void
+     * @return static
      */
-    public function points(array $aPoints): void
+    public function points(array $aPoints): static
     {
         $aPoints = array_filter($aPoints, fn(array $aPoint) =>
             count($aPoint) === 1 || count($aPoint) === 2);
@@ -70,6 +106,7 @@ class Ticks implements JsonSerializable
         {
             $this->point($aPoint[0], $aPoint[1] ?? '');
         }
+        return $this;
     }
 
     /**
@@ -84,9 +121,9 @@ class Ticks implements JsonSerializable
      * The step can be either a float value or a javascript function.
      * The javascript function takes the x value as parameter, and returns the corresponding point label.
      *
-     * @return void
+     * @return static
      */
-    public function loop(float $iStart, float $iEnd, float|string $xStep, string $sJsLabel = '')
+    public function loop(float $iStart, float $iEnd, float|string $xStep, string $sJsLabel = ''): static
     {
         $this->aPoints = [
             'start' => $iStart,
@@ -97,6 +134,7 @@ class Ticks implements JsonSerializable
         {
             $this->aLabels['func'] = $sJsLabel;
         }
+        return $this;
     }
 
     /**
@@ -108,11 +146,19 @@ class Ticks implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return count($this->aLabels) > 0 ? [
-            'points' => $this->aPoints,
-            'labels' => $this->aLabels,
-        ] : [
-            'points' => $this->aPoints,
-        ];
+        $aJson = [];
+        if(count($this->aPoints) > 0)
+        {
+            $aJson['points'] = $this->aPoints;
+            if(count($this->aLabels) > 0)
+            {
+                $aJson['labels'] = $this->aLabels;
+            }
+        }
+        if(count($this->aOptions) > 0)
+        {
+            $aJson['options'] = $this->aOptions;
+        }
+        return $aJson;
     }
 }

@@ -10,7 +10,9 @@ jaxon.dom.ready(() => {
             graphs: inputs,
             size: { width: cWidth = '', height: cHeight = '' },
             xaxis,
-            // yaxis,
+            xaxes,
+            yaxis,
+            yaxes,
             options = {},
         }
     }) => {
@@ -101,6 +103,36 @@ jaxon.dom.ready(() => {
             return [];
         };
 
+        const makeAxis = (values) => {
+            const { points = [], labels = {}, options = {} } = values;
+            if(types.isString(options.tickFormatter))
+            {
+                options.tickFormatter = dom.findFunction(options.tickFormatter);
+            }
+            return points.length === 0 ? options : {
+                ...options,
+                ticks: getPointValues(points, labels),
+            };
+        };
+
+        if(types.isObject(xaxis))
+        {
+            options.xaxis = makeAxis(xaxis);
+        }
+        if(types.isArray(xaxes) && xaxes.length > 0)
+        {
+            options.xaxes = xaxes.map(values => makeAxis(values));
+        }
+        if(types.isObject(yaxis))
+        {
+            options.yaxis = makeAxis(yaxis);
+        }
+        if(types.isArray(yaxes) && yaxes.length > 0)
+        {
+            options.yaxes = yaxes.map(values => makeAxis(values));
+        }
+
+        let showLabels = false;
         const tooltips = {};
         const makeGraph = ({ points, values, labels = {}, options }) => {
             const graph = options || {};
@@ -117,11 +149,6 @@ jaxon.dom.ready(() => {
             return graph;
         };
 
-        const makeTicks = () => {
-            const { points, labels = {} } = xaxis;
-            return points.length > 0 ? getPointValues(points, labels) : [];
-        };
-
         const makeTooltipLabel = ({ series: { label }, datapoint: [x, y] }) => {
             const { data = null, func = null } = tooltips[label];
             if(data !== null && data[x] !== undefined)
@@ -135,20 +162,11 @@ jaxon.dom.ready(() => {
             return '';
         };
 
-        let showLabels = false;
         const graphs = inputs.map(graph => makeGraph(graph));
-        const ticks = makeTicks();
-        if(ticks.length > 0)
-        {
-            options.xaxis = { ticks };
-        }
-        /*if(yaxis.points.length > 0)
-        {
-        }*/
 
         if(showLabels)
         {
-            options.grid = { hoverable: true };
+            options.grid = { ...options.grid, hoverable: true };
         }
         $.plot(wrapper, graphs, options);
 

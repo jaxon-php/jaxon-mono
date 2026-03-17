@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Plot.php - A plot containing one or more graphs.
+ * Plot.php
+ *
+ * A plot containing one or more graphs.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,85 +14,81 @@
 
 namespace Jaxon\Flot\Plot;
 
-use JsonSerializable;
 use Jaxon\Flot\Data\Ticks;
+use JsonSerializable;
 
+use function count;
 use function trim;
 
 class Plot implements JsonSerializable
 {
-
     /**
      * The HTML element selector
      *
      * @var string
      */
-    protected $sSelector;
+    protected string $sSelector;
 
     /**
      * The graphs
      *
      * @var array
      */
-    protected $aGraphs = [];
+    protected array $aGraphs = [];
 
     /**
      * The plot options
      *
      * @var array
      */
-    protected $aOptions;
+    protected array $aOptions;
 
     /**
      * The plot width
      *
      * @var string
      */
-    protected $sWidth;
+    protected string $sWidth = '';
 
     /**
      * The plot height
      *
      * @var string
      */
-    protected $sHeight;
+    protected string $sHeight = '';
 
     /**
      * The plot X axis
      *
-     * @var Ticks
+     * @var array<Ticks>
      */
-    protected $xAxisX;
+    protected array $aAxisX = [];
 
     /**
      * The plot Y axis
      *
-     * @var Ticks
+     * @var array<Ticks>
      */
-    protected $xAxisY;
+    protected array $aAxisY = [];
 
     /**
      * The constructor.
      *
-     * @param string        $sSelector            The jQuery selector
+     * @param string $sSelector The jQuery selector
      */
-    public function __construct($sSelector)
+    public function __construct(string $sSelector)
     {
         $this->sSelector = trim($sSelector, " \t");
-        $this->xAxisX = new Ticks();
-        $this->xAxisY = new Ticks();
-        $this->sWidth = '';
-        $this->sHeight = '';
     }
 
     /**
      * Set the container width.
      *
-     * @param string        $sWidth                 The container width
+     * @param string $sWidth The container width
      *
      * @return static
      */
-    public function width($sWidth): static
+    public function width(string $sWidth): static
     {
         $this->sWidth = trim($sWidth, " \t");
         return $this;
@@ -99,11 +97,11 @@ class Plot implements JsonSerializable
     /**
      * Set the container height.
      *
-     * @param string        $sHeight                The container height
+     * @param string $sHeight The container height
      *
      * @return static
      */
-    public function height($sHeight): static
+    public function height(string $sHeight): static
     {
         $this->sHeight = trim($sHeight, " \t");
         return $this;
@@ -112,7 +110,7 @@ class Plot implements JsonSerializable
     /**
      * Add a new graph to the plot.
      *
-     * @param array         $aOptions               The graph options
+     * @param array $aOptions The graph options
      *
      * @return Graph
      */
@@ -130,7 +128,9 @@ class Plot implements JsonSerializable
      */
     public function xaxis(): Ticks
     {
-        return $this->xAxisX;
+        $xTicks = new Ticks();
+        $this->aAxisX[] = $xTicks;
+        return $xTicks;
     }
 
     /**
@@ -140,7 +140,9 @@ class Plot implements JsonSerializable
      */
     public function yaxis(): Ticks
     {
-        return $this->xAxisY;
+        $xTicks = new Ticks();
+        $this->aAxisY[] = $xTicks;
+        return $xTicks;
     }
 
     /**
@@ -152,12 +154,34 @@ class Plot implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        $aJson = [
             'selector' => $this->sSelector,
             'graphs' => $this->aGraphs,
-            'xaxis' => $this->xAxisX,
-            'yaxis' => $this->xAxisY,
             'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
         ];
+
+        // !!Note: The names when count > 1 are different. That's how The Flot library works.
+        switch(count($this->aAxisX))
+        {
+        case 0:
+            break;
+        case 1:
+            $aJson['xaxis'] = $this->aAxisX[0];
+            break;
+        default:
+            $aJson['xaxes'] = $this->aAxisX;
+        }
+        switch(count($this->aAxisY))
+        {
+        case 0:
+            break;
+        case 1:
+            $aJson['yaxis'] = $this->aAxisY[0];
+            break;
+        default:
+            $aJson['yaxes'] = $this->aAxisY;
+        }
+
+        return $aJson;
     }
 }

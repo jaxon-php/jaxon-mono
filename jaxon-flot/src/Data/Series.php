@@ -67,7 +67,6 @@ class Series implements JsonSerializable
             }
             $this->aLabels['data'][$iXaxis] = $sLabel;
         }
-
         return $this;
     }
 
@@ -76,9 +75,9 @@ class Series implements JsonSerializable
      *
      * @param array $aPoints
      *
-     * @return void
+     * @return static
      */
-    public function points(array $aPoints): void
+    public function points(array $aPoints): static
     {
         $aPoints = array_filter($aPoints, fn(array $aPoint) =>
             count($aPoint) === 2 || count($aPoint) === 3);
@@ -86,6 +85,7 @@ class Series implements JsonSerializable
         {
             $this->point($aPoint[0], $aPoint[1], $aPoint[2] ?? '');
         }
+        return $this;
     }
 
     /**
@@ -103,10 +103,10 @@ class Series implements JsonSerializable
      * The second javascript function takes the x and y values and the series label as parameters,
      * and returns the corresponding point label.
      *
-     * @return void
+     * @return static
      */
     public function loop(float $iStart, float $iEnd, float|string $xStep,
-        string $sJsValue, string $sJsLabel = ''): void
+        string $sJsValue, string $sJsLabel = ''): static
     {
         $this->aPoints = [
             'start' => $iStart,
@@ -118,6 +118,7 @@ class Series implements JsonSerializable
         {
             $this->aLabels['func'] = $sJsLabel;
         }
+        return $this;
     }
 
     /**
