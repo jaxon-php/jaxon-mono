@@ -32,16 +32,23 @@ class Plot implements JsonSerializable
     /**
      * The graphs
      *
-     * @var array
+     * @var array<Graph>
      */
     protected array $aGraphs = [];
+
+    /**
+     * The pie graph
+     *
+     * @var Pie|null
+     */
+    protected Pie|null $xPie = null;
 
     /**
      * The plot options
      *
      * @var array
      */
-    protected array $aOptions;
+    protected array $aOptions = [];
 
     /**
      * The plot width
@@ -82,6 +89,19 @@ class Plot implements JsonSerializable
     }
 
     /**
+     * Set the plot options.
+     *
+     * @param array $aOptions The plot options
+     *
+     * @return static
+     */
+    public function options(array $aOptions): static
+    {
+        $this->aOptions = [...$this->aOptions, ...$aOptions];
+        return $this;
+    }
+
+    /**
      * Set the container width.
      *
      * @param string $sWidth The container width
@@ -105,6 +125,16 @@ class Plot implements JsonSerializable
     {
         $this->sHeight = trim($sHeight, " \t");
         return $this;
+    }
+
+    /**
+     * Add a pie to the plot.
+     *
+     * @return Pie
+     */
+    public function pie(): Pie
+    {
+        return $this->xPie ??= new Pie();
     }
 
     /**
@@ -156,11 +186,18 @@ class Plot implements JsonSerializable
     {
         $aJson = [
             'selector' => $this->sSelector,
-            'graphs' => $this->aGraphs,
             'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
+            'options' => $this->aOptions,
         ];
 
-        // !!Note: The names when count > 1 are different. That's how The Flot library works.
+        if($this->xPie !== null)
+        {
+            $aJson['pie'] = $this->xPie;
+            return $aJson;
+        }
+
+        $aJson['graphs'] = $this->aGraphs;
+        // !!Note: When count > 1, the names are different. That's how The Flot library works.
         switch(count($this->aAxisX))
         {
         case 0:

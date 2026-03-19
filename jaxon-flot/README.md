@@ -20,8 +20,8 @@ Install this package with Composer.
 }
 ```
 
-Usage
------
+Draw graphs
+-----------
 
 Create a new plot to be displayed in a div with a given id, eg. "flot-container".
 
@@ -64,9 +64,7 @@ For each axis, the labels can be optionally set either with an array of points, 
     ])->loop(0, 16, 1, 'plot.xaxis.label');
 ```
 
-Optionally, set the dimensions of the plot.
-If the dimensions are not set here, make sure they are in HTML or CSS code.
-The Flot library requires the container to have width and height set.
+Set the dimensions of the plot.
 
 ```php
     $plot->width('600px')->height('300px');
@@ -79,6 +77,53 @@ Finally, draw the graph.
 ```
 
 You can add as many graphs as you need in a single plot, and you can draw many plots in a single page.
+
+Draw a pie
+----------
+
+Drawing a pie chart requires the pie plugin for Flot to be loaded.
+Call this PHP code before loading the page, or add the Flot pie plugin manually.
+
+```php
+jaxon()->di()->g(FlotPlugin::class)->usePie(true);
+```
+
+Create a new plot to be displayed in a div with a given id, eg. "flot-container".
+
+```php
+    $plot = $response->flot->plot('flot-container');
+```
+
+Set the plot options.
+
+```php
+    $plot->options([
+        'series' => [
+            'pie' => [
+                'show' => true,
+            ],
+        ],
+    ]);
+```
+
+Add the pie to the plot
+
+```php
+    $plot->pie()->slices([
+        [3, 'Pt 1'],
+        [8, 'Pt 2'],
+        [5, 'Pt 3'],
+        [13, 'Pt 4'],
+    ]);
+```
+
+Finally, draw the graph.
+
+```php
+    $response->flot->draw($plot);
+```
+
+Only one pie can be added to a plot.
 
 Contribute
 ----------

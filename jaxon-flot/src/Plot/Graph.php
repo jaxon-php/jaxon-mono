@@ -51,7 +51,7 @@ class Graph implements JsonSerializable
      *
      * @return static
      */
-    public function setOptions(array $aOptions): static
+    public function options(array $aOptions): static
     {
         $this->aOptions = [...$this->aOptions, ...$aOptions];
         return $this;

@@ -7,7 +7,8 @@ jaxon.dom.ready(() => {
     jaxon.register("flot.plot", ({
         plot: {
             selector,
-            graphs: inputs,
+            graphs,
+            pie,
             size: { width: cWidth = '', height: cHeight = '' },
             xaxis,
             xaxes,
@@ -31,6 +32,21 @@ jaxon.dom.ready(() => {
         container.html(`<div id="${wrapperId}" style="width:${width}; height:${height};"></div>`);
         const wrapper = $(`#${wrapperId}`);
 
+        const { dom, types } = jaxon.utils;
+
+        if (types.isArray(pie) && pie.length > 0) {
+            if (types.isString(options.series?.pie?.label?.formatter)) {
+                options.series.pie.label.formatter = dom.findFunction(options.series.pie.label.formatter);
+            }
+            $.plot(wrapper, pie, options);
+            return;
+        }
+
+        if (!types.isArray(graphs) || graphs.length === 0) {
+            console.error(`Flot plugin: no valid data to show in the graph with id ${selector}.`);
+            return;
+        }
+
         // Create the DOM element for the tooltip.
         const tooltipId = `${selector}-flot-tooltip`;
         $(`#${tooltipId}`).remove();
@@ -53,8 +69,6 @@ jaxon.dom.ready(() => {
             });
         });
         observer.observe(document.body, { subtree: true, childList: true });
-
-        const { dom, types } = jaxon.utils;
 
         const getPoints = (points) => {
             if(types.isArray(points))
@@ -162,13 +176,11 @@ jaxon.dom.ready(() => {
             return '';
         };
 
-        const graphs = inputs.map(graph => makeGraph(graph));
-
         if(showLabels)
         {
             options.grid = { ...options.grid, hoverable: true };
         }
-        $.plot(wrapper, graphs, options);
+        $.plot(wrapper, graphs.map(graph => makeGraph(graph)), options);
 
         // Labels
         if(!showLabels)

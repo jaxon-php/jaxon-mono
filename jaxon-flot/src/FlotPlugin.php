@@ -33,12 +33,33 @@ class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInter
     private const JS_LIB_URL = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/dist/es5/jquery.flot.min.js';
 
     /**
+     * @var string
+     */
+    private const JS_PIE_URL = 'https://cdn.jsdelivr.net/npm/flot@4.2.6/source/jquery.flot.pie.js';
+
+    /**
+     * @var bool
+     */
+    private bool $usePie = false;
+
+    /**
      * The constructor
      *
      * @param TemplateEngine $xTemplateEngine
      */
     public function __construct(private TemplateEngine $xTemplateEngine)
     {}
+
+    /**
+     * @param bool $usePie
+     *
+     * @return static
+     */
+    public function usePie(bool $usePie): static
+    {
+        $this->usePie = $usePie;
+        return $this;
+    }
 
     /**
      * @inheritDoc
@@ -72,7 +93,8 @@ class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInter
     public function getJsCode(): JsCode
     {
         $sCode = $this->xTemplateEngine->render('jaxon::flot::flot.js');
-        return new JsCode(sCode: $sCode, aUrls: [self::JS_LIB_URL]);
+        $aUrls = $this->usePie ? [self::JS_LIB_URL, self::JS_PIE_URL] : [self::JS_LIB_URL];
+        return new JsCode(sCode: $sCode, aUrls: $aUrls);
     }
 
     /**
