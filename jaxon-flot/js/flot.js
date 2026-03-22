@@ -188,7 +188,7 @@ jaxon.dom.ready(() => {
             return true;
         }
 
-        wrapper.bind("plothover", function (event, pos, item) {
+        wrapper.on("plothover", function (event, pos, item) {
             const tooltip = $(`#${tooltipId}`);
             if(!item)
             {
