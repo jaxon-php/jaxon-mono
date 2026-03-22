@@ -1,0 +1,29 @@
+{
+    "name": "jaxon-php/jaxon-charts",
+    "type": "library",
+    "description": "Charts for Jaxon with various Javascript libraries.",
+    "authors": [
+        {
+            "name": "Thierry Feuzeu"
+        }
+    ],
+    "homepage": "https://github.com/jaxon-php/jaxon-charts",
+    "license": "BSD-3-Clause",
+    "keywords": ["Jaxon", "Ajax", "PHP", "Javascript", "Graph", "Chart"],
+    "support": {
+        "issues": "https://github.com/jaxon-php/jaxon-charts/issues",
+        "source": "https://github.com/jaxon-php/jaxon-charts"
+    },
+    "require": {
+        "php": ">=8.1",
+        "jaxon-php/jaxon-core": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jaxon\\Charts\\": "src/"
+        },
+        "files": [
+            "src/register.php"
+        ]
+    }
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Flot;
+namespace Jaxon\Charts;
 
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -12,13 +12,13 @@ function _register(): void
 {
     $jaxon = jaxon();
     // Register the template dir into the template renderer
-    $jaxon->di()->set(FlotPlugin::class, function($c) {
+    $jaxon->di()->set(ChartPlugin::class, function($c) {
         $xTemplateEngine = $c->g(TemplateEngine::class);
-        $xTemplateEngine->addNamespace('jaxon::flot', dirname(__DIR__) . '/js');
-        return new FlotPlugin($xTemplateEngine);
+        $xTemplateEngine->addNamespace('jaxon::charts', dirname(__DIR__) . '/js');
+        return new ChartPlugin($xTemplateEngine);
     });
     // Register an instance of this plugin
-    $jaxon->registerPlugin(FlotPlugin::class, FlotPlugin::NAME);
+    $jaxon->registerPlugin(ChartPlugin::class, ChartPlugin::NAME);
 }
 
 function register(): void
