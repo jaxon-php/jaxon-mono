@@ -112,11 +112,13 @@ class Card implements JsonSerializable
     /**
      * Add a pie to the card.
      *
+     * @param array $aOptions
+     *
      * @return Pie
      */
-    public function pie(): Pie
+    public function pie(array $aOptions = []): Pie
     {
-        $xPie = new Pie();
+        $xPie = new Pie($aOptions);
         $this->aPies[] = $xPie;
         return $xPie;
     }
@@ -124,11 +126,13 @@ class Card implements JsonSerializable
     /**
      * Add a new graph to the card.
      *
+     * @param array $aOptions
+     *
      * @return Graph
      */
-    public function graph(): Graph
+    public function graph(array $aOptions = []): Graph
     {
-        $xGraph = new Graph();
+        $xGraph = new Graph($aOptions);
         $this->aGraphs[] = $xGraph;
         return $xGraph;
     }
@@ -136,11 +140,13 @@ class Card implements JsonSerializable
     /**
      * Add an X axis to the card.
      *
+     * @param array $aOptions
+     *
      * @return Axis
      */
-    public function xaxes(): Axis
+    public function xaxes(array $aOptions = []): Axis
     {
-        $xAxis = new Axis();
+        $xAxis = new Axis($aOptions);
         $this->aAxesX[] = $xAxis;
         return $xAxis;
     }
@@ -148,11 +154,13 @@ class Card implements JsonSerializable
     /**
      * Add a Y axis to the card.
      *
+     * @param array $aOptions
+     *
      * @return Axis
      */
-    public function yaxes(): Axis
+    public function yaxes(array $aOptions = []): Axis
     {
-        $xAxis = new Axis();
+        $xAxis = new Axis($aOptions);
         $this->aAxesY[] = $xAxis;
         return $xAxis;
     }
