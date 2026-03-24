@@ -27,7 +27,10 @@ function _register(): void
         $xTemplateEngine = $di->g(TemplateEngine::class);
         $xTemplateEngine->addNamespace('jaxon::charts', dirname(__DIR__) . '/js');
 
-        return $di->make(ChartPlugin::class);
+        $xChart = $di->make(ChartPlugin::class);
+        $xChart->registerLibrary(Library\Flot::class, 'flot');
+
+        return $xChart;
     });
     // Register an instance of this plugin
     $jaxon->registerPlugin(ChartPlugin::class, ChartPlugin::NAME);

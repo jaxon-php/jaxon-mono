@@ -50,23 +50,13 @@ abstract class AbstractLibrary
     abstract public function getName(): string;
 
     /**
-     * Get the library base URL
-     *
-     * @return string
-     */
-    public function getBaseUrl(): string
-    {
-        return '';
-    }
-
-    /**
      * @param string $sFile The javascript file name
      *
      * @return string|null
      */
     private function getFileUrl(string $sFile): ?string
     {
-        return rtrim($this->getBaseUrl(), '/') . "/$sFile";
+        return rtrim($this->sBaseUrl, '/') . "/$sFile";
     }
 
     /**
@@ -104,7 +94,7 @@ abstract class AbstractLibrary
      */
     public function getCssCode(): string
     {
-        return $this->disabled('css') ? '' : chart()->renderCssCode($this->getName());
+        return chart()->renderCssCode($this->getName());
     }
 
      /**
@@ -129,6 +119,6 @@ abstract class AbstractLibrary
      */
     public function getJsCode(): string
     {
-        return $this->disabled('js') ? '' : chart()->renderJsCode($this->getName());
+        return chart()->renderJsCode($this->getName());
     }
 }

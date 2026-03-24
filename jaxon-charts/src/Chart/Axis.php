@@ -18,6 +18,8 @@ use Jaxon\Charts\Chart\Data\Axis\Ticks;
 use Jaxon\Charts\Chart\Option\OptionTrait;
 use JsonSerializable;
 
+use function count;
+
 class Axis implements JsonSerializable
 {
     use OptionTrait;
@@ -25,7 +27,7 @@ class Axis implements JsonSerializable
     /**
      * @var Ticks|null
      */
-    protected Ticks|null $xTicks;
+    protected Ticks|null $xTicks = null;
 
     /**
      * The constructor
@@ -56,9 +58,15 @@ class Axis implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return $this->xTicks === null ? [] : [
-            'ticks' => $this->xTicks->jsonSerialize(),
-            'options' => $this->aOptions,
-        ];
+        $aJson = [];
+        if($this->xTicks !== null)
+        {
+            $aJson['ticks'] = $this->xTicks->jsonSerialize();
+        }
+        if(count($this->aOptions) > 0)
+        {
+            $aJson['options'] = $this->aOptions;
+        }
+        return $aJson;
     }
 }

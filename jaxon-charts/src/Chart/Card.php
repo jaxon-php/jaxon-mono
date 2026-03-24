@@ -144,7 +144,7 @@ class Card implements JsonSerializable
      *
      * @return Axis
      */
-    public function xaxes(array $aOptions = []): Axis
+    public function xaxis(array $aOptions = []): Axis
     {
         $xAxis = new Axis($aOptions);
         $this->aAxesX[] = $xAxis;
@@ -158,7 +158,7 @@ class Card implements JsonSerializable
      *
      * @return Axis
      */
-    public function yaxes(array $aOptions = []): Axis
+    public function yaxis(array $aOptions = []): Axis
     {
         $xAxis = new Axis($aOptions);
         $this->aAxesY[] = $xAxis;

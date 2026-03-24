@@ -7,7 +7,7 @@
 // Register the Chart plugin command.
 jaxon.chart = {};
 jaxon.dom.ready(() => {
-    jaxon.register("charts.card", ({ card, lib }) => jaxon.chart.show(card, lib));
+    jaxon.register("charts.card", ({ lib, card }) => jaxon.chart.show(lib, card));
 });
 
 (function(self, dom, call, query, log) {
@@ -38,12 +38,12 @@ jaxon.dom.ready(() => {
      * Show a chart card.
      *
      * @param {string} sLibName The chart library to use
-     * @param {object} xChart The chart content
+     * @param {object} xCard The card content
      *
      * @returns {true} The operation completed successfully.
      */
-    self.show = (sLibName, xChart) => {
-        getLib(sLibName)?.show(xChart);
+    self.show = (sLibName, xCard) => {
+        getLib(sLibName)?.show(xCard);
         return true;
     };
 

@@ -138,19 +138,6 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
     }
 
     /**
-     * Get the chart library
-     *
-     * @param string $sLibraryName
-     *
-     * @return AbstractLibrary|null
-     */
-    private function getLibrary(string $sLibraryName): AbstractLibrary|null
-    {
-        $sKey = "chart_library_$sLibraryName";
-        return $this->di->h($sKey) ? $this->di->g($sKey) : null;
-    }
-
-    /**
      * @param string $sLibraryName
      *
      * @return string
@@ -201,6 +188,19 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
         }
 
         $this->bConfigProcessed = true;
+    }
+
+    /**
+     * Get a chart library
+     *
+     * @param string $sLibraryName
+     *
+     * @return AbstractLibrary|null
+     */
+    private function getLibrary(string $sLibraryName): AbstractLibrary|null
+    {
+        $sKey = "chart_library_$sLibraryName";
+        return $this->di->h($sKey) ? $this->di->g($sKey) : null;
     }
 
     /**
@@ -271,6 +271,8 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
      */
     public function card($sSelector): Card
     {
+        $this->processLibraryConfig();
+
         return new Card($sSelector);
     }
 
@@ -284,10 +286,8 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
      */
     public function draw(Card $xCard, string $sLibraryName): void
     {
-        $bEnabled = $this->aLibraries[$sLibraryName]['enabled'] ?? false;
-        if($bEnabled)
+        if($this->aLibraries[$sLibraryName]['enabled'] ?? false)
         {
-            // The "charts.card" command is registered by the plugin script.
             $this->addCommand('charts.card', ['card' => $xCard, 'lib' => $sLibraryName]);
         }
     }
