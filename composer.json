@@ -61,6 +61,7 @@
     "replace": {
         "jaxon-php/jaxon-annotations": "self.version",
         "jaxon-php/jaxon-attributes": "self.version",
+        "jaxon-php/jaxon-charts": "self.version",
         "jaxon-php/jaxon-config": "self.version",
         "jaxon-php/jaxon-core": "self.version",
         "jaxon-php/jaxon-dialogs": "self.version",
@@ -76,6 +77,7 @@
             "Jaxon\\": "jaxon-core/src/",
             "Jaxon\\Annotations\\": "jaxon-annotations/src/",
             "Jaxon\\Attributes\\": "jaxon-attributes/src/",
+            "Jaxon\\Charts\\": "jaxon-charts/src/",
             "Jaxon\\Config\\": "jaxon-config/src/",
             "Jaxon\\Dialogs\\": "jaxon-dialogs/src/",
             "Jaxon\\Flot\\": "jaxon-flot/src/",
@@ -88,6 +90,7 @@
             "jaxon-core/src/jaxon_ns.php",
             "jaxon-annotations/src/register.php",
             "jaxon-attributes/src/register.php",
+            "jaxon-charts/src/register.php",
             "jaxon-dialogs/src/register.php",
             "jaxon-flot/src/register.php",
             "jaxon-storage/src/helpers.php",
