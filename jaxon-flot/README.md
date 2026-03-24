@@ -23,16 +23,16 @@ Install this package with Composer.
 Draw graphs
 -----------
 
-Create a new plot to be displayed in a div with a given id, eg. "flot-container".
+Create a new card to be displayed in a div with a given id, eg. "flot-container".
 
 ```php
-    $plot = $response->flot->plot('flot-container');
+    $card = $response->flot->card('flot-container');
 ```
 
-Add a graph in the plot, and set its parameters.
+Add a graph in the card, and set its parameters.
 
 ```php
-    $graph = $plot->graph(['label' => 'Plot example', 'lines' => ['show' => true]]);
+    $graph = $card->graph(['label' => 'Flot example', 'lines' => ['show' => true]]);
 ```
 The options are defined in [the API docs](https://github.com/flot/flot/blob/master/API.md#plot-options).
 
@@ -56,27 +56,27 @@ The X axis and Y axis options can also be set. Multiple X axis and Y axis can be
 For each axis, the labels can be optionally set either with an array of points, or with a loop expression.
 
 ```php
-    $plot->xaxis()->options([
+    $card->xaxis()->options([
         // First X axis options.
     ])->points($ticks);
-    $plot->xaxis()->options([
+    $card->xaxis()->options([
         // Second X axis options.
-    ])->loop(0, 16, 1, 'plot.xaxis.label');
+    ])->loop(0, 16, 1, 'flot.xaxis.label');
 ```
 
-Set the dimensions of the plot.
+Set the dimensions of the card.
 
 ```php
-    $plot->width('600px')->height('300px');
+    $card->width('600px')->height('300px');
 ```
 
 Finally, draw the graph.
 
 ```php
-    $response->flot->draw($plot);
+    $response->flot->draw($card);
 ```
 
-You can add as many graphs as you need in a single plot, and you can draw many plots in a single page.
+You can add as many graphs as you need in a single card, and you can draw many cards in a single page.
 
 Draw a pie
 ----------
@@ -88,16 +88,16 @@ Call this PHP code before loading the page, or add the Flot pie plugin manually.
 jaxon()->di()->g(FlotPlugin::class)->usePie(true);
 ```
 
-Create a new plot to be displayed in a div with a given id, eg. "flot-container".
+Create a new card to be displayed in a div with a given id, eg. "flot-container".
 
 ```php
-    $plot = $response->flot->plot('flot-container');
+    $card = $response->flot->card('flot-container');
 ```
 
-Set the plot options.
+Set the card options.
 
 ```php
-    $plot->options([
+    $card->options([
         'series' => [
             'pie' => [
                 'show' => true,
@@ -106,10 +106,10 @@ Set the plot options.
     ]);
 ```
 
-Add the pie to the plot
+Add the pie to the card
 
 ```php
-    $plot->pie()->slices([
+    $card->pie()->slices([
         [3, 'Pt 1'],
         [8, 'Pt 2'],
         [5, 'Pt 3'],
@@ -120,10 +120,10 @@ Add the pie to the plot
 Finally, draw the graph.
 
 ```php
-    $response->flot->draw($plot);
+    $response->flot->draw($card);
 ```
 
-Only one pie can be added to a plot.
+Only one pie can be added to a card.
 
 Contribute
 ----------

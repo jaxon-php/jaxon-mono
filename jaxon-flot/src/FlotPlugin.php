@@ -18,7 +18,7 @@ use Jaxon\Plugin\CssCodeGeneratorInterface;
 use Jaxon\Plugin\JsCode;
 use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Flot\Plot\Plot;
+use Jaxon\Flot\Chart\Card;
 
 class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInterface, JsCodeGeneratorInterface
 {
@@ -98,25 +98,25 @@ class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInter
     }
 
     /**
-     * Create a Plot instance.
+     * Create a Card instance.
      *
      * @param string        $sSelector            The jQuery selector
      *
-     * @return Plot
+     * @return Card
      */
-    public function plot($sSelector): Plot
+    public function card($sSelector): Card
     {
-        return new Plot($sSelector);
+        return new Card($sSelector);
     }
 
     /**
-     * Draw a Plot in a given HTML element.
+     * Draw a Card in a given HTML element.
      *
      * @return void
      */
-    public function draw(Plot $xPlot): void
+    public function draw(Card $xCard): void
     {
-        // The "flot.plot" command is registered by the plugin script.
-        $this->addCommand('flot.plot', ['plot' => $xPlot]);
+        // The "flot.card" command is registered by the plugin script.
+        $this->addCommand('flot.card', ['card' => $xCard]);
     }
 }

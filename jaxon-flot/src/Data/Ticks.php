@@ -3,7 +3,7 @@
 /**
  * Ticks.php
  *
- * Contains data to be printed on the plot axis.
+ * Contains data to be printed on the card axis.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

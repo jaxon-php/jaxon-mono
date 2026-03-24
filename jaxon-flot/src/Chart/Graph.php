@@ -3,7 +3,7 @@
 /**
  * Graph.php
  *
- * A graph to be printed in a plot.
+ * A graph to be printed in a card.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-flot
  */
 
-namespace Jaxon\Flot\Plot;
+namespace Jaxon\Flot\Chart;
 
 use JsonSerializable;
 use Jaxon\Flot\Data\Series;
@@ -35,7 +35,7 @@ class Graph implements JsonSerializable
     }
 
     /**
-     * Get this plot dataset
+     * Get this graph dataset
      *
      * @return Series
      */

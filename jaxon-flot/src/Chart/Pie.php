@@ -3,7 +3,7 @@
 /**
  * Pie.php
  *
- * A pie to be printed in a plot.
+ * A pie to be printed in a card.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-flot
  */
 
-namespace Jaxon\Flot\Plot;
+namespace Jaxon\Flot\Chart;
 
 use JsonSerializable;
 

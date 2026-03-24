@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plot.php
+ * Card.php
  *
- * A plot containing one or more graphs.
+ * A card containing one or more graphs.
  *
  * @package jaxon-flot
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-flot
  */
 
-namespace Jaxon\Flot\Plot;
+namespace Jaxon\Flot\Chart;
 
 use Jaxon\Flot\Data\Ticks;
 use JsonSerializable;
@@ -20,7 +20,7 @@ use JsonSerializable;
 use function count;
 use function trim;
 
-class Plot implements JsonSerializable
+class Card implements JsonSerializable
 {
     /**
      * The HTML element selector
@@ -44,39 +44,39 @@ class Plot implements JsonSerializable
     protected Pie|null $xPie = null;
 
     /**
-     * The plot options
+     * The card options
      *
      * @var array
      */
     protected array $aOptions = [];
 
     /**
-     * The plot width
+     * The card width
      *
      * @var string
      */
     protected string $sWidth = '';
 
     /**
-     * The plot height
+     * The card height
      *
      * @var string
      */
     protected string $sHeight = '';
 
     /**
-     * The plot X axis
+     * The card X axis
      *
      * @var array<Ticks>
      */
-    protected array $aAxisX = [];
+    protected array $aAxesX = [];
 
     /**
-     * The plot Y axis
+     * The card Y axis
      *
      * @var array<Ticks>
      */
-    protected array $aAxisY = [];
+    protected array $aAxesY = [];
 
     /**
      * The constructor.
@@ -89,9 +89,9 @@ class Plot implements JsonSerializable
     }
 
     /**
-     * Set the plot options.
+     * Set the card options.
      *
-     * @param array $aOptions The plot options
+     * @param array $aOptions The card options
      *
      * @return static
      */
@@ -128,7 +128,7 @@ class Plot implements JsonSerializable
     }
 
     /**
-     * Add a pie to the plot.
+     * Add a pie to the card.
      *
      * @return Pie
      */
@@ -138,7 +138,7 @@ class Plot implements JsonSerializable
     }
 
     /**
-     * Add a new graph to the plot.
+     * Add a new graph to the card.
      *
      * @param array $aOptions The graph options
      *
@@ -159,7 +159,7 @@ class Plot implements JsonSerializable
     public function xaxis(): Ticks
     {
         $xTicks = new Ticks();
-        $this->aAxisX[] = $xTicks;
+        $this->aAxesX[] = $xTicks;
         return $xTicks;
     }
 
@@ -171,7 +171,7 @@ class Plot implements JsonSerializable
     public function yaxis(): Ticks
     {
         $xTicks = new Ticks();
-        $this->aAxisY[] = $xTicks;
+        $this->aAxesY[] = $xTicks;
         return $xTicks;
     }
 
@@ -197,26 +197,13 @@ class Plot implements JsonSerializable
         }
 
         $aJson['graphs'] = $this->aGraphs;
-        // !!Note: When count > 1, the names are different. That's how The Flot library works.
-        switch(count($this->aAxisX))
+        if(count($this->aAxesX) > 0)
         {
-        case 0:
-            break;
-        case 1:
-            $aJson['xaxis'] = $this->aAxisX[0];
-            break;
-        default:
-            $aJson['xaxes'] = $this->aAxisX;
+            $aJson['xaxes'] = $this->aAxesX;
         }
-        switch(count($this->aAxisY))
+        if(count($this->aAxesY) > 0)
         {
-        case 0:
-            break;
-        case 1:
-            $aJson['yaxis'] = $this->aAxisY[0];
-            break;
-        default:
-            $aJson['yaxes'] = $this->aAxisY;
+            $aJson['yaxes'] = $this->aAxesY;
         }
 
         return $aJson;
