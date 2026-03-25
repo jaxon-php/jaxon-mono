@@ -100,13 +100,14 @@ class FlotPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInter
     /**
      * Create a Card instance.
      *
-     * @param string        $sSelector            The jQuery selector
+     * @param string $sSelector
+     * @param array $aOptions
      *
      * @return Card
      */
-    public function card($sSelector): Card
+    public function card($sSelector, array $aOptions = []): Card
     {
-        return new Card($sSelector);
+        return new Card($sSelector, $aOptions);
     }
 
     /**

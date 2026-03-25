@@ -77,10 +77,12 @@ class Card implements JsonSerializable
      * The constructor.
      *
      * @param string $sSelector The jQuery selector
+     * @param array $aOptions
      */
-    public function __construct(string $sSelector)
+    public function __construct(string $sSelector, array $aOptions = [])
     {
         $this->sSelector = trim($sSelector, " \t");
+        $this->options($aOptions);
     }
 
     /**

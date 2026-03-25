@@ -266,14 +266,15 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
      * Create a graph card, to be displayed in a given HTML element.
      *
      * @param string $sSelector
+     * @param array $aOptions
      *
      * @return Card
      */
-    public function card($sSelector): Card
+    public function card(string $sSelector, array $aOptions = []): Card
     {
         $this->processLibraryConfig();
 
-        return new Card($sSelector);
+        return new Card($sSelector, $aOptions);
     }
 
     /**
