@@ -65,8 +65,7 @@ jaxon.dom.ready(() => {
         return [];
     };
 
-    const makeAxis = (values) => {
-        const { points = [], labels = {}, options = {} } = values;
+    const makeAxis = ({ points = [], labels = {}, options = {} }) => {
         if(types.isString(options.tickFormatter))
         {
             options.tickFormatter = dom.findFunction(options.tickFormatter);
@@ -111,12 +110,17 @@ jaxon.dom.ready(() => {
         return options;
     };
 
-    const makeTooltip = (tooltips, { data = null, func = null }, { label }) => {
-        if(label !== undefined && (data !== null || func !== null))
+    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
+        if(label !== null)
         {
-            tooltips[label] = data !== null ? { data } : {
-                func: dom.findFunction(func),
-            };
+            if(data !== null)
+            {
+                tooltips[label] = { data };
+            }
+            if(func !== null)
+            {
+                tooltips[label] = { func: dom.findFunction(func) };
+            }
         }
         return tooltips;
     };
@@ -156,6 +160,7 @@ jaxon.dom.ready(() => {
         }
     };
 
+    const mutationObservers = {};
     const observeMutations = (wrapper, tooltipId) => {
         const observer = new MutationObserver((mutations) => {
             const target = wrapper.get(0); // The actual DOM element.
@@ -169,11 +174,19 @@ jaxon.dom.ready(() => {
                 if(directMatch || parentMatch)
                 {
                     $(`#${tooltipId}`).remove();
+                    const mutationObserver = mutationObservers[tooltipId];
+                    if(mutationObserver !== undefined)
+                    {
+                        // Disconnect the observer;
+                        mutationObserver.disconnect();
+                        mutationObservers[tooltipId] = undefined;
+                    }
                 }
             });
         });
-        // Todo: disconnect the observer.
         observer.observe(document.body, { subtree: true, childList: true });
+        // Save the observer.
+        mutationObservers[tooltipId] = observer;
     };
 
     jaxon.register("flot.card", ({
@@ -227,12 +240,10 @@ jaxon.dom.ready(() => {
             getCardOptions(options, xaxes, yaxes, showLabels));
 
         // Labels
-        if(!showLabels)
+        if(showLabels)
         {
-            return true;
+            wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
         }
-
-        wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
         return true;
     });
 });

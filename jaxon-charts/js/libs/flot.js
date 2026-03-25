@@ -73,12 +73,17 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         data: getPointValues(points, values),
     });
 
-    const makeTooltip = (tooltips, { data = null, func = null }, { label }) => {
-        if(label !== undefined && (data !== null || func !== null))
+    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
+        if(label !== null)
         {
-            tooltips[label] = data !== null ? { data } : {
-                func: dom.findFunction(func),
-            };
+            if(data !== null)
+            {
+                tooltips[label] = { data };
+            }
+            if(func !== null)
+            {
+                tooltips[label] = { func: dom.findFunction(func) };
+            }
         }
         return tooltips;
     };
@@ -160,6 +165,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return options;
     };
 
+    const mutationObservers = {};
     const observeMutations = (wrapper, tooltipId) => {
         const observer = new MutationObserver((mutations) => {
             const target = wrapper.get(0); // The actual DOM element.
@@ -173,11 +179,19 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
                 if(directMatch || parentMatch)
                 {
                     $(`#${tooltipId}`).remove();
+                    const mutationObserver = mutationObservers[tooltipId];
+                    if(mutationObserver !== undefined)
+                    {
+                        // Disconnect the observer;
+                        mutationObserver.disconnect();
+                        mutationObservers[tooltipId] = undefined;
+                    }
                 }
             });
         });
-        // Todo: disconnect the observer.
         observer.observe(document.body, { subtree: true, childList: true });
+        // Save the observer.
+        mutationObservers[tooltipId] = observer;
     };
 
     self.show = ({
