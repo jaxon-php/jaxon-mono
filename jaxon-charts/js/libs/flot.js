@@ -70,7 +70,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         data: getPointValues(points, values),
     });
 
-    const makeAxis = ({ ticks: { points = [], labels = {} } = {}, options = {} }) => {
+    const makeAxis = ({ ticks: { points = [], labels = {} } = {} }, options = {}) => {
         if(types.isString(options.tickFormatter))
         {
             options.tickFormatter = dom.findFunction(options.tickFormatter);
@@ -114,7 +114,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             }
             if(xaxes.length > 1)
             {
-                options.xaxes = xaxes.map(values => makeAxis(values));
+                options.xaxes = xaxes.map(xaxis => makeAxis(xaxis));
             }
         }
         if(types.isArray(yaxes))
@@ -126,30 +126,40 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             }
             if(yaxes.length > 1)
             {
-                options.yaxes = yaxes.map(values => makeAxis(values));
+                options.yaxes = yaxes.map(yaxis => makeAxis(yaxis));
             }
         }
 
         return getCardOptions(options, tooltips);
     };
 
-    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
+    const makeTooltipLabel = (labels, { data = null, func = null }, { label = null }) => {
         if(label !== null)
         {
             if(data !== null)
             {
-                tooltips[label] = { data };
+                labels[label] = { data };
             }
             if(func !== null)
             {
-                tooltips[label] = { func: dom.findFunction(func) };
+                labels[label] = { func: dom.findFunction(func) };
             }
         }
-        return tooltips;
+    };
+
+    const getGraphTooltips = (graphs, tooltipId) => {
+        const tooltipLabels = {};
+        graphs.forEach(({ series: { labels = {} }, options = {} }) =>
+            makeTooltipLabel(tooltipLabels, labels, options));
+        return {
+            id: tooltipId,
+            labels: tooltipLabels,
+            show: Object.keys(tooltipLabels).length > 0,
+        };
     };
 
     const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
-        const { data = null, func = null } = tooltips[label];
+        const { data = null, func = null } = tooltips.labels[label];
         if(data !== null && data[x] !== undefined)
         {
             return data[x];
@@ -161,8 +171,8 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return '';
     };
 
-    const showTooltip = (tooltips, tooltipId, item) => {
-        const tooltip = $(`#${tooltipId}`);
+    const showTooltip = (tooltips, item) => {
+        const tooltip = $(`#${tooltips.id}`);
         if(!item)
         {
             tooltip.hide();
@@ -178,12 +188,12 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         }
     };
 
-    const drawCard = (wrapper, data, options, showLabels) => {
+    const drawCard = (wrapper, data, options, tooltips) => {
         $.plot(wrapper, data, options);
 
-        if(showLabels)
+        if(tooltips.show)
         {
-            wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
+            wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, item));
         }
 
         // Fix: the card labels background is black by default. Change to white.
@@ -265,12 +275,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         // Use an observer to remove the tooltip when the graph is deleted.
         observeMutations(wrapper, tooltipId);
 
-        const tooltips = {
-            id: tooltipId,
-            list: graphs.reduce((_tooltips, { labels = {}, options }) =>
-                makeTooltip(_tooltips, labels, options), {}),
-        };
-        tooltips.show = Object.keys(tooltips.list).length > 0;
+        const tooltips = getGraphTooltips(graphs, tooltipId);
         drawCard(wrapper, graphs.map(graph => makeGraph(graph)),
             getGraphOptions(options, xaxes, yaxes, tooltips), tooltips);
 

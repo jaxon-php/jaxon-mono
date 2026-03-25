@@ -114,7 +114,7 @@ jaxon.dom.ready(() => {
             }
             if(xaxes.length > 1)
             {
-                options.xaxes = xaxes.map(values => makeAxis(values));
+                options.xaxes = xaxes.map(xaxis => makeAxis(xaxis));
             }
         }
         if(types.isArray(yaxes))
@@ -126,30 +126,40 @@ jaxon.dom.ready(() => {
             }
             if(yaxes.length > 1)
             {
-                options.yaxes = yaxes.map(values => makeAxis(values));
+                options.yaxes = yaxes.map(yaxis => makeAxis(yaxis));
             }
         }
 
         return getCardOptions(options, tooltips);
     };
 
-    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
+    const makeTooltipLabel = (labels, { data = null, func = null }, { label = null }) => {
         if(label !== null)
         {
             if(data !== null)
             {
-                tooltips[label] = { data };
+                labels[label] = { data };
             }
             if(func !== null)
             {
-                tooltips[label] = { func: dom.findFunction(func) };
+                labels[label] = { func: dom.findFunction(func) };
             }
         }
-        return tooltips;
+    };
+
+    const getGraphTooltips = (graphs, tooltipId) => {
+        const tooltipLabels = {};
+        graphs.forEach(({ labels = {}, options = {} }) =>
+            makeTooltipLabel(tooltipLabels, labels, options));
+        return {
+            id: tooltipId,
+            labels: tooltipLabels,
+            show: Object.keys(tooltipLabels).length > 0,
+        };
     };
 
     const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
-        const { data = null, func = null } = tooltips[label];
+        const { data = null, func = null } = tooltips.labels[label];
         if(data !== null && data[x] !== undefined)
         {
             return data[x];
@@ -169,7 +179,7 @@ jaxon.dom.ready(() => {
             return;
         }
 
-        const tooltipLabel = getTooltipLabel(tooltips.list, item);
+        const tooltipLabel = getTooltipLabel(tooltips, item);
         if(tooltipLabel !== '')
         {
             tooltip.html(tooltipLabel)
@@ -265,12 +275,7 @@ jaxon.dom.ready(() => {
         // Use an observer to remove the tooltip when the graph is deleted.
         observeMutations(wrapper, tooltipId);
 
-        const tooltips = {
-            id: tooltipId,
-            list: graphs.reduce((_tooltips, { labels = {}, options }) =>
-                makeTooltip(_tooltips, labels, options), {}),
-        };
-        tooltips.show = Object.keys(tooltips.list).length > 0;
+        const tooltips = getGraphTooltips(graphs, tooltipId);
         drawCard(wrapper, graphs.map(graph => makeGraph(graph)),
             getGraphOptions(options, xaxes, yaxes, tooltips), tooltips);
 
