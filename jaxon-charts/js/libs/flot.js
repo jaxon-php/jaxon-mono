@@ -44,7 +44,6 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         {
             return [];
         }
-
         const vals = [];
         for(let val = start; val < end; val += func(val))
         {
@@ -58,13 +57,11 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         {
             return getPoints(points).map(point => [point, data[point]]);
         }
-
         if(func !== null)
         {
             func = dom.findFunction(func);
             return getPoints(points).map(point => [point, func(point)]);
         }
-
         return [];
     };
 
@@ -72,53 +69,6 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         ...options,
         data: getPointValues(points, values),
     });
-
-    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
-        if(label !== null)
-        {
-            if(data !== null)
-            {
-                tooltips[label] = { data };
-            }
-            if(func !== null)
-            {
-                tooltips[label] = { func: dom.findFunction(func) };
-            }
-        }
-        return tooltips;
-    };
-
-    const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
-        const { data = null, func = null } = tooltips[label];
-        if(data !== null && data[x] !== undefined)
-        {
-            return data[x];
-        }
-
-        if(func !== null)
-        {
-            return func(x, y, label);
-        }
-
-        return '';
-    };
-
-    const showTooltip = (tooltips, tooltipId, item) => {
-        const tooltip = $(`#${tooltipId}`);
-        if(!item)
-        {
-            tooltip.hide();
-            return;
-        }
-
-        const tooltipLabel = getTooltipLabel(tooltips, item);
-        if(tooltipLabel !== '')
-        {
-            tooltip.html(tooltipLabel)
-                .css({ top: item.pageY + 5, left: item.pageX + 5 })
-                .fadeIn(200);
-        }
-    };
 
     const makeAxis = ({ ticks: { points = [], labels = {} } = {}, options = {} }) => {
         if(types.isString(options.tickFormatter))
@@ -130,6 +80,8 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             ticks: getPointValues(points, labels),
         };
     };
+
+    const showLegend = options => options.legend?.show ?? false;
 
     const getCardOptions = (options, xaxes, yaxes, showLabels) => {
         if(types.isArray(xaxes))
@@ -161,8 +113,58 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         {
             options.grid = { ...options.grid, hoverable: true };
         }
+        if(showLegend(options) && types.isString(options.legend?.container))
+        {
+            // The Flot library expects a Javascript (not jQuery) DOM element here.
+            options.legend.container = document.getElementById(options.legend.container);
+        }
 
         return options;
+    };
+
+    const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
+        if(label !== null)
+        {
+            if(data !== null)
+            {
+                tooltips[label] = { data };
+            }
+            if(func !== null)
+            {
+                tooltips[label] = { func: dom.findFunction(func) };
+            }
+        }
+        return tooltips;
+    };
+
+    const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
+        const { data = null, func = null } = tooltips[label];
+        if(data !== null && data[x] !== undefined)
+        {
+            return data[x];
+        }
+        if(func !== null)
+        {
+            return func(x, y, label);
+        }
+        return '';
+    };
+
+    const showTooltip = (tooltips, tooltipId, item) => {
+        const tooltip = $(`#${tooltipId}`);
+        if(!item)
+        {
+            tooltip.hide();
+            return;
+        }
+
+        const tooltipLabel = getTooltipLabel(tooltips, item);
+        if(tooltipLabel !== '')
+        {
+            tooltip.html(tooltipLabel)
+                .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                .fadeIn(200);
+        }
     };
 
     const mutationObservers = {};
@@ -246,11 +248,17 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         $.plot(wrapper, graphs.map(graph => makeGraph(graph)),
             getCardOptions(options, xaxes, yaxes, showLabels));
 
-        // Labels
         if(showLabels)
         {
             wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
         }
+        // Fix: the card labels background is black by default. Change to white.
+        if(showLegend(options))
+        {
+            const legendContainer = options.legend?.container ?? wrapper;
+            $('rect.background', legendContainer).attr('fill', '#ffffff');
+        }
+
         return true;
     };
 }));

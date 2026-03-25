@@ -65,6 +65,11 @@ jaxon.dom.ready(() => {
         return [];
     };
 
+    const makeGraph = ({ points, values, options = {} }) => ({
+        ...options,
+        data: getPointValues(points, values),
+    });
+
     const makeAxis = ({ points = [], labels = {}, options = {} }) => {
         if(types.isString(options.tickFormatter))
         {
@@ -75,6 +80,8 @@ jaxon.dom.ready(() => {
             ticks: getPointValues(points, labels),
         };
     };
+
+    const showLegend = options => options.legend?.show ?? false;
 
     const getCardOptions = (options, xaxes, yaxes, showLabels) => {
         if(types.isArray(xaxes))
@@ -106,6 +113,11 @@ jaxon.dom.ready(() => {
         {
             options.grid = { ...options.grid, hoverable: true };
         }
+        if(showLegend(options) && types.isString(options.legend?.container))
+        {
+            // The Flot library expects a Javascript (not jQuery) DOM element here.
+            options.legend.container = document.getElementById(options.legend.container);
+        }
 
         return options;
     };
@@ -124,11 +136,6 @@ jaxon.dom.ready(() => {
         }
         return tooltips;
     };
-
-    const makeGraph = ({ points, values, options = {} }) => ({
-        ...options,
-        data: getPointValues(points, values),
-    });
 
     const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
         const { data = null, func = null } = tooltips[label];
@@ -239,11 +246,17 @@ jaxon.dom.ready(() => {
         $.plot(wrapper, graphs.map(graph => makeGraph(graph)),
             getCardOptions(options, xaxes, yaxes, showLabels));
 
-        // Labels
         if(showLabels)
         {
             wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
         }
+        // Fix: the card labels background is black by default. Change to white.
+        if(showLegend(options))
+        {
+            const legendContainer = options.legend?.container ?? wrapper;
+            $('rect.background', legendContainer).attr('fill', '#ffffff');
+        }
+
         return true;
     });
 });
