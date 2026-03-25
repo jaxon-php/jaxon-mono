@@ -83,7 +83,28 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
 
     const showLegend = options => options.legend?.show ?? false;
 
-    const getCardOptions = (options, xaxes, yaxes, showLabels) => {
+    const getCardOptions = (options, tooltips) => {
+        if(tooltips.show)
+        {
+            options.grid = { ...options.grid, hoverable: true };
+        }
+        if(showLegend(options) && types.isString(options.legend?.container))
+        {
+            // The Flot library expects a Javascript (not jQuery) DOM element here.
+            options.legend.container = document.getElementById(options.legend.container);
+        }
+        return options;
+    };
+
+    const getPieOptions = (options, tooltips) => {
+        if (types.isString(formatter = options.series?.pie?.label?.formatter)) {
+            options.series.pie.label.formatter = dom.findFunction(formatter);
+        }
+
+        return getCardOptions(options, tooltips);
+    };
+
+    const getGraphOptions = (options, xaxes, yaxes, tooltips) => {
         if(types.isArray(xaxes))
         {
             // Note: When length > 1, the option name is different.
@@ -109,17 +130,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             }
         }
 
-        if(showLabels)
-        {
-            options.grid = { ...options.grid, hoverable: true };
-        }
-        if(showLegend(options) && types.isString(options.legend?.container))
-        {
-            // The Flot library expects a Javascript (not jQuery) DOM element here.
-            options.legend.container = document.getElementById(options.legend.container);
-        }
-
-        return options;
+        return getCardOptions(options, tooltips);
     };
 
     const makeTooltip = (tooltips, { data = null, func = null }, { label = null }) => {
@@ -167,6 +178,22 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         }
     };
 
+    const drawCard = (wrapper, data, options, showLabels) => {
+        $.plot(wrapper, data, options);
+
+        if(showLabels)
+        {
+            wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
+        }
+
+        // Fix: the card labels background is black by default. Change to white.
+        if(showLegend(options))
+        {
+            const legendContainer = options.legend.container ?? wrapper;
+            $('rect.background', legendContainer).attr('fill', '#ffffff');
+        }
+    };
+
     const mutationObservers = {};
     const observeMutations = (wrapper, tooltipId) => {
         const observer = new MutationObserver((mutations) => {
@@ -198,7 +225,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
 
     self.show = ({
         selector,
-        size: { width = '', height = '' },
+        size: { width = '', height = '' } = {},
         graphs,
         pies,
         xaxes,
@@ -219,11 +246,8 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
 
         if (types.isArray(pies)) {
             if (pies.length > 0) {
-                if (types.isString(formatter = options.series?.pie?.label?.formatter)) {
-                    options.series.pie.label.formatter = dom.findFunction(formatter);
-                }
-                const [{ series: pie }] = pies;
-                $.plot(wrapper, pie, options);
+                const tooltips = { show: false };
+                drawCard(wrapper, pies[0].series, getPieOptions(options, tooltips), tooltips);
             }
             return;
         }
@@ -241,23 +265,14 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         // Use an observer to remove the tooltip when the graph is deleted.
         observeMutations(wrapper, tooltipId);
 
-        const tooltips = graphs.reduce((_tooltips, { series: { labels = {} }, options }) =>
-            makeTooltip(_tooltips, labels, options), {});
-        const showLabels = Object.keys(tooltips).length > 0;
-
-        $.plot(wrapper, graphs.map(graph => makeGraph(graph)),
-            getCardOptions(options, xaxes, yaxes, showLabels));
-
-        if(showLabels)
-        {
-            wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, tooltipId, item));
-        }
-        // Fix: the card labels background is black by default. Change to white.
-        if(showLegend(options))
-        {
-            const legendContainer = options.legend?.container ?? wrapper;
-            $('rect.background', legendContainer).attr('fill', '#ffffff');
-        }
+        const tooltips = {
+            id: tooltipId,
+            list: graphs.reduce((_tooltips, { labels = {}, options }) =>
+                makeTooltip(_tooltips, labels, options), {}),
+        };
+        tooltips.show = Object.keys(tooltips.list).length > 0;
+        drawCard(wrapper, graphs.map(graph => makeGraph(graph)),
+            getGraphOptions(options, xaxes, yaxes, tooltips), tooltips);
 
         return true;
     };
