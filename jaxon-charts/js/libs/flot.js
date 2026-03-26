@@ -52,22 +52,26 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return vals;
     };
 
-    const getPointValues = (points, { data = null, func = null }) => {
+    const getPointValues = (points, { data = null, func = null }, options = {}) => {
+        const { bars: { show, horizontal } = {} } = options;
+        // Swap the x and y values when drawing horizontal bars.
+        const pointValue = (x, y) => show && horizontal ? [y, x] : [x, y];
+
         if(data !== null)
         {
-            return getPoints(points).map(point => [point, data[point]]);
+            return getPoints(points).map(point => pointValue(point, data[point]));
         }
         if(func !== null)
         {
             func = dom.findFunction(func);
-            return getPoints(points).map(point => [point, func(point)]);
+            return getPoints(points).map(point => pointValue(point, func(point)));
         }
         return [];
     };
 
     const makeGraph = ({ series: { points, values }, options = {} }) => ({
         ...options,
-        data: getPointValues(points, values),
+        data: getPointValues(points, values, options),
     });
 
     const makeAxis = ({ ticks: { points = [], labels = {} } = {} }, options = {}) => {
