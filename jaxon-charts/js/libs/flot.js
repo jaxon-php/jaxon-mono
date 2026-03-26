@@ -84,6 +84,12 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
     const showLegend = options => options.legend?.show ?? false;
 
     const getCardOptions = (options, tooltips) => {
+        if (types.isString(formatter = options.series?.label?.labelFormatter)) {
+            options.series.label.labelFormatter = dom.findFunction(formatter);
+        }
+        if (types.isString(formatter = options.legend?.labelFormatter)) {
+            options.legend.labelFormatter = dom.findFunction(formatter);
+        }
         if(tooltips.show)
         {
             options.grid = { ...options.grid, hoverable: true };

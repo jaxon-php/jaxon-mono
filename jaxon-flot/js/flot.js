@@ -84,6 +84,9 @@ jaxon.dom.ready(() => {
     const showLegend = (options) => options.legend?.show ?? false;
 
     const getCardOptions = (options, tooltips) => {
+        if (types.isString(formatter = options.legend?.labelFormatter)) {
+            options.legend.labelFormatter = dom.findFunction(formatter);
+        }
         if(tooltips.show)
         {
             options.grid = { ...options.grid, hoverable: true };
@@ -105,6 +108,9 @@ jaxon.dom.ready(() => {
     };
 
     const getGraphOptions = (options, xaxes, yaxes, tooltips) => {
+        if (types.isString(formatter = options.series?.label?.labelFormatter)) {
+            options.series.label.labelFormatter = dom.findFunction(formatter);
+        }
         if(types.isArray(xaxes))
         {
             // Note: When length > 1, the option name is different.
