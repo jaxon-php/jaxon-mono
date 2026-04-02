@@ -1,17 +1,17 @@
 /*
- * Jaxon Flot plugin
+ * Jaxon Charts plugin: Flot library support
  */
 
 /** global: jaxon */
 jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
     const { dom, types } = jaxon.utils;
 
-    const wrapperHtml = (container, wrapperId, width, height) => {
-        if(width === '')
+    const wrapperHtml = (container, wrapperId, { width, height } = {}) => {
+        if(!width)
         {
             width = container.css('width');
         }
-        if(height === '')
+        if(!height)
         {
             height = container.css('height');
         }
@@ -69,12 +69,12 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return [];
     };
 
-    const makeGraph = ({ series: { points, values }, options = {} }) => ({
+    const makeChart = ({ series: { points, values }, options = {} }) => ({
         ...options,
         data: getPointValues(points, values, options),
     });
 
-    const makeAxis = ({ ticks: { points = [], labels = {} } = {} }, options = {}) => {
+    const makeAxis = ({ ticks: { points = [], labels = {} } = {}, options = {} }) => {
         if(types.isString(options.tickFormatter))
         {
             options.tickFormatter = dom.findFunction(options.tickFormatter);
@@ -85,12 +85,9 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         };
     };
 
-    const showLegend = options => options.legend?.show ?? false;
+    const showLegend = (options) => options.legend?.show ?? false;
 
     const getCardOptions = (options, tooltips) => {
-        if (types.isString(formatter = options.series?.label?.labelFormatter)) {
-            options.series.label.labelFormatter = dom.findFunction(formatter);
-        }
         if (types.isString(formatter = options.legend?.labelFormatter)) {
             options.legend.labelFormatter = dom.findFunction(formatter);
         }
@@ -114,7 +111,10 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return getCardOptions(options, tooltips);
     };
 
-    const getGraphOptions = (options, xaxes, yaxes, tooltips) => {
+    const getChartOptions = (options, xaxes, yaxes, tooltips) => {
+        if (types.isString(formatter = options.series?.label?.labelFormatter)) {
+            options.series.label.labelFormatter = dom.findFunction(formatter);
+        }
         if(types.isArray(xaxes))
         {
             // Note: When length > 1, the option name is different.
@@ -157,9 +157,12 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         }
     };
 
-    const getGraphTooltips = (graphs, tooltipId) => {
+    const getChartTooltips = (charts, tooltipId) => {
+        $(`#${tooltipId}`).remove();
+        $(`<div id="${tooltipId}" class="flot-tooltip"></div>`).appendTo("body");
+
         const tooltipLabels = {};
-        graphs.forEach(({ series: { labels = {} }, options = {} }) =>
+        charts.forEach(({ series: { labels = {} }, options = {} }) =>
             makeTooltipLabel(tooltipLabels, labels, options));
         return {
             id: tooltipId,
@@ -245,49 +248,45 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
 
     self.show = ({
         selector,
-        size: { width = '', height = '' } = {},
-        graphs,
-        pies,
+        size,
+        type,
+        data,
         xaxes,
         yaxes,
         options = {},
     }) => {
+        if (!types.isArray(data) || data.length === 0) {
+            console.error(`Charts plugin (Flot): no valid data to show in the chart with id ${selector}.`);
+            return true;
+        }
+
         const container = $(`#${selector}`);
         if(!container)
         {
-            console.error(`Flot plugin: unable to find the DOM element with id ${selector}.`);
-            return;
+            console.error(`Charts plugin (Flot): unable to find the DOM element with id ${selector}.`);
+            return true;
         }
 
-        // A wrapper is added so the graph destruction can be detected using its removal.
+        // A wrapper is added so the chart destruction can be detected using its removal.
         const wrapperId = `${selector}-wrapper`;
-        container.html(wrapperHtml(container, wrapperId, width, height));
+        container.html(wrapperHtml(container, wrapperId, size));
         const wrapper = $(`#${wrapperId}`);
 
-        if (types.isArray(pies)) {
-            if (pies.length > 0) {
-                const tooltips = { show: false };
-                drawCard(wrapper, pies[0].series, getPieOptions(options, tooltips), tooltips);
-            }
-            return;
-        }
-
-        if (!types.isArray(graphs) || graphs.length === 0) {
-            console.error(`Flot plugin: no valid data to show in the graph with id ${selector}.`);
-            return;
+        if(type === 'pie' || type === 'donut')
+        {
+            const tooltips = { show: false };
+            drawCard(wrapper, data[0].series, getPieOptions(options, tooltips), tooltips);
+            return true;
         }
 
         // Create the DOM element for the tooltip.
         const tooltipId = `${selector}-flot-tooltip`;
-        $(`#${tooltipId}`).remove();
-        $(`<div id="${tooltipId}" class="flot-tooltip"></div>`).appendTo("body");
-
-        // Use an observer to remove the tooltip when the graph is deleted.
+        // Use an observer to remove the tooltip when the chart is deleted.
         observeMutations(wrapper, tooltipId);
 
-        const tooltips = getGraphTooltips(graphs, tooltipId);
-        drawCard(wrapper, graphs.map(graph => makeGraph(graph)),
-            getGraphOptions(options, xaxes, yaxes, tooltips), tooltips);
+        const tooltips = getChartTooltips(data, tooltipId);
+        drawCard(wrapper, data.map(chart => makeChart(chart)),
+            getChartOptions(options, xaxes, yaxes, tooltips), tooltips);
 
         return true;
     };

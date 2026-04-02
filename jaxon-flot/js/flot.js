@@ -246,9 +246,9 @@ jaxon.dom.ready(() => {
     jaxon.register("flot.card", ({
         card: {
             selector,
+            size: { width = '', height = '' } = {},
             graphs,
             pie,
-            size: { width = '', height = '' } = {},
             xaxes,
             yaxes,
             options = {},

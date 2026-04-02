@@ -18,6 +18,8 @@ use Jaxon\Charts\Chart\Data\Pie\Series;
 use Jaxon\Charts\Chart\Option\OptionTrait;
 use JsonSerializable;
 
+use function count;
+
 class Pie implements JsonSerializable
 {
     use OptionTrait;
@@ -56,9 +58,13 @@ class Pie implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return $this->xSeries === null ? [] : [
+        $aJson = $this->xSeries === null ? [] : [
             'series' => $this->xSeries->jsonSerialize(),
-            'options' => $this->aOptions,
         ];
+        if(count($this->aOptions) > 0)
+        {
+            $aJson['options'] = $this->aOptions;
+        }
+        return $aJson;
     }
 }

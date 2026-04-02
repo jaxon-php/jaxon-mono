@@ -58,11 +58,9 @@ class Axis implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        $aJson = [];
-        if($this->xTicks !== null)
-        {
-            $aJson['ticks'] = $this->xTicks->jsonSerialize();
-        }
+        $aJson = $this->xTicks === null ? [] : [
+            'ticks' => $this->xTicks->jsonSerialize(),
+        ];
         if(count($this->aOptions) > 0)
         {
             $aJson['options'] = $this->aOptions;

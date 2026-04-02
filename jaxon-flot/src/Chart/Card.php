@@ -189,8 +189,11 @@ class Card implements JsonSerializable
         $aJson = [
             'selector' => $this->sSelector,
             'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
-            'options' => $this->aOptions,
         ];
+        if(count($this->aOptions) > 0)
+        {
+            $aJson['options'] = $this->aOptions;
+        }
 
         if($this->xPie !== null)
         {

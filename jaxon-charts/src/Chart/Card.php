@@ -168,6 +168,28 @@ class Card implements JsonSerializable
     }
 
     /**
+     * @param string $sType
+     * @param array $aGraphs
+     *
+     * @return array
+     */
+    private function makeConfig(string $sType, array $aGraphs): array
+    {
+        $aOptions = [
+            'type' => $sType,
+            'selector' => $this->sSelector,
+            'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
+            'data' => $aGraphs,
+        ];
+        if(count($this->aOptions) > 0)
+        {
+            $aOptions['options'] = $this->aOptions;
+        }
+
+        return $aOptions;
+    }
+
+    /**
      * Convert this object to an array for json format.
      *
      * This is a method of the JsonSerializable interface.
@@ -176,28 +198,17 @@ class Card implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        $aJson = [
-            'selector' => $this->sSelector,
-            'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
-            'options' => $this->aOptions,
-        ];
-
         if(count($this->aPies) > 0)
         {
-            $aJson['pies'] = $this->aPies;
-            return $aJson;
+            return $this->makeConfig('pie', $this->aPies);
         }
 
-        $aJson['graphs'] = $this->aGraphs;
-        if(count($this->aAxesX) > 0)
-        {
-            $aJson['xaxes'] = $this->aAxesX;
-        }
-        if(count($this->aAxesY) > 0)
-        {
-            $aJson['yaxes'] = $this->aAxesY;
-        }
-
-        return $aJson;
+        $aAxesX = count($this->aAxesX) > 0 ? ['xaxes' => $this->aAxesX] : [];
+        $aAxesY = count($this->aAxesY) > 0 ? ['yaxes' => $this->aAxesY] : [];
+        return [
+            ...$this->makeConfig('bar', $this->aGraphs),
+            ...$aAxesX,
+            ...$aAxesY,
+        ];
     }
 }
