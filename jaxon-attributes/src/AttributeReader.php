@@ -280,18 +280,15 @@ class AttributeReader implements MetadataReaderInterface
             $xClass = $xInput->getReflectionClass();
             $this->readBaseClassAttributes($xClass);
 
-            $aClasses = [
-                $xClass->getName() => $xClass,
-                ...$this->getClassTraits($xClass),
-            ];
-            while(($xClass = $this->getParentClass($xClass)) !== null)
+            $aClasses = [];
+            do
             {
                 $aClasses = [
                     $xClass->getName() => $xClass,
                     ...$this->getClassTraits($xClass),
                     ...$aClasses,
                 ];
-            }
+            } while(($xClass = $this->getParentClass($xClass)) !== null);
             $aClasses = array_unique($aClasses);
 
             foreach($aClasses as $xClass)
