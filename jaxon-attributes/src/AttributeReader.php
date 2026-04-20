@@ -30,7 +30,10 @@ use ReflectionNamedType;
 use ReflectionProperty;
 
 use function array_filter;
-use function array_reverse;
+use function array_map;
+use function array_merge;
+use function array_unique;
+use function array_reduce;
 use function count;
 use function in_array;
 use function is_a;
@@ -250,6 +253,21 @@ class AttributeReader implements MetadataReaderInterface
     }
 
     /**
+     * Recursively get all the traits used in a single class.
+     *
+     * @param ReflectionClass $xClass
+     *
+     * @return array
+     */
+    private function getClassTraits(ReflectionClass $xClass): array
+    {
+        $aTraits = $xClass->getTraits();
+        $aChildrenTraits = array_map($this->getClassTraits(...), $aTraits);
+        $aChildrenTraits = array_reduce($aChildrenTraits, array_merge(...), []);
+        return [...$aChildrenTraits, ...$aTraits];
+    }
+
+    /**
      * @inheritDoc
      * @throws SetupException
      */
@@ -262,12 +280,19 @@ class AttributeReader implements MetadataReaderInterface
             $xClass = $xInput->getReflectionClass();
             $this->readBaseClassAttributes($xClass);
 
-            $aClasses = [$xClass];
+            $aClasses = [
+                $xClass->getName() => $xClass,
+                ...$this->getClassTraits($xClass),
+            ];
             while(($xClass = $this->getParentClass($xClass)) !== null)
             {
-                $aClasses[] = $xClass;
+                $aClasses = [
+                    $xClass->getName() => $xClass,
+                    ...$this->getClassTraits($xClass),
+                    ...$aClasses,
+                ];
             }
-            $aClasses = array_reverse($aClasses);
+            $aClasses = array_unique($aClasses);
 
             foreach($aClasses as $xClass)
             {
