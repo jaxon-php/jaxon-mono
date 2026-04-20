@@ -13,7 +13,7 @@
         "source": "https://github.com/jaxon-php/jaxon-attributes"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-json": "*",
         "jaxon-php/jaxon-core": "^5.2"
     },
