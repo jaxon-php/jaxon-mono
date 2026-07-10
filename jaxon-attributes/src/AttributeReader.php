@@ -27,7 +27,6 @@ use Exception;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionNamedType;
-use ReflectionProperty;
 
 use function array_filter;
 use function array_map;
@@ -91,8 +90,7 @@ class AttributeReader implements MetadataReaderInterface
         }
 
         $this->aTypes[$sClass] = [];
-        $aProperties = $xClass->getProperties(ReflectionProperty::IS_PUBLIC |
-            ReflectionProperty::IS_PROTECTED);
+        $aProperties = $xClass->getProperties();
         foreach($aProperties as $xReflectionProperty)
         {
             $xType = $xReflectionProperty->getType();
