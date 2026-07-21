@@ -3,9 +3,13 @@
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
 use Jaxon\Attributes\Tests\AttributeTrait;
+use Jaxon\Attributes\Tests\Attr\Ajax\ClassAttribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsAttribute;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsExcluded;
 use Jaxon\Attributes\Tests\Attr\Ajax\ClassExtendsTraitExcluded;
+use Jaxon\Attributes\Tests\Attr\Ajax\FontService;
+use Jaxon\Attributes\Tests\Service\ColorService;
+use Jaxon\Attributes\Tests\Service\TextService;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
@@ -168,12 +172,16 @@ class ClassExtendsTest extends TestCase
         $this->assertIsArray($aProperties['*']['__after']['funcAfter2']);
         $this->assertIsArray($aProperties['*']['__after']['funcAfter3']);
 
-        $this->assertCount(3, $aProperties['*']['__di']);
-        $this->assertArrayHasKey('colorService', $aProperties['*']['__di']);
-        $this->assertArrayHasKey('textService', $aProperties['*']['__di']);
-        $this->assertArrayHasKey('fontService', $aProperties['*']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService']);
+        $di = $aProperties['*']['__di'];
+        $this->assertCount(3, $di);
+        $this->assertArrayHasKey('colorService', $di);
+        $this->assertArrayHasKey('textService', $di);
+        $this->assertArrayHasKey('fontService', $di);
+        $this->assertEquals(ColorService::class, $di['colorService'][0]);
+        $this->assertEquals(ClassAttribute::class, $di['colorService'][1]);
+        $this->assertEquals(TextService::class, $di['textService'][0]);
+        $this->assertEquals(ClassAttribute::class, $di['textService'][1]);
+        $this->assertEquals(FontService::class, $di['fontService'][0]);
+        $this->assertEquals(ClassAttribute::class, $di['fontService'][1]);
     }
 }

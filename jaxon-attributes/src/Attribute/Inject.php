@@ -28,7 +28,7 @@ class Inject extends AbstractAttribute
     /**
      * @var int
      */
-    protected $nTarget;
+    protected int $nTarget;
 
     /**
      * @var array
@@ -119,6 +119,7 @@ class Inject extends AbstractAttribute
     {
         $this->validate();
         $this->getFullClassName();
-        $xMetadata->container($sMethod)->addValue($this->attr, $this->type);
+        $xMetadata->container($sMethod)
+            ->addValue($this->attr, $this->type, $xMetadata->getDeclaringClass());
     }
 }

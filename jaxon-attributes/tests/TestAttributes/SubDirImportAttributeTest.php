@@ -5,6 +5,8 @@ namespace Jaxon\Attributes\Tests\TestAttributes;
 
 use Jaxon\Attributes\Tests\AttributeTrait;
 use Jaxon\Attributes\Tests\Attr\Ajax\SubDirImportAttribute;
+use Jaxon\Attributes\Tests\Service\SubDir\FirstService;
+use Jaxon\Attributes\Tests\Service\SubDir\SecondService;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
@@ -45,18 +47,22 @@ class SubDirImportAttributeTest extends TestCase
 
     public function testCbBeforeAttributeErrorNumber()
     {
-        $xMetadata = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'], ['secondService']);
+        $xMetadata = $this->getAttributes(SubDirImportAttribute::class, ['attrDi'],
+            [SubDirImportAttribute::class => ['secondService']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
-        $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di1 = $aProperties['attrDi']['__di'];
+        $di2 = $aProperties['*']['__di'];
         $this->assertCount(2, $aProperties);
         $this->assertArrayHasKey('attrDi', $aProperties);
-        $this->assertCount(1, $aProperties['attrDi']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\SubDir\FirstService', $aProperties['attrDi']['__di']['firstService']);
+        $this->assertCount(1, $di1);
+        $this->assertEquals(FirstService::class, $di1['firstService'][0]);
+        $this->assertEquals(SubDirImportAttribute::class, $di1['firstService'][1]);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\SubDir\SecondService', $aProperties['*']['__di']['secondService']);
+        $this->assertEquals(SecondService::class, $di2['secondService'][0]);
+        $this->assertEquals(SubDirImportAttribute::class, $di2['secondService'][1]);
     }
 }

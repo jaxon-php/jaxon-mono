@@ -3,7 +3,10 @@
 namespace Jaxon\Attributes\Tests\TestAttributes;
 
 use Jaxon\Attributes\Tests\AttributeTrait;
+use Jaxon\Attributes\Tests\Attr\Ajax\FontService;
 use Jaxon\Attributes\Tests\Attr\Ajax\PropertyAttribute;
+use Jaxon\Attributes\Tests\Service\ColorService;
+use Jaxon\Attributes\Tests\Service\TextService;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
@@ -47,20 +50,24 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerAttribute()
     {
-        $xMetadata = $this->getAttributes(PropertyAttribute::class,
-            ['attrVar'], ['colorService', 'fontService', 'textService']);
+        $xMetadata = $this->getAttributes(PropertyAttribute::class, ['attrVar'],
+            [PropertyAttribute::class => ['colorService', 'fontService', 'textService']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di = $aProperties['attrVar']['__di'];
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('attrVar', $aProperties);
-        $this->assertCount(3, $aProperties['attrVar']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['attrVar']['__di']['colorService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['attrVar']['__di']['fontService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['attrVar']['__di']['textService']);
+        $this->assertCount(3, $di);
+        $this->assertEquals(ColorService::class, $di['colorService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['colorService'][1]);
+        $this->assertEquals(FontService::class, $di['fontService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['fontService'][1]);
+        $this->assertEquals(TextService::class, $di['textService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['textService'][1]);
     }
 
     /**
@@ -68,20 +75,24 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDocBlockAttribute()
     {
-        $xMetadata = $this->getAttributes(PropertyAttribute::class,
-            ['attrDbVar'], ['colorService', 'fontService', 'textService']);
+        $xMetadata = $this->getAttributes(PropertyAttribute::class, ['attrDbVar'],
+            [PropertyAttribute::class => ['colorService', 'fontService', 'textService']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di = $aProperties['attrDbVar']['__di'];
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('attrDbVar', $aProperties);
-        $this->assertCount(3, $aProperties['attrDbVar']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['attrDbVar']['__di']['colorService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['attrDbVar']['__di']['fontService']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['attrDbVar']['__di']['textService']);
+        $this->assertCount(3, $di);
+        $this->assertEquals(ColorService::class, $di['colorService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['colorService'][1]);
+        $this->assertEquals(FontService::class, $di['fontService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['fontService'][1]);
+        $this->assertEquals(TextService::class, $di['textService'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['textService'][1]);
     }
 
     /**
@@ -89,20 +100,24 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAttribute()
     {
-        $xMetadata = $this->getAttributes(PropertyAttribute::class,
-            ['attrDi'], ['colorService1', 'fontService1', 'textService1']);
+        $xMetadata = $this->getAttributes(PropertyAttribute::class, ['attrDi'],
+            [PropertyAttribute::class => ['colorService1', 'fontService1', 'textService1']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di = $aProperties['*']['__di'];
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(3, $aProperties['*']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService1']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService1']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService1']);
+        $this->assertCount(3, $di);
+        $this->assertEquals(ColorService::class, $di['colorService1'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['colorService1'][1]);
+        $this->assertEquals(FontService::class, $di['fontService1'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['fontService1'][1]);
+        $this->assertEquals(TextService::class, $di['textService1'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['textService1'][1]);
     }
 
     /**
@@ -110,20 +125,24 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerDiAndVarAttribute()
     {
-        $xMetadata = $this->getAttributes(PropertyAttribute::class,
-            ['attrDi'], ['colorService2', 'fontService2', 'textService2']);
+        $xMetadata = $this->getAttributes(PropertyAttribute::class, ['attrDi'],
+            [PropertyAttribute::class => ['colorService2', 'fontService2', 'textService2']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di = $aProperties['*']['__di'];
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(3, $aProperties['*']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService2']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService2']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService2']);
+        $this->assertCount(3, $di);
+        $this->assertEquals(ColorService::class, $di['colorService2'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['colorService2'][1]);
+        $this->assertEquals(FontService::class, $di['fontService2'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['fontService2'][1]);
+        $this->assertEquals(TextService::class, $di['textService2'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['textService2'][1]);
     }
 
     /**
@@ -131,32 +150,36 @@ class PropertyAttributeTest extends TestCase
      */
     public function testContainerPropAttribute()
     {
-        $xMetadata = $this->getAttributes(PropertyAttribute::class,
-            ['attrDi'], ['colorService3', 'fontService3', 'textService3']);
+        $xMetadata = $this->getAttributes(PropertyAttribute::class, ['attrDi'],
+            [PropertyAttribute::class => ['colorService3', 'fontService3', 'textService3']]);
         $bExcluded = $xMetadata->isExcluded();
         $aProperties = $xMetadata->getProperties();
         $aExcluded = $xMetadata->getExceptMethods();
 
         $this->assertFalse($bExcluded);
 
+        $di = $aProperties['*']['__di'];
         $this->assertCount(1, $aProperties);
         $this->assertArrayHasKey('*', $aProperties);
-        $this->assertCount(3, $aProperties['*']['__di']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\ColorService', $aProperties['*']['__di']['colorService3']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Attr\Ajax\FontService', $aProperties['*']['__di']['fontService3']);
-        $this->assertEquals('Jaxon\Attributes\Tests\Service\TextService', $aProperties['*']['__di']['textService3']);
+        $this->assertCount(3, $di);
+        $this->assertEquals(ColorService::class, $di['colorService3'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['colorService3'][1]);
+        $this->assertEquals(FontService::class, $di['fontService3'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['fontService3'][1]);
+        $this->assertEquals(TextService::class, $di['textService3'][0]);
+        $this->assertEquals(PropertyAttribute::class, $di['textService3'][1]);
     }
 
     public function testContainerAttributeErrorDiAttr()
     {
         $this->expectException(SetupException::class);
-        $this->getAttributes(PropertyAttribute::class, [], ['errorDiAttr']);
+        $this->getAttributes(PropertyAttribute::class, [], [PropertyAttribute::class => ['errorDiAttr']]);
     }
 
     public function testContainerAttributeErrorTwoDi()
     {
         $this->expectException(SetupException::class);
-        $this->getAttributes(PropertyAttribute::class, [], ['errorTwoDi']);
+        $this->getAttributes(PropertyAttribute::class, [], [PropertyAttribute::class => ['errorTwoDi']]);
     }
 
     public function testContainerAttributeErrorDiClass()

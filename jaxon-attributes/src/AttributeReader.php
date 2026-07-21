@@ -14,7 +14,6 @@
 
 namespace Jaxon\Attributes;
 
-use Jaxon\App;
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -31,7 +30,6 @@ use ReflectionNamedType;
 use function array_filter;
 use function array_map;
 use function array_merge;
-use function array_unique;
 use function array_reduce;
 use function count;
 use function in_array;
@@ -48,17 +46,6 @@ class AttributeReader implements MetadataReaderInterface
      * @var array
      */
     protected array $aTypes;
-
-    /**
-     * @var array
-     */
-    private $aJaxonClasses = [
-        App\Component::class,
-        App\NodeComponent::class,
-        App\FuncComponent::class,
-        App\PageComponent::class,
-        App\CallableClass::class,
-    ];
 
     /**
      * @var array
@@ -239,18 +226,6 @@ class AttributeReader implements MetadataReaderInterface
     }
 
     /**
-     * @param ReflectionClass $xClass
-     *
-     * @return ReflectionClass|null
-     */
-    private function getParentClass(ReflectionClass $xClass): ReflectionClass|null
-    {
-        $xParentClass = $xClass->getParentClass();
-        return $xParentClass === false || in_array($xParentClass->getName(),
-            $this->aJaxonClasses) ? null : $xParentClass;
-    }
-
-    /**
      * Recursively get all the traits used in a single class.
      *
      * @param ReflectionClass $xClass
@@ -276,26 +251,35 @@ class AttributeReader implements MetadataReaderInterface
             $this->xMetadata = new Metadata();
 
             $xClass = $xInput->getReflectionClass();
+            $this->xMetadata->setDeclaringClass($xClass->getName());
             $this->readBaseClassAttributes($xClass);
 
             $aClasses = [];
             do
             {
+                // Reverse order. The new item is added at the top of the array.
                 $aClasses = [
-                    $xClass->getName() => $xClass,
-                    ...$this->getClassTraits($xClass),
+                    $xClass->getName() => [$xClass, $this->getClassTraits($xClass)],
                     ...$aClasses,
                 ];
-            } while(($xClass = $this->getParentClass($xClass)) !== null);
-            $aClasses = array_unique($aClasses);
+            } while(($xClass = InputData::getParentClass($xClass)) !== null);
 
-            foreach($aClasses as $xClass)
+            foreach($aClasses as $sClassName => [$xClass, $aTraits])
             {
+                $this->xMetadata->setDeclaringClass($sClassName);
                 // Processing class attributes
+                foreach($aTraits as $xTrait)
+                {
+                    $this->readClassAttributes($xTrait);
+                }
                 $this->readClassAttributes($xClass);
                 // Processing properties attributes
-                foreach($xInput->getProperties() as $sProperty)
+                foreach($xInput->getProperties($sClassName) as $sProperty)
                 {
+                    foreach($aTraits as $xTrait)
+                    {
+                        $this->readPropertyAttributes($xTrait, $sProperty);
+                    }
                     $this->readPropertyAttributes($xClass, $sProperty);
                 }
             }
@@ -306,11 +290,16 @@ class AttributeReader implements MetadataReaderInterface
                 return $this->xMetadata;
             }
 
-            foreach($aClasses as $xClass)
+            foreach($aClasses as $sClassName => [$xClass, $aTraits])
             {
+                $this->xMetadata->setDeclaringClass($sClassName);
                 // Processing methods attributes
                 foreach($xInput->getMethods() as $sMethod)
                 {
+                    foreach($aTraits as $xTrait)
+                    {
+                        $this->readMethodAttributes($xTrait, $sMethod);
+                    }
                     $this->readMethodAttributes($xClass, $sMethod);
                 }
             }
