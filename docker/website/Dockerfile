@@ -1,4 +1,4 @@
-FROM lagdo/alpine-php-nginx-unit
+FROM lagdo/alpine-php-free-unit
 
 ARG PHP_USER
 ARG PHP_UID
@@ -14,7 +14,7 @@ RUN set -xe && \
 
 RUN install-php-extensions gmp intl sockets phar gd mbstring redis yaml
 
-# Configure Nginx Unit
+# Configure Free Unit
 COPY website/config/unit.json /docker-entrypoint.d/config.json
 
 # Make sure files/folders needed by the processes are accessible
