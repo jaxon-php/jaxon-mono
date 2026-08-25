@@ -3,7 +3,7 @@
 /**
  * Axis.php
  *
- * An axis for the graphs in a card.
+ * An axis for the graphs in a chart.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -52,15 +52,15 @@ class Axis implements JsonSerializable
     /**
      * Convert this object to another object more suitable for json format.
      *
-     * This is a method of the JsonSerializable interface.
-     *
      * @return array
      */
     public function jsonSerialize(): array
     {
-        $aJson = $this->xTicks === null ? [] : [
-            'ticks' => $this->xTicks->jsonSerialize(),
-        ];
+        $aJson = [];
+        if($this->xTicks !== null)
+        {
+            $aJson['ticks'] = $this->xTicks->jsonSerialize();
+        }
         if(count($this->aOptions) > 0)
         {
             $aJson['options'] = $this->aOptions;

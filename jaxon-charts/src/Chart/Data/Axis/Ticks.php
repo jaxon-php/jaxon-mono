@@ -3,7 +3,7 @@
 /**
  * Ticks.php
  *
- * Contains data to be printed on the card axis.
+ * Contains data to be printed on the chart axis.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,6 +14,8 @@
 
 namespace Jaxon\Charts\Chart\Data\Axis;
 
+use Jaxon\Charts\Chart\Data\Labels;
+use Jaxon\Charts\Chart\Data\Loop;
 use JsonSerializable;
 
 use function array_filter;
@@ -22,19 +24,14 @@ use function count;
 
 class Ticks implements JsonSerializable
 {
+    use Labels;
+
     /**
      * The points
      *
      * @var array
      */
     protected $aPoints = [];
-
-    /**
-     * The points labels
-     *
-     * @var array
-     */
-    protected $aLabels = [];
 
     /**
      * Add a point to the ticks.
@@ -76,35 +73,18 @@ class Ticks implements JsonSerializable
     /**
      * Add points to the ticks using a loop expression.
      *
-     * @param float $iStart The first point
-     * @param float $iEnd The last point
-     * @param float|string $xStep The step between next points
-     * @param string $sJsLabel The javascript function to get points labels
-     *
-     * The first three parameters are used in a for loop.
-     * The step can be either a float value or a javascript function.
-     * The javascript function takes the x value as parameter, and returns the corresponding point label.
+     * @param Loop $loop
      *
      * @return static
      */
-    public function loop(float $iStart, float $iEnd, float|string $xStep, string $sJsLabel = ''): static
+    public function values(Loop $loop): static
     {
-        $this->aPoints = [
-            'start' => $iStart,
-            'end' => $iEnd,
-            'step' => $xStep,
-        ];
-        if($sJsLabel !== '')
-        {
-            $this->aLabels['func'] = $sJsLabel;
-        }
+        $this->aPoints = $loop->points();
         return $this;
     }
 
     /**
      * Convert this object to array.
-     *
-     * This is a method of the JsonSerializable interface.
      *
      * @return array
      */

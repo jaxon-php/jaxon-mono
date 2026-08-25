@@ -3,7 +3,7 @@
 /**
  * OptionTrait.php
  *
- * Options for cards and charts.
+ * Options for charts.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

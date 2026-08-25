@@ -33,16 +33,14 @@ class Series implements JsonSerializable
      * Add a slice to the series.
      *
      * @param float $fValue The slice value
-     * @param string $sLabel The slice label
+     * @param string $sTooltip The slice tooltip
      *
      * @return static
      */
-    public function slice(float $fValue, string $sLabel = ''): static
+    public function slice(float $fValue, string $sTooltip = ''): static
     {
-        $this->aSlices[] = [
-            'data' => $fValue,
-            'label' => $sLabel,
-        ];
+        $this->aSlices[] = $sTooltip === '' ? ['value' => $fValue] :
+            ['value' => $fValue, 'tooltip' => $sTooltip];
         return $this;
     }
 
@@ -55,10 +53,11 @@ class Series implements JsonSerializable
      */
     public function slices(array $aSlices): static
     {
-        $aSlices = array_filter($aSlices, fn(array $aSlice) => count($aSlice) === 2);
-        foreach(array_values($aSlices) as $aSlice)
+        $aSlices = array_filter($aSlices, fn(array $aSlice) =>
+            count($aSlice) === 1 || count($aSlice) === 2);
+        foreach(array_values($aSlices) as $xSlice)
         {
-            $this->slice($aSlice[0], $aSlice[1]);
+            $this->slice($xSlice[0], $xSlice[1] ?? '');
         }
         return $this;
     }

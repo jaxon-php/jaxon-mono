@@ -3,7 +3,7 @@
 /**
  * Graph.php
  *
- * A graph to be printed in a card.
+ * A graph to be printed in a chart.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -27,16 +27,31 @@ class Graph implements JsonSerializable
     /**
      * @var Series|null
      */
-    protected Series|null $xSeries;
+    protected Series|null $xSeries = null;
 
     /**
-     * The constructor
-     *
-     * @param array $aOptions
+     * @var string|null
      */
-    public function __construct(array $aOptions = [])
+    protected string|null $sLabel = null;
+
+    /**
+     * @param string $sType
+     * @param bool $bFill
+     */
+    public function __construct(private string $sType, private bool $bFill)
+    {}
+
+    /**
+     * Set the graph label
+     *
+     * @param string $sLabel
+     *
+     * @return static
+     */
+    public function label(string $sLabel): static
     {
-        $this->options($aOptions);
+        $this->sLabel = $sLabel;
+        return $this;
     }
 
     /**
@@ -58,9 +73,20 @@ class Graph implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        $aJson = $this->xSeries === null ? [] : [
+        if($this->xSeries === null)
+        {
+            return [];
+        }
+
+        $aJson = [
+            'type' => $this->sType,
+            'fill' => $this->bFill,
             'series' => $this->xSeries->jsonSerialize(),
         ];
+        if($this->sLabel !== null)
+        {
+            $aJson['label'] = $this->sLabel;
+        }
         if(count($this->aOptions) > 0)
         {
             $aJson['options'] = $this->aOptions;

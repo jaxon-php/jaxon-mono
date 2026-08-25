@@ -40,4 +40,20 @@ class Flot extends AbstractLibrary
     {
         return 'flot';
     }
+
+    /**
+     * @return string
+     */
+    public function getCssCode(): string
+    {
+        return $this->template()->render("jaxon::charts::flot/chart.css");
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsCode(): string
+    {
+        return $this->template()->render("jaxon::charts::flot/chart.js");
+    }
 }

@@ -3,7 +3,7 @@
 /**
  * Pie.php
  *
- * A pie to be printed in a card.
+ * A pie to be printed in a chart.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -30,6 +30,11 @@ class Pie implements JsonSerializable
     protected Series|null $xSeries;
 
     /**
+     * @var array|null
+     */
+    protected array|null $aLabels = null;
+
+    /**
      * The constructor
      *
      * @param array $aOptions
@@ -37,6 +42,19 @@ class Pie implements JsonSerializable
     public function __construct(array $aOptions = [])
     {
         $this->options($aOptions);
+    }
+
+    /**
+     * Set the graph labels
+     *
+     * @param array $aLabels
+     *
+     * @return static
+     */
+    public function labels(array $aLabels): static
+    {
+        $this->aLabels = $aLabels;
+        return $this;
     }
 
     /**
@@ -61,6 +79,10 @@ class Pie implements JsonSerializable
         $aJson = $this->xSeries === null ? [] : [
             'series' => $this->xSeries->jsonSerialize(),
         ];
+        if($this->aLabels !== null)
+        {
+            $aJson['labels'] = $this->aLabels;
+        }
         if(count($this->aOptions) > 0)
         {
             $aJson['options'] = $this->aOptions;

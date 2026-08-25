@@ -69,10 +69,36 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         return [];
     };
 
-    const makeChart = ({ series: { points, values }, options = {} }) => ({
-        ...options,
-        data: getPointValues(points, values, options),
-    });
+    const getPieConfig = ({ series, labels }) => {
+        return series.map(({ value }, index) => ({ data: value, label: labels[index] ?? '' }));
+    };
+
+    const getGraphConfig = (graphs) => {
+        return graphs.map(({
+            type,
+            fill,
+            series: { points, values },
+            label,
+            options = {},
+        }) => {
+            if (['line', 'bar', 'point'].includes(type))
+            {
+                options = {
+                    ...options,
+                    [`${type}s`]: { show: true, fill, ...(options[`${type}s`] ?? {}) },
+                };
+            }
+            // Copy the label into the options.
+            if(label !== undefined && options.label === undefined)
+            {
+                options.label = label;
+            }
+            return {
+                ...options,
+                data: getPointValues(points, values, options),
+            };
+        });
+    };
 
     const makeAxis = ({ ticks: { points = [], labels = {} } = {}, options = {} }) => {
         if(types.isString(options.tickFormatter))
@@ -87,7 +113,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
 
     const showLegend = (options) => options.legend?.show ?? false;
 
-    const getCardOptions = (options, tooltips) => {
+    const getChartOptions = (options, tooltips) => {
         if (types.isString(formatter = options.legend?.labelFormatter)) {
             options.legend.labelFormatter = dom.findFunction(formatter);
         }
@@ -108,10 +134,10 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             options.series.pie.label.formatter = dom.findFunction(formatter);
         }
 
-        return getCardOptions(options, tooltips);
+        return getChartOptions(options, tooltips);
     };
 
-    const getChartOptions = (options, xaxes, yaxes, tooltips) => {
+    const getGraphOptions = (options, xaxes, yaxes, tooltips) => {
         if (types.isString(formatter = options.series?.label?.labelFormatter)) {
             options.series.label.labelFormatter = dom.findFunction(formatter);
         }
@@ -140,39 +166,48 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             }
         }
 
-        return getCardOptions(options, tooltips);
+        return getChartOptions(options, tooltips);
     };
 
-    const makeTooltipLabel = (labels, { data = null, func = null }, { label = null }) => {
-        if(label !== null)
+    const makeTooltipLabel = (labels, { data = null, func = null }, index) => {
+        if(data !== null)
         {
-            if(data !== null)
-            {
-                labels[label] = { data };
-            }
-            if(func !== null)
-            {
-                labels[label] = { func: dom.findFunction(func) };
-            }
+            labels[index] = { data };
+        }
+        if(func !== null)
+        {
+            labels[index] = { func: dom.findFunction(func) };
         }
     };
 
-    const getChartTooltips = (charts, tooltipId) => {
+    /**
+     * Save the tooltips in an array
+     *
+     * @param {array} graphs
+     * @param {string} tooltipId
+     *
+     * @returns {object}
+     */
+    const getChartTooltips = (graphs, tooltipId) => {
         $(`#${tooltipId}`).remove();
         $(`<div id="${tooltipId}" class="flot-tooltip"></div>`).appendTo("body");
 
-        const tooltipLabels = {};
-        charts.forEach(({ series: { labels = {} }, options = {} }) =>
-            makeTooltipLabel(tooltipLabels, labels, options));
+        const tooltipLabels = [];
+        graphs.forEach(({ series: { tooltips = {} } }, index) =>
+            makeTooltipLabel(tooltipLabels, tooltips, index));
         return {
             id: tooltipId,
             labels: tooltipLabels,
-            show: Object.keys(tooltipLabels).length > 0,
+            show: tooltipLabels.length > 0,
         };
     };
 
-    const getTooltipLabel = (tooltips, { series: { label }, datapoint: [x, y] }) => {
-        const { data = null, func = null } = tooltips.labels[label];
+    /**
+     * Make a tooltip label using the saved array
+     *
+     * @returns {string}
+     */
+    const getTooltipLabel = ({ data = null, func = null } = {}, label, [x, y]) => {
         if(data !== null && data[x] !== undefined)
         {
             return data[x];
@@ -192,7 +227,8 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             return;
         }
 
-        const tooltipLabel = getTooltipLabel(tooltips, item);
+        const { series: { label }, seriesIndex: index, datapoint } = item;
+        const tooltipLabel = getTooltipLabel(tooltips.labels[index], label, datapoint);
         if(tooltipLabel !== '')
         {
             tooltip.html(tooltipLabel)
@@ -201,7 +237,11 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         }
     };
 
-    const drawCard = (wrapper, data, options, tooltips) => {
+    const drawChart = (wrapper, data, options, tooltips) => {
+        if (data === null) {
+            return;
+        }
+
         $.plot(wrapper, data, options);
 
         if(tooltips.show)
@@ -209,7 +249,7 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
             wrapper.on("plothover", (event, pos, item) => showTooltip(tooltips, item));
         }
 
-        // Fix: the card labels background is black by default. Change to white.
+        // Fix: the chart labels background is black by default. Change to white.
         if(showLegend(options))
         {
             const legendContainer = options.legend.container ?? wrapper;
@@ -249,17 +289,12 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
     self.show = ({
         selector,
         size,
-        type,
-        data,
+        pie,
+        graphs,
         xaxes,
         yaxes,
         options = {},
     }) => {
-        if (!types.isArray(data) || data.length === 0) {
-            console.error(`Charts plugin (Flot): no valid data to show in the chart with id ${selector}.`);
-            return true;
-        }
-
         const container = $(`#${selector}`);
         if(!container)
         {
@@ -272,22 +307,28 @@ jaxon.dom.ready(() => jaxon.chart.register('flot', (self, utils) => {
         container.html(wrapperHtml(container, wrapperId, size));
         const wrapper = $(`#${wrapperId}`);
 
-        if(type === 'pie' || type === 'donut')
+        if(pie && types.isObject(pie))
         {
             const tooltips = { show: false };
-            drawCard(wrapper, data[0].series, getPieOptions(options, tooltips), tooltips);
+            const pieOptions = getPieOptions(options, tooltips);
+            drawChart(wrapper, getPieConfig(pie), pieOptions, tooltips);
             return true;
         }
 
-        // Create the DOM element for the tooltip.
-        const tooltipId = `${selector}-flot-tooltip`;
-        // Use an observer to remove the tooltip when the chart is deleted.
-        observeMutations(wrapper, tooltipId);
+        if(graphs && types.isArray(graphs) && graphs.length > 0)
+        {
+            // Create the DOM element for the tooltip.
+            const tooltipId = `${selector}-flot-tooltip`;
+            // Use an observer to remove the tooltip when the chart is deleted.
+            observeMutations(wrapper, tooltipId);
 
-        const tooltips = getChartTooltips(data, tooltipId);
-        drawCard(wrapper, data.map(chart => makeChart(chart)),
-            getChartOptions(options, xaxes, yaxes, tooltips), tooltips);
+            const tooltips = getChartTooltips(graphs, tooltipId);
+            const graphOptions = getGraphOptions(options, xaxes, yaxes, tooltips);
+            drawChart(wrapper, getGraphConfig(graphs), graphOptions, tooltips);
+            return true;
+        }
 
+        console.error(`Charts plugin (ChartJs): no valid data to show in the chart with id ${selector}.`);
         return true;
     };
 }));

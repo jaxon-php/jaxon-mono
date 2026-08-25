@@ -29,6 +29,7 @@ function _register(): void
 
         $xChart = $di->make(ChartPlugin::class);
         $xChart->registerLibrary(Library\Flot::class, 'flot');
+        $xChart->registerLibrary(Library\ChartJs::class, 'chartjs');
 
         return $xChart;
     });

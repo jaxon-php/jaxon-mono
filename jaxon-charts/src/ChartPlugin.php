@@ -15,7 +15,7 @@
 namespace Jaxon\Charts;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\Charts\Chart\Card;
+use Jaxon\Charts\Chart\Chart;
 use Jaxon\Charts\Library\AbstractLibrary;
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
@@ -44,7 +44,7 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
     private $xConfig = null;
 
     /**
-     * @var array<AbstractLibrary>
+    * @var array<array<string, string|bool>>|null
      */
     private array $aLibraries = [];
 
@@ -135,26 +135,6 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
 
         // Register the library class in the container
         $this->saveLibraryInContainer($sClassName, $sLibraryName);
-    }
-
-    /**
-     * @param string $sLibraryName
-     *
-     * @return string
-     */
-    public function renderJsCode(string $sLibraryName): string
-    {
-        return $this->xTemplateEngine->render("jaxon::charts::libs/{$sLibraryName}.js");
-    }
-
-    /**
-     * @param string $sLibraryName
-     *
-     * @return string
-     */
-    public function renderCssCode(string $sLibraryName): string
-    {
-        return $this->xTemplateEngine->render("jaxon::charts::libs/{$sLibraryName}.css");
     }
 
     /**
@@ -263,33 +243,33 @@ class ChartPlugin extends AbstractResponsePlugin implements CssCodeGeneratorInte
     }
 
     /**
-     * Create a graph card, to be displayed in a given HTML element.
+     * Create a graph chart, to be displayed in a given HTML element.
      *
      * @param string $sSelector
      * @param array $aOptions
      *
-     * @return Card
+     * @return Chart
      */
-    public function card(string $sSelector, array $aOptions = []): Card
+    public function chart(string $sSelector, array $aOptions = []): Chart
     {
         $this->processLibraryConfig();
 
-        return new Card($sSelector, $aOptions);
+        return new Chart($sSelector, $aOptions);
     }
 
     /**
-     * Draw a card with thge specified chart library.
+     * Draw a chart with thge specified chart library.
      *
-     * @param Card $xCard
+     * @param Chart $xChart
      * @param string $sLibraryName
      *
      * @return void
      */
-    public function draw(Card $xCard, string $sLibraryName): void
+    public function draw(Chart $xChart, string $sLibraryName): void
     {
         if($this->aLibraries[$sLibraryName]['enabled'] ?? false)
         {
-            $this->addCommand('charts.card', ['card' => $xCard, 'lib' => $sLibraryName]);
+            $this->addCommand('charts.chart', ['chart' => $xChart, 'lib' => $sLibraryName]);
         }
     }
 }

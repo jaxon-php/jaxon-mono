@@ -14,6 +14,8 @@
 
 namespace Jaxon\Charts\Chart\Data\Graph;
 
+use Jaxon\Charts\Chart\Data\Labels;
+use Jaxon\Charts\Chart\Data\Loop;
 use JsonSerializable;
 
 use function array_filter;
@@ -22,6 +24,8 @@ use function count;
 
 class Series implements JsonSerializable
 {
+    use Labels;
+
     /**
      * The points
      *
@@ -37,22 +41,15 @@ class Series implements JsonSerializable
     protected $aValues = [];
 
     /**
-     * The points labels
-     *
-     * @var array
-     */
-    protected $aLabels = [];
-
-    /**
      * Add a point to the series.
      *
      * @param float $iXaxis The point on the X axis
      * @param float|string $xValue The point value
-     * @param string $sLabel The point label
+     * @param string $sTooltip The point tooltip
      *
      * @return static
      */
-    public function point(float $iXaxis, float|string $xValue, string $sLabel = ''): static
+    public function point(float $iXaxis, float|string $xValue, string $sTooltip = ''): static
     {
         $this->aPoints[] = $iXaxis;
         if(!isset($this->aValues['data']))
@@ -60,13 +57,13 @@ class Series implements JsonSerializable
             $this->aValues['data'] = [];
         }
         $this->aValues['data'][$iXaxis] = $xValue;
-        if($sLabel !== '')
+        if($sTooltip !== '')
         {
             if(!isset($this->aLabels['data']))
             {
                 $this->aLabels['data'] = [];
             }
-            $this->aLabels['data'][$iXaxis] = $sLabel;
+            $this->aLabels['data'][$iXaxis] = $sTooltip;
         }
         return $this;
     }
@@ -90,42 +87,22 @@ class Series implements JsonSerializable
     }
 
     /**
-     * Add points to the graph series using a loop expression.
+     * Add points to the graph series using a function expression.
      *
-     * @param float $iStart The first point
-     * @param float $iEnd The last point
-     * @param float|string $xStep The step between next points
-     * @param string $sJsValue The javascript function to get points values
-     * @param string $sJsLabel The javascript function to get points labels
-     *
-     * The first three parameters are used in a for loop.
-     * The step can be either a float value or a javascript function.
-     * The first javascript function takes the x value as parameter, and returns the corresponding point value.
-     * The second javascript function takes the x and y values and the series label as parameters,
-     * and returns the corresponding point label.
+     * @param string $sJsValues The javascript function to get points values
+     * @param Loop $loop
      *
      * @return static
      */
-    public function loop(float $iStart, float $iEnd, float|string $xStep,
-        string $sJsValue, string $sJsLabel = ''): static
+    public function func(string $sJsValues, Loop $loop): static
     {
-        $this->aPoints = [
-            'start' => $iStart,
-            'end' => $iEnd,
-            'step' => $xStep,
-        ];
-        $this->aValues['func'] = $sJsValue;
-        if($sJsLabel !== '')
-        {
-            $this->aLabels['func'] = $sJsLabel;
-        }
+        $this->aValues['func'] = $sJsValues;
+        $this->aPoints = $loop->points();
         return $this;
     }
 
     /**
      * Convert this object to array.
-     *
-     * This is a method of the JsonSerializable interface.
      *
      * @return array
      */
@@ -134,7 +111,7 @@ class Series implements JsonSerializable
         return count($this->aLabels) > 0 ? [
             'points' => $this->aPoints,
             'values' => $this->aValues,
-            'labels' => $this->aLabels,
+            'tooltips' => $this->aLabels,
         ] : [
             'points' => $this->aPoints,
             'values' => $this->aValues,

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Card.php
+ * Chart.php
  *
- * A card containing one or more graphs.
+ * A chart containing one or more graphs.
  *
  * @package jaxon-charts
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,13 +14,14 @@
 
 namespace Jaxon\Charts\Chart;
 
+use Jaxon\Charts\Chart\Data\Loop;
 use Jaxon\Charts\Chart\Option\OptionTrait;
 use JsonSerializable;
 
 use function count;
 use function trim;
 
-class Card implements JsonSerializable
+class Chart implements JsonSerializable
 {
     use OptionTrait;
 
@@ -46,36 +47,34 @@ class Card implements JsonSerializable
     protected array $aPies = [];
 
     /**
-     * The card width
+     * The chart width
      *
      * @var string
      */
     protected string $sWidth = '';
 
     /**
-     * The card height
+     * The chart height
      *
      * @var string
      */
     protected string $sHeight = '';
 
     /**
-     * The card X axes
+     * The chart X axes
      *
      * @var array<Axis>
      */
     protected array $aAxesX = [];
 
     /**
-     * The card Y axes
+     * The chart Y axes
      *
      * @var array<Axis>
      */
     protected array $aAxesY = [];
 
     /**
-     * The constructor.
-     *
      * @param string $sSelector The jQuery selector
      * @param array $aOptions
      */
@@ -83,6 +82,20 @@ class Card implements JsonSerializable
     {
         $this->sSelector = trim($sSelector, " \t");
         $this->options($aOptions);
+    }
+
+    /**
+     * Get a loop expression.
+     *
+     * @param float $iStart The first point
+     * @param float $iEnd The last point
+     * @param float|string $xStep The step between next points
+     *
+     * @return Loop
+     */
+    public function loop(float $iStart, float $iEnd, float|string $xStep): Loop
+    {
+        return new Loop($iStart, $iEnd, $xStep);
     }
 
     /**
@@ -112,7 +125,7 @@ class Card implements JsonSerializable
     }
 
     /**
-     * Add a pie to the card.
+     * Add a pie to the chart.
      *
      * @param array $aOptions
      *
@@ -126,21 +139,22 @@ class Card implements JsonSerializable
     }
 
     /**
-     * Add a new graph to the card.
+     * Add a new graph to the chart.
      *
-     * @param array $aOptions
+     * @param string $sType
+     * @param bool $bFill
      *
      * @return Graph
      */
-    public function graph(array $aOptions = []): Graph
+    public function graph(string $sType, bool $bFill = false): Graph
     {
-        $xGraph = new Graph($aOptions);
+        $xGraph = new Graph($sType, $bFill);
         $this->aGraphs[] = $xGraph;
         return $xGraph;
     }
 
     /**
-     * Add an X axis to the card.
+     * Add an X axis to the chart.
      *
      * @param array $aOptions
      *
@@ -154,7 +168,7 @@ class Card implements JsonSerializable
     }
 
     /**
-     * Add a Y axis to the card.
+     * Add a Y axis to the chart.
      *
      * @param array $aOptions
      *
@@ -168,31 +182,26 @@ class Card implements JsonSerializable
     }
 
     /**
-     * @param string $sType
      * @param array $aGraphs
      *
      * @return array
      */
-    private function makeConfig(string $sType, array $aGraphs): array
+    private function makeConfig(array $aGraphs): array
     {
         $aOptions = [
-            'type' => $sType,
             'selector' => $this->sSelector,
             'size' => ['width' => $this->sWidth, 'height' => $this->sHeight],
-            'data' => $aGraphs,
+            ...$aGraphs,
         ];
         if(count($this->aOptions) > 0)
         {
             $aOptions['options'] = $this->aOptions;
         }
-
         return $aOptions;
     }
 
     /**
      * Convert this object to an array for json format.
-     *
-     * This is a method of the JsonSerializable interface.
      *
      * @return array
      */
@@ -200,13 +209,13 @@ class Card implements JsonSerializable
     {
         if(count($this->aPies) > 0)
         {
-            return $this->makeConfig('pie', $this->aPies);
+            return $this->makeConfig(['pie' => $this->aPies[0]]);
         }
 
         $aAxesX = count($this->aAxesX) > 0 ? ['xaxes' => $this->aAxesX] : [];
         $aAxesY = count($this->aAxesY) > 0 ? ['yaxes' => $this->aAxesY] : [];
         return [
-            ...$this->makeConfig('bar', $this->aGraphs),
+            ...$this->makeConfig(['graphs' => $this->aGraphs]),
             ...$aAxesX,
             ...$aAxesY,
         ];

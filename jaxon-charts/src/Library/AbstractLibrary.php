@@ -14,10 +14,12 @@
 
 namespace Jaxon\Charts\Library;
 
+use Jaxon\Charts\ChartPlugin;
+use Jaxon\Utils\Template\TemplateEngine;
+
 use function array_map;
 use function is_array;
 use function rtrim;
-use function Jaxon\Charts\chart;
 
 abstract class AbstractLibrary
 {
@@ -43,8 +45,22 @@ abstract class AbstractLibrary
     protected array $aJsFiles = [];
 
     /**
-     * Get the library name
-     *
+     * @param ChartPlugin $chart
+     * @param TemplateEngine $xTemplateEngine
+     */
+    public function __construct(private ChartPlugin $chart,
+        private TemplateEngine $xTemplateEngine)
+    {}
+
+    /**
+     * @return TemplateEngine
+     */
+    protected function template(): TemplateEngine
+    {
+        return $this->xTemplateEngine;
+    }
+
+    /**
      * @return string
      */
     abstract public function getName(): string;
@@ -67,13 +83,13 @@ abstract class AbstractLibrary
     private function disabled(string $sType): bool
     {
         $sAssets = 'assets.' . $this->getName();
-        $xConfig = chart()->config();
+        $xConfig = $this->chart->config();
         return $xConfig->getOption($sAssets) === false ||
             $xConfig->getOption("$sAssets.$sType") === false;
     }
 
     /**
-     * @inheritDoc
+     * @return array
      */
     public function getCssUrls(): array
     {
@@ -84,21 +100,18 @@ abstract class AbstractLibrary
 
         $aCssFiles = array_map($this->getFileUrl(...), $this->aCssFiles);
         $sAssets = 'assets.' . $this->getName();
-        $xConfig = chart()->config();
+        $xConfig = $this->chart->config();
         return is_array($aCssUrls = $xConfig->getOption("$sAssets.css")) ?
             [...$aCssFiles, ...$aCssUrls] : $aCssFiles;
     }
 
     /**
-     * @inheritDoc
+     * @return string
      */
-    public function getCssCode(): string
-    {
-        return chart()->renderCssCode($this->getName());
-    }
+    abstract public function getCssCode(): string;
 
-     /**
-     * @inheritDoc
+    /**
+     * @return array
      */
     public function getJsUrls(): array
     {
@@ -109,16 +122,13 @@ abstract class AbstractLibrary
 
         $aJsFiles = array_map($this->getFileUrl(...), $this->aJsFiles);
         $sAssets = 'assets.' . $this->getName();
-        $xConfig = chart()->config();
+        $xConfig = $this->chart->config();
         return is_array($aJsUrls = $xConfig->getOption("$sAssets.js")) ?
             [...$aJsFiles, ...$aJsUrls] : $aJsFiles;
     }
 
     /**
-     * @inheritDoc
+     * @return string
      */
-    public function getJsCode(): string
-    {
-        return chart()->renderJsCode($this->getName());
-    }
+    abstract public function getJsCode(): string;
 }
