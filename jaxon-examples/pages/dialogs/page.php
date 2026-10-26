@@ -15,16 +15,6 @@ $aLibraries = [
         'name' => 'Bootbox',
         'class' => Jaxon\Dialogs\Dialog\Library\Bootbox::class,
     ],
-    // Quantum
-    'quantum'     => [
-        'name' => 'Quantum Alert',
-        'class' => Jaxon\Dialogs\Dialog\Library\Quantum::class,
-    ],
-    // Butterup
-    'butterup'     => [
-        'name' => 'Butterup',
-        'class' => Jaxon\Dialogs\Dialog\Library\Butterup::class,
-    ],
     // CuteAlert
     'cute'          => [
         'name' => 'CuteAlert',
@@ -40,11 +30,6 @@ $aLibraries = [
         'name' => 'JAlert',
         'class' => Jaxon\Dialogs\Dialog\Library\JAlert::class,
     ],
-    // Tingle
-    'tingle'        => [
-        'name' => 'Tingle',
-        'class' => Jaxon\Dialogs\Dialog\Library\Tingle::class,
-    ],
     // Noty
     'noty'          => [
         'name' => 'Noty',
@@ -55,11 +40,6 @@ $aLibraries = [
         'name' => 'Notyf',
         'class' => Jaxon\Dialogs\Dialog\Library\Notyf::class,
     ],
-    // Notify
-    'notify'        => [
-        'name' => 'Notify',
-        'class' => Jaxon\Dialogs\Dialog\Library\Notify::class,
-    ],
     // IziToast
     'izitoast'     => [
         'name' => 'IziToast',
@@ -69,11 +49,6 @@ $aLibraries = [
     'sweetalert'    => [
         'name' => 'SweetAlert',
         'class' => Jaxon\Dialogs\Dialog\Library\SweetAlert::class,
-    ],
-    // JQuery Confirm
-    'jconfirm'      => [
-        'name' => 'JQueryConfirm',
-        'class' => Jaxon\Dialogs\Dialog\Library\JQueryConfirm::class,
     ],
 ];
 ?>
